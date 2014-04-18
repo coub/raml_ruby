@@ -8,6 +8,8 @@ module Raml
       root_data.each do |key, value|
         if key.start_with?('/')
           @root.resources[key] = Resource.new(value)
+        elsif key == 'documentation'
+          self.documentation = Documentation.new(value)
         else
           @root.send("#{underscore(key)}=", value)
         end
