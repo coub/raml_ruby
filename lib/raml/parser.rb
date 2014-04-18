@@ -8,15 +8,7 @@ module Raml
     end
 
     def parse
-      @root = Root.new
-
-      @data.each do |key, value|
-        if key.start_with?('/')
-          @root.resources[key] = Resource.new(value)
-        else
-          @root.send("#{underscore(key)}=", value)
-        end
-      end
+      @root = Root.new(@data)
 
       @root
     end
