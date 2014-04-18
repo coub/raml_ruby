@@ -9,10 +9,14 @@ module Raml
         :example, :repeat, :required, :default
 
       def initialize(param)
-        param.each { |name, value| instance_variable_set("@#{underscore(name)}", value) }
+        if param.is_a? Array
+          raise "Named Parameters With Multiple Types are not implemented"
+        elsif param.is_a? Hash
+          param.each { |name, value| instance_variable_set("@#{underscore(name)}", value) }
 
-        set_defaults
-        validate
+          set_defaults
+          validate
+        end
       end
 
       private

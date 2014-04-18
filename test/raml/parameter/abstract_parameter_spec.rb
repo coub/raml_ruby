@@ -55,8 +55,6 @@ describe Raml::Parameter::AbstractParameter do
         end
       end
     end
-
-
   end
 
 end
