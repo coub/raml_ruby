@@ -8,6 +8,7 @@ require_relative 'raml/root'
 require_relative 'raml/response'
 require_relative 'raml/body'
 require_relative 'raml/header'
+require_relative 'raml/exceptions'
 
 require_relative 'raml/parameter/abstract_parameter'
 require_relative 'raml/parameter/form_parameter'
@@ -15,6 +16,9 @@ require_relative 'raml/parameter/query_parameter'
 require_relative 'raml/parameter/uri_parameter'
 
 module Raml
+  TRUE_VALUE = 'true'
+  FALSE_VALUE = 'false'
+
   def self.load(raml)
     Raml::Parser.new(raml)
   end

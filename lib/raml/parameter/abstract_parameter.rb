@@ -36,6 +36,13 @@ module Raml
           raise NamedParameterNotApplicable.new('minimum and maximum attributes applicable only for parameters of type number or integer')
         end
 
+        if repeat && ![TRUE_VALUE, FALSE_VALUE].include?(repeat)
+          raise AttributeMustBeTrueOrFalse
+        end
+
+        if required && ![TRUE_VALUE, FALSE_VALUE].include?(required)
+          raise AttributeMustBeTrueOrFalse
+        end
       end
     end
   end

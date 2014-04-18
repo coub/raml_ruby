@@ -7,7 +7,7 @@ describe Raml::Parameter::AbstractParameter do
     it 'should initialize ' do
       param_data = {
         type: 'integer',
-        required: true,
+        required: 'true',
         example: 253995,
         minimum: 33
       }
@@ -16,7 +16,7 @@ describe Raml::Parameter::AbstractParameter do
     end
 
     it 'should default parameter type to string' do
-      param = abstract_param_class.new({ required: true })
+      param = abstract_param_class.new({ required: 'true' })
       param.type.should == 'string'
     end
 
@@ -54,6 +54,14 @@ describe Raml::Parameter::AbstractParameter do
           to raise_error
         end
       end
+    end
+
+    it "should throw error if repeat is not 'true' or 'false'" do
+      expect { abstract_param_class.new({ repeat: 111 }) }.to raise_error(Raml::AttributeMustBeTrueOrFalse)
+    end
+
+    it "should throw error if required is not 'true' or 'false'" do
+      expect { abstract_param_class.new({ required: 111 }) }.to raise_error(Raml::AttributeMustBeTrueOrFalse)
     end
   end
 
