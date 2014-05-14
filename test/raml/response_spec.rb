@@ -9,8 +9,18 @@ describe Raml::Response do
     YAML.load(%q(
       description: Successful response
       body:
+        text/xml:
+          schema: !include job.xsd
+          example: |
+            <api-request>
+              <input>s3://zencodertesting/test.mov</input>
+            </api-request>
         application/json:
-          schema: !include instagram-v1-meta-error.schema.json
+          schema: !include job.schema.json
+          example: |
+            {
+              "input": "s3://zencodertesting/test.mov"
+            }
       headers:
         Zencoder-Api-Key:
           displayName: ZEncoder API Key
@@ -26,12 +36,20 @@ describe Raml::Response do
   end
 
   it "inits with headers" do
-    headers = subject.children.select{|child| child.is_a?(Raml::Header)}
-    expect( headers.size ).to eq(2)
+    expect( subject.headers.size ).to eq(2)
   end
 
   it "inits with body" do
-    headers = subject.children.select{|child| child.is_a?(Raml::Body)}
-    expect( headers.size ).to eq(1)
+    expect( subject.bodies.size ).to eq(2)
+  end
+
+  describe "#document" do
+    it "prints out documentation" do
+      subject.document
+
+      # puts "\n"
+      # puts subject.document
+      # puts "\n"
+    end
   end
 end

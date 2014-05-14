@@ -11,6 +11,7 @@ describe Raml::Resource do
           example: 277102
       /processing_status:
         get:
+          displayName: Processing status
           description: Получить статус загрузки
           responses:
             200:
@@ -25,7 +26,18 @@ describe Raml::Resource do
     ))
   }
 
+  subject { Raml::Resource.new(name, data) }
+
   it "should instanciate Resource" do
-    resource = Raml::Resource.new(name, data)
+    subject
+  end
+
+  describe "#document" do
+    it "prints out documentation" do
+      subject.document
+
+      puts subject.document
+    end
+
   end
 end

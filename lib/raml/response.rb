@@ -25,5 +25,36 @@ module Raml
         end
       end
     end
+
+    def document
+      lines = []
+
+      lines << "**%s**" % (@display_name || @name)
+      lines << @description.to_s
+
+      if bodies.any?
+        lines << "**Body:**"
+        bodies.each do |body|
+          lines << body.document
+        end
+      end
+
+      if headers.any?
+        lines << "**Headers:**"
+        headers.each do |header|
+          lines << header.document
+        end
+      end
+
+      lines.join "\n\n"
+    end
+
+    def bodies
+      @children.select {|child| child.is_a? Body}
+    end
+
+    def headers
+      @children.select {|child| child.is_a? Header}
+    end
   end
 end

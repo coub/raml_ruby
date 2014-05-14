@@ -5,8 +5,9 @@ describe Raml::Parameter::AbstractParameter do
     let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
     let(:name) { 'page_number' }
 
-    it 'should initialize ' do
+    subject { abstract_param_class.new(name, param_data) }
 
+    it 'should initialize ' do
       param_data = {
         type: 'integer',
         required: true,
@@ -67,7 +68,4 @@ describe Raml::Parameter::AbstractParameter do
       expect { abstract_param_class.new(name, { required: 111 }) }.to raise_error(Raml::AttributeMustBeTrueOrFalse)
     end
   end
-
-  describe
-
 end

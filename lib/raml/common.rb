@@ -16,7 +16,7 @@ module Raml
             end
           end
 
-          lines.join "\n"
+          lines.join "\n\n"
         end
       end
     end
@@ -34,6 +34,14 @@ module Raml
       gsub(/([a-z\d])([A-Z])/,'\1_\2').
       tr("-", "_").
       downcase
+  end
+
+  def self.code_indenter(code)
+    code.split("\n").map{|line| ' ' * 4 + line}.join("\n")
+  end
+
+  def self.nbsp_indenter(text, indent_depth = 4)
+    text.split("\n").map{|line| '&nbsp;' * indent_depth + line}.join("\n")
   end
 end
 

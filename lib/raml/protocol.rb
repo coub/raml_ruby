@@ -1,5 +1,8 @@
 module Raml
   class Protocol
+    extend Common
+    is_documentable
+
     attr_accessor :http, :https
 
     def initialize(protocol_data)

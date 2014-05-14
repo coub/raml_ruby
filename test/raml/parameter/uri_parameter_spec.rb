@@ -10,7 +10,29 @@ describe Raml::Parameter::UriParameter do
     ))
   }
 
+  subject { Raml::Parameter::UriParameter.new(name, data) }
+
+
   it "should instanciate Uri parameter" do
     Raml::Parameter::UriParameter.new(name, data)
+  end
+
+  describe "#document" do
+    let(:data) {
+      YAML.load(%q(
+        description: Specify the page that you want to retrieve
+        type: integer
+        required: true
+        example: 1
+      ))
+    }
+
+    it "prints out documentation" do
+      subject.document
+
+      # puts "\n"
+      # puts subject.document
+      # puts "\n"
+    end
   end
 end

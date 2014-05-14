@@ -25,6 +25,33 @@ module Raml
       end
     end
 
+    def document
+      head = []
+      lines = []
+      head << "**#{@name}**"
+      head << "**#{@display_name || @name}**"
+      head << "#{@description}"
+
+      @children.each do |child|
+        lines << child.document
+      end
+
+      # lines.map!{|line| Raml.nbsp_indenter(line)}
+      (head + lines).join "  \n"
+    end
+
+    def resources
+      @children.select {|child| child.is_a? Resource}
+    end
+
+    def methods
+      @children.select {|child| child.is_a? Method}
+    end
+
+    def uri_parameters
+      @children.select {|child| child.is_a? UriParameters}
+    end
+
 
   end
 end
