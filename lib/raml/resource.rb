@@ -1,25 +1,26 @@
 module Raml
-  class Resource < Node
-    attr_accessor :resources, :methods
-    attr_accessor :uri_parameters
+  class Resource
+    attr_accessor :children
 
-    def initialize(resource_data)
+    extend Common
+
+    is_documentable
+
+    def initialize(name, resource_data)
+      @children = []
+      @name = name
+
       resource_data.each do |key, value|
         if key.start_with?('/')
-          self.resources ||= {}
-          self.resources[key] = Resource.new(value)
+          @children << Resource.new(key, value)
         elsif Raml::Method::NAMES.include?(key)
-          self.methods ||= {}
-          self.methods[key] = Method.new(value)
+          @children << Method.new(key, value)
         elsif key == "uriParameters"
-          self.uri_parameters ||= {}
-
-          uri_parameter_list = value
-          uri_parameter_list.each do |name, attributes|
-            uri_parameters[name] = Parameter::UriParameter.new(attributes)
+          value.each do |name, uri_parameter_data|
+            @children << Parameter::UriParameter.new(name, uri_parameter_data)
           end
         else
-          send("#{underscore(key)}=", value)
+          send("#{Raml.underscore(key)}=", value)
         end
       end
     end

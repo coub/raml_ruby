@@ -9,6 +9,6 @@ describe Raml::Method do
   }
 
   it "should instanciate Method" do
-    Raml::Method.new(data)
+    Raml::Method.new('get', data)
   end
 end

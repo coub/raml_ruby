@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Raml
-  class Parser < Node
+  class Parser
     def initialize(data)
       @data = YAML.load(data)
       self

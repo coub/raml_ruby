@@ -7,4 +7,8 @@ module Raml
   # Root
   class RootTitleMissing < StandardError; end
   class RootBaseUriMissing < StandardError; end
+
+  # Protocols
+  class ProtocolMustBeArrayOfStrings < StandardError; end
+  class ProtocolMustBeHTTPorHTTPS < StandardError; end
 end

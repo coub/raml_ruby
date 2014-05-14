@@ -1,20 +1,15 @@
 require_relative 'spec_helper'
 
 describe Raml::Header do
+  let(:name) { 'meta' }
   let (:data) {
     YAML.load(%q(
-      Zencoder-Api-Key:
-        displayName: ZEncoder API Key
-      x-Zencoder-job-metadata-{*}:
-        displayName: Job Metadata
-        description: |
-           Field names prefixed with x-Zencoder-job-metadata- contain user-specified metadata.
-           The API does not validate or use this data. All metadata headers will be stored
-           with the job and returned to the client when this resource is queried.
+      displayName: Job Metadata
+      description: Field names prefixed with x-Zencoder-job-metadata- contain user-specified metadata.
     ))
   }
 
   it "should instanciate Header" do
-    Raml::Header.new(data)
+    Raml::Header.new(name, data)
   end
 end

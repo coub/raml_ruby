@@ -1,7 +1,7 @@
 module Raml
   module Parameter
     class FormParameter < AbstractParameter
-      def initialize(form_data)
+      def initialize(name, form_parameter_data)
         puts "FORM PARAMETER is partially implemented"
         super
       end

@@ -1,18 +1,23 @@
 module Raml
   module Parameter
-    class AbstractParameter < Node
+    class AbstractParameter
+      extend Common
+
       VALID_TYPES = %w(string number integer date boolean file)
       BOOLEAN_ATTRIBUTES = %w(repeat required)
 
-      attr_accessor :displayName, :description, :type, :enum,
+      is_documentable
+      attr_accessor :type, :enum,
         :pattern, :min_length, :max_length, :minimum, :maximum,
         :example, :repeat, :required, :default
 
-      def initialize(param)
-        if param.is_a? Array
+      def initialize(name, parameter_data)
+        @name = name
+
+        if parameter_data.is_a? Array
           raise "Named Parameters With Multiple Types are not implemented"
-        elsif param.is_a? Hash
-          param.each { |name, value| instance_variable_set("@#{underscore(name)}", value) }
+        elsif parameter_data.is_a? Hash
+          parameter_data.each { |name, value| instance_variable_set("@#{Raml.underscore(name)}", value) }
 
           set_defaults
           validate
@@ -36,12 +41,12 @@ module Raml
           raise NamedParameterNotApplicable.new('minimum and maximum attributes applicable only for parameters of type number or integer')
         end
 
-        if repeat && ![TRUE_VALUE, FALSE_VALUE].include?(repeat)
-          raise AttributeMustBeTrueOrFalse
+        if repeat && ![true, false].include?(repeat)
+          raise AttributeMustBeTrueOrFalse.new(self)
         end
 
-        if required && ![TRUE_VALUE, FALSE_VALUE].include?(required)
-          raise AttributeMustBeTrueOrFalse
+        if required && ![true, false].include?(required)
+          raise AttributeMustBeTrueOrFalse.new(self)
         end
       end
     end

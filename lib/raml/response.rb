@@ -1,24 +1,29 @@
 module Raml
-  class Response < Node
-    attr_accessor :body, :headers
+  class Response
+    extend Common
 
-    def initialize(response_data)
+    is_documentable
+
+    attr_accessor :children
+
+    def initialize(name, response_data)
+      @children = []
+      @name = name
+
       response_data.each do |key, value|
         case key
         when 'body'
-          self.body = Body.new(value)
+          value.each do |name, body_data|
+            @children << Body.new(name, body_data)
+          end
         when 'headers'
-          self.headers ||= {}
-
-          header_list = value
-          header_list.each do |name, attributes|
-            headers[name] = Header.new(attributes)
+          value.each do |name, header_data|
+            @children << Header.new(name, header_data)
           end
         else
-          send("#{underscore(key)}=", value)
+          send("#{Raml.underscore(key)}=", value)
         end
       end
-
     end
   end
 end
