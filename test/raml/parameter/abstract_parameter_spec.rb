@@ -5,7 +5,7 @@ describe Raml::Parameter::AbstractParameter do
     let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
     let(:name) { 'page_number' }
 
-    subject { abstract_param_class.new(name, param_data) }
+    subject { abstract_param_class.new(name, parameter_data) }
 
     it 'should initialize ' do
       param_data = {
@@ -23,6 +23,30 @@ describe Raml::Parameter::AbstractParameter do
       param = abstract_param_class.new(name, { required: true })
       param.type.should == 'string'
     end
+
+    describe "Named Parameters With Multiple Types" do
+      let(:parameter_data) {
+        YAML.load %q(
+          - type: string
+            description: Text content. The text content must be the last field in the form.
+          - type: file
+            description: File to upload. The file must be the last field in the form.
+        )
+      }
+
+      let(:name) { 'file' }
+
+      subject { Raml::Parameter::UriParameter.new(name, parameter_data) }
+
+      it "creates children for multiple types" do
+        subject.children.should_not be_empty
+      end
+
+      it "prints out documentation" do
+        subject.document
+      end
+    end
+
 
     describe 'valid parameter types' do
       Raml::Parameter::AbstractParameter::VALID_TYPES.each do |type|

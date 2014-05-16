@@ -35,8 +35,6 @@ describe Raml::Resource do
   describe "#document" do
     it "prints out documentation" do
       subject.document
-
-      puts subject.document
     end
 
   end

@@ -11,17 +11,45 @@ module Raml
         :pattern, :min_length, :max_length, :minimum, :maximum,
         :example, :repeat, :required, :default
 
+      attr_accessor :children
+
       def initialize(name, parameter_data)
         @name = name
+        @children = []
 
         if parameter_data.is_a? Array
-          raise "Named Parameters With Multiple Types are not implemented"
+          parameter_data.each do |parameter|
+            @children << self.class.new(name, parameter)
+          end
         elsif parameter_data.is_a? Hash
           parameter_data.each { |name, value| instance_variable_set("@#{Raml.underscore(name)}", value) }
 
           set_defaults
           validate
         end
+      end
+
+      def document
+        lines = []
+
+        if @children.any?
+          lines = @children.map &:document
+        else
+          lines << "**#{@display_name || @name}**"
+          lines << "#{@description}"
+          lines << "type: #{@type}" if @type
+          lines << "required: #{@required}" if @required
+          lines << "enum: #{@enum}" if @enum
+          lines << "pattern: #{@pattern}" if @pattern
+          lines << "min_length: #{@min_length}" if @min_length
+          lines << "max_length: #{@max_length}" if @max_length
+          lines << "minimum: #{@minimum}" if @minimum
+          lines << "maximum: #{@maximum}" if @maximum
+          lines << "example: `#{@example}`" if @example
+          lines << "repeat: #{@repeat}" if @repeat
+        end
+
+        lines.join "  \n"
       end
 
       private

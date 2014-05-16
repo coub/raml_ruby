@@ -22,7 +22,7 @@ module Raml
           @children << Protocol.new(value)
         when 'queryParameters'
           value.each do |name, query_parameter_data|
-            @children <<  Parameter::QueryParameter.new(name, query_parameter_data)
+            @children << Parameter::QueryParameter.new(name, query_parameter_data)
           end
         when 'body'
           value.each do |name, body_data|
