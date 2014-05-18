@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ## Warning
 
-This project is at very early stage, some parts might be missing or not working. Todo list is located below, if you want to contribute you can find me on [RAML forums](http://forums.raml.org/t/ruby-rails-tooling/49/11) or just follow contribution guidelines.
+This project is at very early stage, some parts might be missing or not working. Todo list is located below, if you want to contribute you can find me on [RAML forums](http://forums.raml.org/t/ruby-rails-tooling/49) or just follow contribution guidelines.
 
 ## Usage
 
