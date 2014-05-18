@@ -8,7 +8,7 @@ module Raml
     end
 
     def document
-      ["## #{@title}", "#{@content}"].join "\n"
+      ["####{@title}", "#{@content}"].join "\n"
     end
   end
 end

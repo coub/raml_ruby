@@ -46,7 +46,7 @@ module Raml
 
     def document
       lines = []
-      lines << "**#{@display_name || @name}**"
+      lines << "####{}**#{@display_name || @name}**"
       lines << "#{@description}"
 
       if protocol

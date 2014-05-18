@@ -29,7 +29,7 @@ module Raml
       head = []
       lines = []
       head << "**#{@name}**"
-      head << "**#{@display_name || @name}**"
+      # head << "**#{@display_name || @name}**"
       head << "#{@description}"
 
       @children.each do |child|

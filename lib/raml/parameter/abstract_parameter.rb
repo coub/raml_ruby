@@ -35,18 +35,19 @@ module Raml
         if @children.any?
           lines = @children.map &:document
         else
-          lines << "**#{@display_name || @name}**"
-          lines << "#{@description}"
-          lines << "type: #{@type}" if @type
-          lines << "required: #{@required}" if @required
-          lines << "enum: #{@enum}" if @enum
-          lines << "pattern: #{@pattern}" if @pattern
-          lines << "min_length: #{@min_length}" if @min_length
-          lines << "max_length: #{@max_length}" if @max_length
-          lines << "minimum: #{@minimum}" if @minimum
-          lines << "maximum: #{@maximum}" if @maximum
-          lines << "example: `#{@example}`" if @example
-          lines << "repeat: #{@repeat}" if @repeat
+          lines << "*#{@display_name || @name}:*"
+          lines << "&nbsp;&nbsp;#{@description}" if @description
+          lines << "&nbsp;&nbsp;type: #{@type}" if @type
+          lines << "&nbsp;&nbsp;required: #{@required}" if @required
+          lines << "&nbsp;&nbsp;enum: #{@enum}" if @enum
+          lines << "&nbsp;&nbsp;pattern: #{@pattern}" if @pattern
+          lines << "&nbsp;&nbsp;min_length: #{@min_length}" if @min_length
+          lines << "&nbsp;&nbsp;max_length: #{@max_length}" if @max_length
+          lines << "&nbsp;&nbsp;minimum: #{@minimum}" if @minimum
+          lines << "&nbsp;&nbsp;maximum: #{@maximum}" if @maximum
+          lines << "&nbsp;&nbsp;example: `#{@example}`" if @example
+          lines << "&nbsp;&nbsp;repeat: #{@repeat}" if @repeat
+          lines << "\n"
         end
 
         lines.join "  \n"
