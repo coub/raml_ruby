@@ -1,6 +1,8 @@
-# Raml::Ruby
+# Raml ruby
 
-Simple gem to access RAML files using Ruby. It can also be used to generate documentation, although this part might be extracted in the future.
+Implementation of a RAML parser in Ruby (uses Psych YAML parser). It
+can also generate documentation, although this part might be extracted in the future.
+
 
 <!---
 ## Installation
@@ -17,6 +19,10 @@ Or install it yourself as:
 
     $ gem install raml-ruby
 -->
+
+## Warning
+
+This project is at very early stage, some parts might be missing or not working. Todo list is located below, if you want to contribute you can find me on [RAML forums](http://forums.raml.org/t/ruby-rails-tooling/49/11) or just follow contribution guidelines.
 
 ## Usage
 
@@ -57,16 +63,15 @@ Raml.document("/path/to/your/file.raml")
 ###To Do:
 **Parser**
 
-1. Named parameters with multiple types
-2. Find the way to handle `!include` tag properly
-3. Resource types
-4. Resource traits
-5. Security schemes
-6. Publish to Rubygems
+- Find the way to handle `!include` tag properly
+- Resource types
+- Resource traits
+- Security schemes
+- Publish to Rubygems
 
 **Documentation**
 
-1. General cleanup of everything
+- Cleaner layouts
 
 ## Contributing
 
