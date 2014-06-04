@@ -1,4 +1,4 @@
-# Raml ruby
+# RAML ruby
 
 Implementation of a RAML parser in Ruby (uses Psych YAML parser). It
 can also generate documentation, although this part might be extracted in the future.
