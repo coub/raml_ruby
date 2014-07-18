@@ -11,4 +11,7 @@ module Raml
   # Protocols
   class ProtocolMustBeArrayOfStrings < StandardError; end
   class ProtocolMustBeHTTPorHTTPS < StandardError; end
+  
+  # Body
+  class FormParametersMissing < StandardError; end
 end

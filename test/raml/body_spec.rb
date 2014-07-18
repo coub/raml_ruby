@@ -20,15 +20,32 @@ describe Raml::Body do
   }
 
   subject { Raml::Body.new(media_type, body_data) }
+  
+  describe '#initialize' do
+    it "inits body with media_type" do
+      expect( subject.media_type ).to eq(media_type)
+    end
 
-  it "inits body with media_type" do
-    expect( subject.media_type ).to eq(media_type)
+    it "inits body with schema" do
+      expect( subject.schema ).to eq('job.xsd')
+    end
+    
+    context 'when body is a web form' do
+      [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].each do |mtype|
+        context "when media type is #{mtype}" do
+          let(:media_type) { mtype }
+          context 'when a formParameters property is not provided' do
+            it { expect { subject }.to raise_error Raml::FormParametersMissing }
+          end
+          context 'when a formParameters property is provided' do
+            let(:body_data) { form_body_data }
+            it { expect { subject }.to_not raise_error }
+          end
+        end
+      end      
+    end
   end
-
-  it "inits body with schema" do
-    expect( subject.schema ).to eq('job.xsd')
-  end
-
+  
   describe "#document" do
     let (:body_data) {
       YAML.load(%q(
@@ -39,7 +56,8 @@ describe Raml::Body do
     it "prints out documentation" do
       subject.document
     end
-
+  end
+  
   describe '#form_parameters' do
     context 'when body is not a web form' do
       it 'returns no form parameters' do
@@ -55,5 +73,18 @@ describe Raml::Body do
     end
   end
   
+  describe '#web_form?' do
+    context 'when body isnt a web form' do
+      it { should_not be_web_form }
+    end
+    context 'when body is a web form' do
+      let(:body_data) { form_body_data }
+      [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].each do |mtype|
+        context "when media type is #{mtype}" do
+          let(:media_type) { mtype }
+          it { should be_web_form }
+        end
+      end
+    end
   end
 end

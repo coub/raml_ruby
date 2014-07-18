@@ -20,6 +20,8 @@ module Raml
           send("#{Raml.underscore(key)}=", value)
         end
       end
+      
+      raise FormParametersMissing if web_form? && form_parameters.empty?
     end
 
     def document
@@ -33,6 +35,10 @@ module Raml
     
     def form_parameters
       @children.select { |child| child.is_a? Parameter::FormParameter }
+    end
+    
+    def web_form?
+      [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? @media_type
     end
   end
 end
