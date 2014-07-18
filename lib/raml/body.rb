@@ -21,7 +21,10 @@ module Raml
         end
       end
       
-      raise FormParametersMissing if web_form? && form_parameters.empty?
+      if web_form?
+        raise FormCantHaveSchema    if @schema
+        raise FormParametersMissing if form_parameters.empty?
+      end
     end
 
     def document

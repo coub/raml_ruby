@@ -14,4 +14,5 @@ module Raml
   
   # Body
   class FormParametersMissing < StandardError; end
+  class FormCantHaveSchema < StandardError; end
 end

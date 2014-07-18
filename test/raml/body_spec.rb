@@ -26,20 +26,38 @@ describe Raml::Body do
       expect( subject.media_type ).to eq(media_type)
     end
 
-    it "inits body with schema" do
-      expect( subject.schema ).to eq('job.xsd')
+    context 'when the body is not a web form' do
+      it "inits body with schema" do
+        expect( subject.schema ).to eq('job.xsd')
+      end
     end
     
     context 'when body is a web form' do
+      let(:body_data) { form_body_data }
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].each do |mtype|
         context "when media type is #{mtype}" do
           let(:media_type) { mtype }
           context 'when a formParameters property is not provided' do
+            before { body_data.delete 'formParameters' }
             it { expect { subject }.to raise_error Raml::FormParametersMissing }
           end
           context 'when a formParameters property is provided' do
-            let(:body_data) { form_body_data }
             it { expect { subject }.to_not raise_error }
+          end
+          
+          context 'when a schema property is not provided' do
+            it { expect { subject }.to_not raise_error }
+          end
+          context 'when a schema property is provided' do
+            let(:body_data) {
+              YAML.load %q(
+                schema: !include job.xsd
+                formParameters:
+                  param:
+                    type: string
+              )
+            }
+            it { expect { subject }.to raise_error Raml::FormCantHaveSchema }
           end
         end
       end      
