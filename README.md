@@ -63,7 +63,6 @@ Raml.document("/path/to/your/file.raml")
 ###To Do:
 **Parser**
 
-- Find the way to handle `!include` tag properly
 - Resource types
 - Resource traits
 - Security schemes

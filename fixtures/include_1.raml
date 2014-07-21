@@ -1,0 +1,7 @@
+#%RAML 0.8
+baseUri: https://api.example.com
+title: Filesystem API
+version: 0.1
+schemas:
+  - !include schemas/canonicalSchemas.raml
+  - File:       !include schemas/filesystem/file.json

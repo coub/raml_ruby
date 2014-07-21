@@ -14,6 +14,8 @@ require_relative 'raml/body'
 require_relative 'raml/header'
 require_relative 'raml/documentation'
 require_relative 'raml/exceptions'
+require_relative 'raml/include'
+
 
 require_relative 'raml/parameter/form_parameter'
 require_relative 'raml/parameter/query_parameter'
@@ -26,7 +28,9 @@ module Raml
 
   def self.load_file(filename)
     file = File.new(filename)
-    Raml::Parser.new(file.read)
+    path = File.dirname filename
+    path = nil if path == ''
+    Raml::Parser.new(file.read, path)
   end
 
   def self.document(filepath, out_file = nil)

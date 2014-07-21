@@ -1,4 +1,6 @@
 module Raml
+  class CantIncludeFile < StandardError; end
+  
   # Abstract parameter
   class InvalidParameterType < StandardError; end
   class NamedParameterNotApplicable < StandardError; end
