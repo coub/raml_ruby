@@ -4,24 +4,26 @@ describe Raml::Parameter::AbstractParameter do
   describe '#new' do
     let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
     let(:name) { 'page_number' }
+    let(:parameter_data) {
+      {
+        type:     'integer',
+        required: true,
+        example:  253995,
+        minimum:  33
+      }
+    }
 
     subject { abstract_param_class.new(name, parameter_data) }
 
     it 'should initialize ' do
-      param_data = {
-        type: 'integer',
-        required: true,
-        example: 253995,
-        minimum: 33
-      }
-
-      param = abstract_param_class.new(name, param_data)
-      param.name.should == name
+      subject.name.should == name
     end
 
-    it 'should default parameter type to string' do
-      param = abstract_param_class.new(name, { required: true })
-      param.type.should == 'string'
+    context 'when a paratemer type is not supplied' do
+      let(:parameter_data) { { required: true } }
+      it 'should default parameter type to string' do
+        subject.type.should == 'string'
+      end
     end
 
     describe "Named Parameters With Multiple Types" do
@@ -48,48 +50,92 @@ describe Raml::Parameter::AbstractParameter do
     end
 
 
-    describe 'valid parameter types' do
-      Raml::Parameter::AbstractParameter::VALID_TYPES.each do |type|
-        it "should allow type #{type}" do
-          param = abstract_param_class.new(name, { type: type })
-          param.type.should == type
-        end
-      end
-
-      it 'should throw error if type is invalid' do
-        invalid_type = 'unicorn'
-        expect { abstract_param_class.new(name, { type: invalid_type }) }.
-        to raise_error
-      end
-    end
-
-    describe "minLength / maxLength" do
-      it 'should throw warning if minLength applied to non string type' do
-        expect { abstract_param_class.new(name, { type: 'integer', min_length: 2 }) }.
-        to raise_error
-      end
-
-      it 'should throw warning if maxLength applied to non string type' do
-        expect { abstract_param_class.new(name, { type: 'integer', max_length: 2 }) }.
-        to raise_error
-      end
-    end
-
-    describe 'minimum / maximum' do
-      %w(minimum maximum).each do |attribute|
-        it "should throw warning if #{attribute} applied to non string type" do
-          expect { abstract_param_class.new(name, { type: 'string', attribute.to_sym => 2 }) }.
-          to raise_error
+    context 'when the parameter type is valid' do
+      %w(string number integer date boolean file).each do |type|
+        context "when the parameter type is #{type}" do
+          let(:parameter_data) { { type: type } }
+          it { expect { subject }.to_not raise_error }
+          it "allows the type" do
+            subject.type.should == type
+          end
         end
       end
     end
-
-    it "should throw error if repeat is not 'true' or 'false'" do
-      expect { abstract_param_class.new(name, { repeat: 111 }) }.to raise_error(Raml::ParameterAttributeMustBeTrueOrFalse)
+    context 'when the parameter type is invalid' do
+      let(:parameter_data) { { type: 'invalid' } }
+      it { expect { subject }.to raise_error Raml::InvalidParameterType }
     end
 
-    it "should throw error if required is not 'true' or 'false'" do
-      expect { abstract_param_class.new(name, { required: 111 }) }.to raise_error(Raml::ParameterAttributeMustBeTrueOrFalse)
+    context 'when the parameter type is string' do
+      context 'and a minLength attribute is given' do
+        let(:parameter_data) { { type: 'string', min_length: 2 } }
+        it { expect { subject }.to_not raise_error }
+        it "stores the attribute" do
+          subject.min_length.should == 2
+        end
+      end
+      context 'and a maxLength attribute is given' do
+        let(:parameter_data) { { type: 'string', max_length: 2 } }
+        it { expect { subject }.to_not raise_error }
+        it "stores the attribute" do
+          subject.max_length.should == 2
+        end
+      end      
+    end
+    context 'when the parameter type is not string' do
+      context 'and a minLength attribute is given' do
+        let(:parameter_data) { { type: 'integer', min_length: 2 } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+      context 'and a maxLength attribute is given' do
+        let(:parameter_data) { { type: 'integer', max_length: 2 } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+    end
+
+    %w(integer number).each do |type|
+      context "when the parameter type is #{type}" do
+        context 'and a minimum attribute is given' do
+          let(:parameter_data) { { type: type, minimum: 2 } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.minimum.should == 2
+          end
+        end
+        context 'and a maximum attribute is given' do
+          let(:parameter_data) { { type: type, maximum: 2 } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.maximum.should == 2
+          end
+        end      
+      end
+    end
+    context 'when the parameter type is not integer or number' do
+      context 'and a minimum attribute is given' do
+        let(:parameter_data) { { type: 'string', minimum: 2 } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+      context 'and a maximum attribute is given' do
+        let(:parameter_data) { { type: 'string', maximum: 2 } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+    end
+
+    %w{repeat required}.each do |attribute|
+      context "when the #{attribute} attribute is not true or false" do
+        let(:parameter_data) { { attribute => 111 } }
+        it { expect { subject }.to raise_error Raml::ParameterAttributeMustBeTrueOrFalse }
+      end
+      [ true, false ].each do |val|
+        context "when the #{attribute} attribute is #{val}" do
+          let(:parameter_data) { { attribute => val} }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.send(attribute.to_sym).should == val
+          end
+        end
+      end
     end
   end
 end
