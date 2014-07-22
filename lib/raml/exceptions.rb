@@ -4,8 +4,8 @@ module Raml
   
   # Abstract parameter
   class InvalidParameterType < StandardError; end
-  class NamedParameterNotApplicable < StandardError; end
-  class AttributeMustBeTrueOrFalse < StandardError; end
+  class InapplicableParameterAttribute < StandardError; end
+  class ParameterAttributeMustBeTrueOrFalse < StandardError; end
 
   # Root
   class RootTitleMissing < StandardError; end

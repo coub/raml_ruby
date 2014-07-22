@@ -63,19 +63,21 @@ module Raml
         raise InvalidParameterType.new() if !VALID_TYPES.include?(type)
 
         if type != 'string' && (min_length || max_length)
-          raise NamedParameterNotApplicable.new('minLength and maxLength attributes are applicable only for parameters of type string')
+          raise InapplicableParameterAttribute,
+            'minLength and maxLength attributes are applicable only to string parameters.'
         end
 
         if !%w(integer number).include?(type) && (minimum || maximum)
-          raise NamedParameterNotApplicable.new('minimum and maximum attributes applicable only for parameters of type number or integer')
+          raise InapplicableParameterAttribute,
+            'minimum and maximum attributes applicable only to number or integer parameters.'
         end
 
         if repeat && ![true, false].include?(repeat)
-          raise AttributeMustBeTrueOrFalse.new(self)
+          raise ParameterAttributeMustBeTrueOrFalse
         end
 
         if required && ![true, false].include?(required)
-          raise AttributeMustBeTrueOrFalse.new(self)
+          raise ParameterAttributeMustBeTrueOrFalse
         end
       end
     end

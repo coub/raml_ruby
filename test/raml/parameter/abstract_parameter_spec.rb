@@ -85,11 +85,11 @@ describe Raml::Parameter::AbstractParameter do
     end
 
     it "should throw error if repeat is not 'true' or 'false'" do
-      expect { abstract_param_class.new(name, { repeat: 111 }) }.to raise_error(Raml::AttributeMustBeTrueOrFalse)
+      expect { abstract_param_class.new(name, { repeat: 111 }) }.to raise_error(Raml::ParameterAttributeMustBeTrueOrFalse)
     end
 
     it "should throw error if required is not 'true' or 'false'" do
-      expect { abstract_param_class.new(name, { required: 111 }) }.to raise_error(Raml::AttributeMustBeTrueOrFalse)
+      expect { abstract_param_class.new(name, { required: 111 }) }.to raise_error(Raml::ParameterAttributeMustBeTrueOrFalse)
     end
   end
 end
