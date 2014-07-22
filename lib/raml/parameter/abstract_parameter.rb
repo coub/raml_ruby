@@ -61,6 +61,15 @@ module Raml
 
       def validate
         raise InvalidParameterType.new() if !VALID_TYPES.include?(type)
+        
+        if enum
+          if type == 'string'
+            raise InvalidParameterAttribute, 'enum attribute must be an array of strings.' unless
+              enum.is_a?(Array) && enum.all? { |val| val.is_a? String }
+          else
+            raise InapplicableParameterAttribute, 'enum attribute is only applicable to string parameters.'
+          end
+        end
 
         if type != 'string' && (min_length || max_length)
           raise InapplicableParameterAttribute,
@@ -73,11 +82,11 @@ module Raml
         end
 
         if !repeat.nil? && ![true, false].include?(repeat)
-          raise ParameterAttributeMustBeTrueOrFalse
+          raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end
 
         if !required.nil? && ![true, false].include?(required)
-          raise ParameterAttributeMustBeTrueOrFalse
+          raise InvalidParameterAttribute, 'required attribute must be true or false.'
         end
       end
     end

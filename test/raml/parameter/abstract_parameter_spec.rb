@@ -80,7 +80,27 @@ describe Raml::Parameter::AbstractParameter do
         it "stores the attribute" do
           subject.max_length.should == 2
         end
-      end      
+      end
+      context 'and an enum attribute is given' do
+        context 'and the value is an array of strings' do
+          let(:enum) { ['foo', 'bar'] }
+          let(:parameter_data) { { type: 'string', enum: enum } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.enum.should == enum
+          end
+        end
+        context 'and the value is not an array' do
+          let(:enum) { 'foo' }
+          let(:parameter_data) { { type: 'string', enum: enum } }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+        end
+        context 'and the value is an array but not all elements are string' do
+          let(:enum) { ['foo', 'bar', 2] }
+          let(:parameter_data) { { type: 'string', enum: enum } }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+        end
+      end    
     end
     context 'when the parameter type is not string' do
       context 'and a minLength attribute is given' do
@@ -89,6 +109,11 @@ describe Raml::Parameter::AbstractParameter do
       end
       context 'and a maxLength attribute is given' do
         let(:parameter_data) { { type: 'integer', max_length: 2 } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+      context 'and an enum attribute is given' do
+        let(:enum) { ['foo', 'bar'] }
+        let(:parameter_data) { { type: 'integer', enum: enum } }
         it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
       end
     end
@@ -108,7 +133,7 @@ describe Raml::Parameter::AbstractParameter do
           it "stores the attribute" do
             subject.maximum.should == 2
           end
-        end      
+        end
       end
     end
     context 'when the parameter type is not integer or number' do
@@ -125,7 +150,7 @@ describe Raml::Parameter::AbstractParameter do
     %w{repeat required}.each do |attribute|
       context "when the #{attribute} attribute is not true or false" do
         let(:parameter_data) { { attribute => 111 } }
-        it { expect { subject }.to raise_error Raml::ParameterAttributeMustBeTrueOrFalse }
+        it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
       end
       [ true, false ].each do |val|
         context "when the #{attribute} attribute is #{val}" do
