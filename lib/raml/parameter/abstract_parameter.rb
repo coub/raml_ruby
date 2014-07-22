@@ -72,11 +72,11 @@ module Raml
             'minimum and maximum attributes applicable only to number or integer parameters.'
         end
 
-        if repeat && ![true, false].include?(repeat)
+        if !repeat.nil? && ![true, false].include?(repeat)
           raise ParameterAttributeMustBeTrueOrFalse
         end
 
-        if required && ![true, false].include?(required)
+        if !required.nil? && ![true, false].include?(required)
           raise ParameterAttributeMustBeTrueOrFalse
         end
       end
