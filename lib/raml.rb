@@ -28,8 +28,11 @@ module Raml
 
   def self.load_file(filename)
     file = File.new(filename)
+    raise UnsupportedRamlVersion unless file.readline =~ /\A#%RAML 0.8\s*\z/
+    
     path = File.dirname filename
     path = nil if path == ''
+    
     Raml::Parser.new(file.read, path)
   end
 

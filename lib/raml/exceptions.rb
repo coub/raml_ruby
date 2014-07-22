@@ -1,4 +1,5 @@
 module Raml
+  class UnsupportedRamlVersion < StandardError; end
   class CantIncludeFile < StandardError; end
   
   # Abstract parameter
