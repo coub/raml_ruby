@@ -1,4 +1,4 @@
-  require_relative 'spec_helper'
+require_relative 'spec_helper'
 
 describe Raml::Root do
   let (:data) {
@@ -14,15 +14,17 @@ describe Raml::Root do
     )
   }
 
-  it "should init root" do
-    expect { Raml::Root.new(data) }.to_not raise_error
-  end
+  describe '#new' do
+    it "should init root" do
+      expect { Raml::Root.new(data) }.to_not raise_error
+    end
 
-  it "should throw error if title is missing" do
-    expect{ Raml::Root.new( { } ) }.to raise_error
-  end
-
-  it "should throw error if baseUri is missing" do
-    expect{ Raml::Root.new( { } ) }.to raise_error
+    context 'when the title property is missing' do
+      it  { expect{ Raml::Root.new({'baseUri' => 'x'}) }.to raise_error Raml::RootTitleMissing }
+    end
+    
+    context 'when the baseUri property is missing' do
+      it { expect{ Raml::Root.new({'title' => 'x'}) }.to raise_error Raml::RootBaseUriMissing }
+    end
   end
 end
