@@ -46,8 +46,17 @@ module Raml
     private
 
     def validate
-      raise RootTitleMissing   if title.nil?
-      raise RootBaseUriMissing if base_uri.nil?
+      if title.nil?
+        raise RequiredPropertyMissing, 'Missing root title property.'
+      else
+        raise InvalidProperty, 'Root title property must be a string' unless title.is_a? String
+      end
+      
+      if base_uri.nil?
+        raise RequiredPropertyMissing, 'Missing root baseUri property'
+      else
+        raise InvalidProperty, 'Root baseUri property must be a string' unless base_uri.is_a? String
+      end
     end
 
     # def validate_base_uri

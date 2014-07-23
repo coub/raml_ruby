@@ -14,17 +14,29 @@ describe Raml::Root do
     )
   }
 
+  subject { Raml::Root.new data }
+  
   describe '#new' do
     it "should init root" do
-      expect { Raml::Root.new(data) }.to_not raise_error
+      expect { subject }.to_not raise_error
     end
 
     context 'when the title property is missing' do
-      it  { expect{ Raml::Root.new({'baseUri' => 'x'}) }.to raise_error Raml::RootTitleMissing }
+      let(:data) { { 'baseUri' => 'x' } }
+      it { expect{ subject }.to raise_error Raml::RequiredPropertyMissing, /title/ }
+    end
+    context 'when the title property is not a string' do
+      let(:data) { { 'title' => 1, 'baseUri' => 'x' } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /title/ }
     end
     
     context 'when the baseUri property is missing' do
-      it { expect{ Raml::Root.new({'title' => 'x'}) }.to raise_error Raml::RootBaseUriMissing }
+      let(:data) { { 'title' => 'x' } }
+      it { expect{ subject }.to raise_error Raml::RequiredPropertyMissing, /baseUri/ }
+    end
+    context 'when the baseUri property is not a string' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 1 } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /baseUri/ }
     end
   end
 end
