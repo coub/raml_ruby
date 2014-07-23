@@ -51,6 +51,10 @@ module Raml
         lines.join "  \n"
       end
 
+      def has_multiple_types?
+        not children.empty?
+      end
+            
       private
 
       def set_defaults

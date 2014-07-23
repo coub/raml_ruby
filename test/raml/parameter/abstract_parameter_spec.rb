@@ -1,8 +1,10 @@
 require_relative '../spec_helper'
 
 describe Raml::Parameter::AbstractParameter do
+  let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
+  subject { abstract_param_class.new(name, parameter_data) }
+  
   describe '#new' do
-    let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
     let(:name) { 'page_number' }
     let(:parameter_data) {
       {
@@ -12,8 +14,6 @@ describe Raml::Parameter::AbstractParameter do
         minimum:  33
       }
     }
-
-    subject { abstract_param_class.new(name, parameter_data) }
 
     it 'should initialize ' do
       subject.name.should == name
@@ -25,30 +25,6 @@ describe Raml::Parameter::AbstractParameter do
         subject.type.should == 'string'
       end
     end
-
-    describe "Named Parameters With Multiple Types" do
-      let(:parameter_data) {
-        YAML.load %q(
-          - type: string
-            description: Text content. The text content must be the last field in the form.
-          - type: file
-            description: File to upload. The file must be the last field in the form.
-        )
-      }
-
-      let(:name) { 'file' }
-
-      subject { Raml::Parameter::UriParameter.new(name, parameter_data) }
-
-      it "creates children for multiple types" do
-        subject.children.should_not be_empty
-      end
-
-      it "prints out documentation" do
-        subject.document
-      end
-    end
-
 
     context 'when the parameter type is valid' do
       %w(string number integer date boolean file).each do |type|
@@ -259,5 +235,47 @@ describe Raml::Parameter::AbstractParameter do
         end
       end
     end
+    
+    context 'when the parameter has multiple types' do
+      let(:parameter_data) {
+        YAML.load %q(
+          - type: string
+            description: Text content. The text content must be the last field in the form.
+          - type: file
+            description: File to upload. The file must be the last field in the form.
+        )
+      }
+      let(:name) { 'file' }
+
+      it "creates children for multiple types" do
+        subject.children.should_not be_empty
+        subject.children.should all( be_a Raml::Parameter::AbstractParameter )
+        subject.children.map(&:type).should contain_exactly 'string', 'file'
+      end
+
+      it "prints out documentation" do
+        subject.document
+      end
+    end
+  end
+  
+  describe '#has_multiple_types?' do
+    let(:name) { 'file' }
+    context 'when the parameter has a single type' do
+      let(:parameter_data) { { type: 'string' } }
+      it { subject.has_multiple_types?.should be false }
+    end
+    context 'when the parameter has multiple types' do
+      let(:parameter_data) {
+        YAML.load %q(
+          - type: string
+            description: Text content. The text content must be the last field in the form.
+          - type: file
+            description: File to upload. The file must be the last field in the form.
+        )
+      }
+      
+      it { subject.has_multiple_types?.should be true }
+    end    
   end
 end
