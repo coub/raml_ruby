@@ -56,7 +56,9 @@ module Raml
       private
 
       def set_defaults
-        self.type ||= 'string'
+        self.type     ||= 'string'
+        self.repeat     = false if repeat.nil?
+        self.required   = false if required.nil?
       end
 
       def validate
@@ -141,15 +143,11 @@ module Raml
           end
         end
         
-        if repeat.nil?
-          @repeat = false
-        elsif not [true, false].include?(repeat)
+        unless [true, false].include?(repeat)
           raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end
 
-        if required.nil?
-          @required = false
-        elsif not [true, false].include?(required)
+        unless [true, false].include?(required)
           raise InvalidParameterAttribute, 'required attribute must be true or false.'
         end
       end
