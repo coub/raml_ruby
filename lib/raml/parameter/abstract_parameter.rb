@@ -62,6 +62,18 @@ module Raml
       def validate
         raise InvalidParameterType unless VALID_TYPES.include? type
         
+        validate_enum
+        validate_pattern
+        validate_min_length
+        validate_max_length
+        validate_minimum
+        validate_maximum
+        validate_example
+        validate_repeat
+        validate_required
+      end
+      
+      def validate_enum
         if enum
           if type == 'string'
             raise InvalidParameterAttribute, 'enum attribute must be an array of strings.' unless
@@ -70,10 +82,12 @@ module Raml
             raise InapplicableParameterAttribute, 'enum attribute is only applicable to string parameters.'
           end
         end
-
+      end
+      
+      def validate_pattern
         if pattern
           if type == 'string'
-            raise InvalidParameterAttribute, 'pattern attribute must be a string' unless @pattern.is_a? String
+            raise InvalidParameterAttribute, 'pattern attribute must be a string' unless pattern.is_a? String
             pattern.gsub!(/\\*\^/u) { |m| m.size.odd? ? "#{m.chop}\\A" : m }
             pattern.gsub!(/\\*\$/u) { |m| m.size.odd? ? "#{m.chop}\\z" : m }
             begin
@@ -85,7 +99,9 @@ module Raml
             raise InapplicableParameterAttribute, 'pattern attribute is only applicable to string parameters.'
           end          
         end
-        
+      end
+      
+      def validate_min_length
         if min_length
           if type != 'string'
             raise InapplicableParameterAttribute, 'minLength attributes are applicable only to string parameters.'
@@ -93,7 +109,9 @@ module Raml
             raise InvalidParameterAttribute, 'minLength attributes must be an integer' unless min_length.is_a? Integer
           end
         end
-        
+      end
+      
+      def validate_max_length
         if max_length
           if type != 'string'
             raise InapplicableParameterAttribute, 'maxLength attributes are applicable only to string parameters.'
@@ -101,7 +119,9 @@ module Raml
             raise InvalidParameterAttribute, 'maxLength attributes must be an integer' unless max_length.is_a? Integer
           end
         end
-        
+      end
+      
+      def validate_minimum
         if minimum
           if %w(integer number).include? type
             raise InvalidParameterAttribute, 'minimum attribute must be numeric' unless minimum.is_a? Numeric
@@ -110,7 +130,9 @@ module Raml
               'minimum attribute applicable only to number or integer parameters.'
           end
         end
-
+      end
+      
+      def validate_maximum
         if maximum
           if %w(integer number).include? type
             raise InvalidParameterAttribute, 'maximum attribute must be numeric' unless maximum.is_a? Numeric
@@ -119,7 +141,9 @@ module Raml
               'maximum attribute applicable only to number or integer parameters.'
           end
         end
-        
+      end
+      
+      def validate_example
         if example
           err_msg = 'example attribute for a %s parameter must be a %s' 
           case type
@@ -140,11 +164,15 @@ module Raml
               ( err_msg % [ 'boolean', 'boolean' ] ) unless [TrueClass, FalseClass].include? example.class
           end
         end
-        
+      end
+      
+      def validate_repeat
         unless [true, false].include?(repeat)
           raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end
-
+      end
+      
+      def validate_required
         unless [true, false].include?(required)
           raise InvalidParameterAttribute, 'required attribute must be true or false.'
         end
