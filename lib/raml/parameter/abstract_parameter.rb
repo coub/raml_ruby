@@ -60,7 +60,7 @@ module Raml
       end
 
       def validate
-        raise InvalidParameterType.new() if !VALID_TYPES.include?(type)
+        raise InvalidParameterType unless VALID_TYPES.include? type
         
         if enum
           if type == 'string'

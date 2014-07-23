@@ -12,9 +12,8 @@ module Raml
     end
 
     def parse
-      @root = Root.new(@data)
-
-      @root
+      @root = Root.new @data
+    end
     
     private
     

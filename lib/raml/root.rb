@@ -46,9 +46,8 @@ module Raml
     private
 
     def validate
-      raise RootTitleMissing if title.nil?
+      raise RootTitleMissing   if title.nil?
       raise RootBaseUriMissing if base_uri.nil?
-
     end
 
     # def validate_base_uri
