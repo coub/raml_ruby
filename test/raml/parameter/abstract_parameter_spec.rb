@@ -222,16 +222,18 @@ describe Raml::Parameter::AbstractParameter do
     ].each do |test|
       param_type, attr_type, good_value, bad_value = test
       context "when the paramater type is a #{param_type}" do
-        context "when the example attribute is a #{attr_type}" do
-          let(:parameter_data) { { type: param_type, example: good_value } }
-          it { expect { subject }.to_not raise_error }
-          it "stores the attribute" do
-            subject.example.should == good_value
+        [ :example, :default ].each do |attr|
+          context "when the #{attr} attribute is a #{attr_type}" do
+            let(:parameter_data) { { type: param_type, attr => good_value } }
+            it { expect { subject }.to_not raise_error }
+            it "stores the attribute" do
+              subject.send(attr).should == good_value
+            end
           end
-        end
-        context "when the example attribute is not a #{attr_type}" do
-          let(:parameter_data) { { type: param_type, example: bad_value } }
-          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+          context "when the #{attr} attribute is not a #{attr_type}" do
+            let(:parameter_data) { { type: param_type, attr => bad_value } }
+            it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+          end
         end
       end
     end

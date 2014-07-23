@@ -71,6 +71,7 @@ module Raml
         validate_example
         validate_repeat
         validate_required
+        validate_default
       end
       
       def validate_enum
@@ -144,26 +145,7 @@ module Raml
       end
       
       def validate_example
-        if example
-          err_msg = 'example attribute for a %s parameter must be a %s' 
-          case type
-          when 'string'
-            raise InvalidParameterAttribute, 
-              ( err_msg % [ 'string' , 'string'  ] ) unless example.is_a? String
-          when 'number'
-            raise InvalidParameterAttribute, 
-              ( err_msg % [ 'number' , 'number'  ] ) unless example.is_a? Numeric
-          when 'integer'
-            raise InvalidParameterAttribute, 
-              ( err_msg % [ 'integer', 'integer' ] ) unless example.is_a? Integer
-          when 'date'
-            raise InvalidParameterAttribute, 
-              ( err_msg % [ 'date'   , 'string'  ] ) unless example.is_a? String
-          when 'boolean'
-            raise InvalidParameterAttribute, 
-              ( err_msg % [ 'boolean', 'boolean' ] ) unless [TrueClass, FalseClass].include? example.class
-          end
-        end
+        validate_value :example
       end
       
       def validate_repeat
@@ -175,6 +157,34 @@ module Raml
       def validate_required
         unless [true, false].include?(required)
           raise InvalidParameterAttribute, 'required attribute must be true or false.'
+        end
+      end
+      
+      def validate_default
+        validate_value :default
+      end
+      
+      def validate_value(which)
+        val = send which
+        if val
+          err_msg = "#{which} attribute for a %s parameter must be a %s"
+          case type
+          when 'string'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'string' , 'string'  ] ) unless val.is_a? String
+          when 'number'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'number' , 'number'  ] ) unless val.is_a? Numeric
+          when 'integer'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'integer', 'integer' ] ) unless val.is_a? Integer
+          when 'date'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'date'   , 'string'  ] ) unless val.is_a? String
+          when 'boolean'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'boolean', 'boolean' ] ) unless [TrueClass, FalseClass].include? val.class
+          end
         end
       end
     end
