@@ -102,11 +102,24 @@ module Raml
           end
         end
         
-        if !%w(integer number).include?(type) && (minimum || maximum)
-          raise InapplicableParameterAttribute,
-            'minimum and maximum attributes applicable only to number or integer parameters.'
+        if minimum
+          if %w(integer number).include? type
+            raise InvalidParameterAttribute, 'minimum attribute must be numeric' unless minimum.is_a? Numeric
+          else
+            raise InapplicableParameterAttribute, 
+              'minimum attribute applicable only to number or integer parameters.'
+          end
         end
 
+        if maximum
+          if %w(integer number).include? type
+            raise InvalidParameterAttribute, 'maximum attribute must be numeric' unless maximum.is_a? Numeric
+          else
+            raise InapplicableParameterAttribute, 
+              'maximum attribute applicable only to number or integer parameters.'
+          end
+        end
+        
         if !repeat.nil? && ![true, false].include?(repeat)
           raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end

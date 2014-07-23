@@ -178,18 +178,26 @@ describe Raml::Parameter::AbstractParameter do
 
     %w(integer number).each do |type|
       context "when the parameter type is #{type}" do
-        context 'and a minimum attribute is given' do
-          let(:parameter_data) { { type: type, minimum: 2 } }
-          it { expect { subject }.to_not raise_error }
-          it "stores the attribute" do
-            subject.minimum.should == 2
-          end
-        end
-        context 'and a maximum attribute is given' do
-          let(:parameter_data) { { type: type, maximum: 2 } }
-          it { expect { subject }.to_not raise_error }
-          it "stores the attribute" do
-            subject.maximum.should == 2
+        %w(minimum maximum).each do |attribute|
+          context "and a #{attribute} attribute is given" do
+            context 'and the attribute\'s value is an integer' do
+              let(:parameter_data) { { type: type, attribute => 2 } }
+              it { expect { subject }.to_not raise_error }
+              it "stores the attribute" do
+                subject.send(attribute.to_sym).should == 2
+              end
+            end
+            context 'and the attribute\'s value is an float' do
+              let(:parameter_data) { { type: type, attribute => 2.1 } }
+              it { expect { subject }.to_not raise_error }
+              it "stores the attribute" do
+                subject.send(attribute.to_sym).should == 2.1
+              end
+            end
+            context 'and the attribute\'s value is not an integer or a float' do
+              let(:parameter_data) { { type: type, attribute => '2' } }
+              it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+            end
           end
         end
       end
