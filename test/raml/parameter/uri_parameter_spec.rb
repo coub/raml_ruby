@@ -12,9 +12,17 @@ describe Raml::Parameter::UriParameter do
 
   subject { Raml::Parameter::UriParameter.new(name, data) }
 
-
-  it "should instanciate Uri parameter" do
-    Raml::Parameter::UriParameter.new(name, data)
+  describe '#new' do
+    it "should instanciate Uri parameter" do
+      Raml::Parameter::UriParameter.new(name, data)
+    end
+    
+    context 'when no required attribute is given' do
+      let(:data) { { } }
+      it 'defaults to true' do
+        subject.required.should == true
+      end
+    end
   end
 
   describe "#document" do
