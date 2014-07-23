@@ -1,21 +1,23 @@
 module Raml
-  class UnsupportedRamlVersion < StandardError; end
-  class CantIncludeFile < StandardError; end
+  class RamlError < StandardError; end
   
+  class UnsupportedRamlVersion          < RamlError; end
+  class CantIncludeFile                 < RamlError; end
+    
   # Abstract parameter
-  class InvalidParameterType < StandardError; end
-  class InapplicableParameterAttribute < StandardError; end
-  class InvalidParameterAttribute < StandardError; end
+  class InvalidParameterType            < RamlError; end
+  class InapplicableParameterAttribute  < RamlError; end
+  class InvalidParameterAttribute       < RamlError; end
 
   # Root
-  class RootTitleMissing < StandardError; end
-  class RootBaseUriMissing < StandardError; end
+  class RootTitleMissing                < RamlError; end
+  class RootBaseUriMissing              < RamlError; end
 
   # Protocols
-  class ProtocolMustBeArrayOfStrings < StandardError; end
-  class ProtocolMustBeHTTPorHTTPS < StandardError; end
+  class ProtocolMustBeArrayOfStrings    < RamlError; end
+  class ProtocolMustBeHTTPorHTTPS       < RamlError; end
   
   # Body
-  class FormParametersMissing < StandardError; end
-  class FormCantHaveSchema < StandardError; end
+  class FormParametersMissing           < RamlError; end
+  class FormCantHaveSchema              < RamlError; end
 end
