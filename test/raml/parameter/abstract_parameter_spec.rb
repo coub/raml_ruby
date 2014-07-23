@@ -68,17 +68,29 @@ describe Raml::Parameter::AbstractParameter do
 
     context 'when the parameter type is string' do
       context 'and a minLength attribute is given' do
-        let(:parameter_data) { { type: 'string', min_length: 2 } }
-        it { expect { subject }.to_not raise_error }
-        it "stores the attribute" do
-          subject.min_length.should == 2
+        context 'and the value is an integer' do
+          let(:parameter_data) { { type: 'string', min_length: 2 } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.min_length.should == 2
+          end
+        end
+        context 'and the value is not an integer' do
+          let(:parameter_data) { { type: 'string', min_length: 2.0 } }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
         end
       end
       context 'and a maxLength attribute is given' do
-        let(:parameter_data) { { type: 'string', max_length: 2 } }
-        it { expect { subject }.to_not raise_error }
-        it "stores the attribute" do
-          subject.max_length.should == 2
+        context 'and the value is an integer' do
+          let(:parameter_data) { { type: 'string', max_length: 2 } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.max_length.should == 2
+          end
+        end
+        context 'and the value is not an integer' do
+          let(:parameter_data) { { type: 'string', max_length: 2.0 } }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
         end
       end
       context 'and an enum attribute is given' do

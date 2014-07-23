@@ -86,11 +86,22 @@ module Raml
           end          
         end
         
-        if type != 'string' && (min_length || max_length)
-          raise InapplicableParameterAttribute,
-            'minLength and maxLength attributes are applicable only to string parameters.'
+        if min_length
+          if type != 'string'
+            raise InapplicableParameterAttribute, 'minLength attributes are applicable only to string parameters.'
+          else
+            raise InvalidParameterAttribute, 'minLength attributes must be an integer' unless min_length.is_a? Integer
+          end
         end
-
+        
+        if max_length
+          if type != 'string'
+            raise InapplicableParameterAttribute, 'maxLength attributes are applicable only to string parameters.'
+          else
+            raise InvalidParameterAttribute, 'maxLength attributes must be an integer' unless max_length.is_a? Integer
+          end
+        end
+        
         if !%w(integer number).include?(type) && (minimum || maximum)
           raise InapplicableParameterAttribute,
             'minimum and maximum attributes applicable only to number or integer parameters.'
