@@ -4,17 +4,15 @@ module Raml
       extend Common
 
       VALID_TYPES = %w(string number integer date boolean file)
-      BOOLEAN_ATTRIBUTES = %w(repeat required)
 
       is_documentable
-      attr_accessor :type, :enum,
-        :pattern, :min_length, :max_length, :minimum, :maximum,
-        :example, :repeat, :required, :default
-
-      attr_accessor :children
+      
+      attr_accessor :type       , :enum     , :pattern  , :min_length , 
+                    :max_length , :minimum  , :maximum  , :example    , 
+                    :repeat     , :required , :default  , :children
 
       def initialize(name, parameter_data)
-        @name = name
+        @name     = name
         @children = []
 
         if parameter_data.is_a? Array
