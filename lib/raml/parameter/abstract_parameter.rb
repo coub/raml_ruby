@@ -120,6 +120,27 @@ module Raml
           end
         end
         
+        if example
+          err_msg = 'example attribute for a %s parameter must be a %s' 
+          case type
+          when 'string'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'string' , 'string'  ] ) unless example.is_a? String
+          when 'number'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'number' , 'number'  ] ) unless example.is_a? Numeric
+          when 'integer'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'integer', 'integer' ] ) unless example.is_a? Integer
+          when 'date'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'date'   , 'string'  ] ) unless example.is_a? String
+          when 'boolean'
+            raise InvalidParameterAttribute, 
+              ( err_msg % [ 'boolean', 'boolean' ] ) unless [TrueClass, FalseClass].include? example.class
+          end
+        end
+        
         if !repeat.nil? && ![true, false].include?(repeat)
           raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end

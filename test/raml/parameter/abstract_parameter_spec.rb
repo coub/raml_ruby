@@ -212,7 +212,30 @@ describe Raml::Parameter::AbstractParameter do
         it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
       end
     end
-
+    
+    [
+      [ 'string' , 'string' , '123',  123  ],
+      [ 'number' , 'number' ,  12.3, '123' ],
+      [ 'integer', 'integer',  123 ,  12.3 ],
+      [ 'date'   , 'string' , '123',  123  ],
+      [ 'boolean', 'boolean',  true,  123  ]
+    ].each do |test|
+      param_type, attr_type, good_value, bad_value = test
+      context "when the paramater type is a #{param_type}" do
+        context "when the example attribute is a #{attr_type}" do
+          let(:parameter_data) { { type: param_type, example: good_value } }
+          it { expect { subject }.to_not raise_error }
+          it "stores the attribute" do
+            subject.example.should == good_value
+          end
+        end
+        context "when the example attribute is not a #{attr_type}" do
+          let(:parameter_data) { { type: param_type, example: bad_value } }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+        end
+      end
+    end
+    
     %w{repeat required}.each do |attribute|
       context "when the #{attribute} attribute is not true or false" do
         let(:parameter_data) { { attribute => 111 } }
