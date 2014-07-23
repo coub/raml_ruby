@@ -141,11 +141,15 @@ module Raml
           end
         end
         
-        if !repeat.nil? && ![true, false].include?(repeat)
+        if repeat.nil?
+          @repeat = false
+        elsif not [true, false].include?(repeat)
           raise InvalidParameterAttribute, 'repeat attribute must be true or false.'
         end
 
-        if !required.nil? && ![true, false].include?(required)
+        if required.nil?
+          @required = false
+        elsif not [true, false].include?(required)
           raise InvalidParameterAttribute, 'required attribute must be true or false.'
         end
       end

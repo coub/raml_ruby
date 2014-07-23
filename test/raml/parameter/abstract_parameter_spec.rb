@@ -241,6 +241,12 @@ describe Raml::Parameter::AbstractParameter do
         let(:parameter_data) { { attribute => 111 } }
         it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
       end
+      context "when the #{attribute} attribute is not given" do
+        let(:parameter_data) { { } }
+        it 'defaults to false' do
+          subject.send(attribute.to_sym).should == false
+        end
+      end
       [ true, false ].each do |val|
         context "when the #{attribute} attribute is #{val}" do
           let(:parameter_data) { { attribute => val} }
