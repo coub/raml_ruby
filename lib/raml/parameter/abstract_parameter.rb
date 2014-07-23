@@ -71,6 +71,21 @@ module Raml
           end
         end
 
+        if pattern
+          if type == 'string'
+            raise InvalidParameterAttribute, 'pattern attribute must be a string' unless @pattern.is_a? String
+            pattern.gsub!(/\\*\^/u) { |m| m.size.odd? ? "#{m.chop}\\A" : m }
+            pattern.gsub!(/\\*\$/u) { |m| m.size.odd? ? "#{m.chop}\\z" : m }
+            begin
+              @pattern = Regexp.new pattern
+            rescue RegexpError
+              raise InvalidParameterAttribute, 'pattern attribute must be a valid regexp'
+            end
+          else
+            raise InapplicableParameterAttribute, 'pattern attribute is only applicable to string parameters.'
+          end          
+        end
+        
         if type != 'string' && (min_length || max_length)
           raise InapplicableParameterAttribute,
             'minLength and maxLength attributes are applicable only to string parameters.'

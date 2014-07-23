@@ -101,6 +101,48 @@ describe Raml::Parameter::AbstractParameter do
           it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
         end
       end    
+      context 'and an pattern attribute is given' do
+        let(:parameter_data) { { type: 'string', pattern: pattern } }
+        context 'and the value is string representing a valid regexp' do
+          let(:pattern) { '[a-z]*' }
+          it { expect { subject }.to_not raise_error }
+          it 'it converts the attribute into a Regexp object' do
+            subject.pattern.should == /[a-z]*/
+          end
+          context 'when the regexp has JS ^ anchors' do
+            let(:pattern) { "^[a-z]*\\\\^" }
+            it 'replaces them with the Ruby \\A anchor' do
+              subject.pattern.should == /\A[a-z]*\\\A/
+            end
+          end
+          context 'when the regexp has JS $ anchors' do
+            let(:pattern) { '$[a-z]*\\\\$' }
+            it 'replaces them with the Ruby \\z anchor' do
+              subject.pattern.should == /\z[a-z]*\\\z/
+            end
+          end
+          context 'when the regexp has escaped an escaped ^' do
+            let(:pattern) { "\\^[a-z]*\\\\\\^" }
+            it 'doesnt replace them' do
+              subject.pattern.should == /\^[a-z]*\\\^/
+            end
+          end
+          context 'when the regexp has escaped an escaped $' do
+            let(:pattern) { "\\$[a-z]*\\\\\\$" }
+            it 'doesnt replace them' do
+              subject.pattern.should == /\$[a-z]*\\\$/
+            end
+          end
+        end
+        context 'and the pattern is not a string' do
+          let(:pattern) { 1 }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+        end
+        context 'and the pattern an invalid regexp pattern' do
+          let(:pattern) { '[' }
+          it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
+        end
+      end    
     end
     context 'when the parameter type is not string' do
       context 'and a minLength attribute is given' do
@@ -114,6 +156,10 @@ describe Raml::Parameter::AbstractParameter do
       context 'and an enum attribute is given' do
         let(:enum) { ['foo', 'bar'] }
         let(:parameter_data) { { type: 'integer', enum: enum } }
+        it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
+      end
+      context 'and a pattern attribute is given' do
+        let(:parameter_data) { { type: 'integer', pattern: '[a-Z]*' } }
         it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
       end
     end
