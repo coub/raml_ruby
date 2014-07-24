@@ -1,3 +1,6 @@
+require 'uri'
+require 'uri_template'
+
 module Raml
   class Root
     attr_accessor :children
@@ -46,26 +49,51 @@ module Raml
     private
 
     def validate
+      validate_title            
+      validate_base_uri
+    end
+
+    def validate_title
       if title.nil?
         raise RequiredPropertyMissing, 'Missing root title property.'
       else
         raise InvalidProperty, 'Root title property must be a string' unless title.is_a? String
       end
-      
+    end
+    
+    def validate_base_uri
       if base_uri.nil?
         raise RequiredPropertyMissing, 'Missing root baseUri property'
       else
-        raise InvalidProperty, 'Root baseUri property must be a string' unless base_uri.is_a? String
+        raise InvalidProperty, 'baseUri property must be a string' unless base_uri.is_a? String
+      end
+      
+      # Check whether its a URL.
+      uri = parse_uri base_uri
+      
+      # If the parser doesn't think its a URL or the URL is not for HTTP or HTTPS,
+      # try to parse it as a URL template.
+      if uri.nil? and not uri.kind_of? URI::HTTP
+        template = parse_template
+        
+        # The template parser did not complain, but does it generate valid URLs?
+        uri = template.expand Hash[ template.variables.map {|var| [ var, 'a'] } ]
+        uri = parse_uri uri
+        raise InvalidProperty, 'baseUri property is not a URL or a URL template.' unless
+          uri and uri.kind_of? URI::HTTP
       end
     end
-
-    # def validate_base_uri
-    #   var_regex = /{(.*?)}/
-
-    #   vars = base_uri.scan(var_regex).flatten
-    #   vars.each do |var|
-
-    #   end
-    # end
+    
+    def parse_uri(uri)
+      URI.parse uri
+    rescue URI::InvalidURIError
+      nil
+    end
+    
+    def parse_template
+      URITemplate::RFC6570.new base_uri
+    rescue URITemplate::RFC6570::Invalid
+      raise InvalidProperty, 'baseUri property is not a URL or a URL template.'
+    end
   end
 end

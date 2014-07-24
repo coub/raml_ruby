@@ -38,5 +38,38 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 1 } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /baseUri/ }
     end
+    context 'when the baseUri property is a valid URL' do
+      it 'should not raise an error' do
+        [
+          'https://api.github.com',
+          'https://app.zencoder.com/api'
+        ].each do |template|
+          expect { Raml::Root.new({ 'title' => 'x', 'baseUri' => template }) }.to_not raise_error
+        end
+      end
+    end
+    context 'when the baseUri property is an invalid URL template' do
+      let(:data) { { 'title' => 'x', 'baseUri' => '://app.zencoder.com/api' } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /baseUri/ }
+    end
+    context 'when the baseUri property is a URL template' do
+      it 'should not raise an error' do
+        [
+          'https://{destinationBucket}.s3.amazonaws.com',
+          'https://na1.salesforce.com/services/data/{version}/chatter',
+          'https://api.stormpath.com/{version}',
+          'https://{companyName}.freshbooks.com/api/{version}/xml-in',
+          'https://{communityDomain}.force.com/{communityPath}',
+          'https://app.zencoder.com/api/{version}',
+          'https://{apiDomain}.dropbox.com/{version}'
+        ].each do |template|
+          expect { Raml::Root.new({ 'title' => 'x', 'baseUri' => template }) }.to_not raise_error
+        end
+      end
+    end
+    context 'when the baseUri property is an invalid URL template' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'https://api.stormpath.com/}version}' } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /baseUri/ }
+    end
   end
 end
