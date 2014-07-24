@@ -128,5 +128,45 @@ describe Raml::Root do
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /mediaType/ }
     end
     
+    context 'when the schemas property is an array of maps with string keys and values' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'}] } }
+      it { expect{ subject }.to_not raise_error }
+    end
+    context 'when the schemas property is an array with a single map' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'}] } }
+      it 'returns that map in the #schema method' do
+        subject.schemas.should eq({'foo'=>'bar'})
+      end
+    end
+    context 'when the schemas property is an array with multiple maps' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'},{'boo'=>'bar'}] } }
+      it 'returns the merged maps in the #schema method' do
+        subject.schemas.should eq({'foo'=>'bar','boo'=>'bar'})
+      end
+    end
+    context 'when the schemas property is not an array' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => 'x' } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
+    end
+    context 'when the schemas property is an empty array' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [] } }
+      it { expect{ subject }.to_not raise_error }
+    end
+    context 'when the schemas property is an array with some non-map elements' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'}, 1] } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
+    end
+    context 'when the schemas property is an array of maps with non-string keys' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{1=>'bar'}] } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
+    end
+    context 'when the schemas property is an array of maps with non-string values' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>1}] } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
+    end
+    context 'when the schemas property has duplicate schema names' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'},{'foo'=>'boo'}] } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
+    end
   end
 end

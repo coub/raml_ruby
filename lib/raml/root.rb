@@ -53,6 +53,7 @@ module Raml
       validate_base_uri
       validate_protocols
       validate_media_type
+      validate_schemas
     end
 
     def validate_title
@@ -107,6 +108,29 @@ module Raml
       if media_type
         raise InvalidProperty, 'mediaType property must be a string' unless media_type.is_a? String
         raise InvalidProperty, 'mediaType property is malformed'     unless media_type =~ MEDIA_TYPE_RE
+      end
+    end
+    
+    def validate_schemas
+      if schemas
+        raise InvalidProperty, 'schemas property must be an array'          unless 
+          schemas.is_a? Array
+        
+        raise InvalidProperty, 'schemas property must be an array of maps'  unless
+          schemas.all? {|s| s.is_a? Hash}
+        
+        raise InvalidProperty, 'schemas property must be an array of maps with string keys'   unless 
+          schemas.all? {|s| s.keys.all?   {|k| k.is_a? String }}
+        
+        raise InvalidProperty, 'schemas property must be an array of maps with string values' unless 
+          schemas.all? {|s| s.values.all? {|v| v.is_a? String }}
+        
+        raise InvalidProperty, 'schemas property contains duplicate schema names'             unless 
+          schemas.map(&:keys).flatten.uniq!.nil?
+        
+        self.schemas = schemas.reduce({}) { |memo, schema| memo.merge! schema }
+      else
+        self.schemas = {}
       end
     end
     
