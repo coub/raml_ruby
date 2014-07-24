@@ -52,6 +52,7 @@ module Raml
       validate_title            
       validate_base_uri
       validate_protocols
+      validate_media_type
     end
 
     def validate_title
@@ -97,6 +98,15 @@ module Raml
         
         raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
           protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
+      end
+    end
+    
+    MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
+    
+    def validate_media_type
+      if media_type
+        raise InvalidProperty, 'mediaType property must be a string' unless media_type.is_a? String
+        raise InvalidProperty, 'mediaType property is malformed'     unless media_type =~ MEDIA_TYPE_RE
       end
     end
     

@@ -107,5 +107,26 @@ describe Raml::Root do
         subject.protocols.should eq [ 'HTTP', 'HTTPS' ]
       end
     end
+    
+    [
+       'application/json',
+       'application/x-yaml',
+       'application/foo+json',
+       'application/foo+xml'
+    ].each do |type|
+      context 'when the mediaType property is a well formed media type' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'media_type' => type} }
+        it { expect{ subject }.to_not raise_error }
+      end
+    end
+    context 'when the mediaType property is not a string' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'media_type' => 1 } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /mediaType/ }
+    end
+    context 'when the mediaType property is a malformed media type' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'media_type' => 'foo' } }
+      it { expect{ subject }.to raise_error Raml::InvalidProperty, /mediaType/ }
+    end
+    
   end
 end
