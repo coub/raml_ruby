@@ -51,6 +51,7 @@ module Raml
     def validate
       validate_title            
       validate_base_uri
+      validate_protocols
     end
 
     def validate_title
@@ -81,6 +82,21 @@ module Raml
         uri = parse_uri uri
         raise InvalidProperty, 'baseUri property is not a URL or a URL template.' unless
           uri and uri.kind_of? URI::HTTP
+      end
+    end
+    
+    def validate_protocols
+      if protocols
+        raise InvalidProperty, 'protocols property must be an array' unless
+          protocols.is_a? Array
+        
+        raise InvalidProperty, 'protocols property must be an array strings' unless
+          protocols.all? { |p| p.is_a? String }
+        
+        @protocols.map!(&:upcase)
+        
+        raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
+          protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
       end
     end
     
