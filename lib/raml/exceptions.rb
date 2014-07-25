@@ -11,13 +11,11 @@ module Raml
   # Methods
   class InvalidMethod                   < RamlError; end
   
-  # Abstract parameter
+  # Parameters
   class InvalidParameterType            < RamlError; end
   class InapplicableParameterAttribute  < RamlError; end
   class InvalidParameterAttribute       < RamlError; end
   
   # Body
   class InvalidMediaType                < RamlError; end
-  class FormParametersMissing           < RamlError; end
-  class FormCantHaveSchema              < RamlError; end
 end

@@ -49,8 +49,9 @@ module Raml
       raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
       
       if web_form?
-        raise FormCantHaveSchema    if @schema
-        raise FormParametersMissing if form_parameters.empty?
+        raise InvalidProperty, 'schema property can\'t be defined for web forms.' if @schema
+        raise RequiredPropertyMissing, 'formParameters property must be specified for web forms.' if
+          form_parameters.empty?
       end
     end
   end

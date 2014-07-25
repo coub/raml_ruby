@@ -40,7 +40,7 @@ describe Raml::Body do
           let(:media_type) { mtype }
           context 'when a formParameters property is not provided' do
             before { body_data.delete 'formParameters' }
-            it { expect { subject }.to raise_error Raml::FormParametersMissing }
+            it { expect { subject }.to raise_error Raml::RequiredPropertyMissing, /formParameters/ }
           end
           context 'when a formParameters property is provided' do
             it { expect { subject }.to_not raise_error }
@@ -58,7 +58,7 @@ describe Raml::Body do
                     type: string
               )
             }
-            it { expect { subject }.to raise_error Raml::FormCantHaveSchema }
+            it { expect { subject }.to raise_error Raml::InvalidProperty, /schema/ }
           end
         end
       end      
