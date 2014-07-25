@@ -66,6 +66,27 @@ describe Raml::Resource do
         subject.document.should include data['description']
       end
     end
+    
+    context 'when the uriParameters parameter is given with valid parameters' do
+      context 'when the uriParameters property is well formed' do
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Parameter::UriParameter instances' do
+          expect( subject.uri_parameters ).to all( be_a Raml::Parameter::UriParameter )
+        end
+      end
+      context 'when the uriParameters property is not a map' do
+        let(:data) { { 'uriParameters' => 1 } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /uriParameters/ }
+      end
+      context 'when the uriParameters property is not a map with non-string keys' do
+        let(:data) { { 'uriParameters' => { 1 => {}} } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /uriParameters/ }
+      end
+      context 'when the uriParameters property is not a map with non-string keys' do
+        let(:data) { { 'uriParameters' => { '1' => 'x'} } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /uriParameters/ }
+      end
+    end
   end
   
   describe "#document" do

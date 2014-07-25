@@ -16,6 +16,7 @@ module Raml
         elsif Raml::Method::NAMES.include?(key)
           @children << Method.new(key, value)
         elsif key == "uriParameters"
+          validate_uri_parameters value
           value.each do |name, uri_parameter_data|
             @children << Parameter::UriParameter.new(name, uri_parameter_data)
           end
@@ -34,15 +35,28 @@ module Raml
     end
 
     def resources
-      children.select {|child| child.is_a? Resource}
+      children.select { |child| child.is_a? Resource }
     end
 
     def methods
-      children.select {|child| child.is_a? Method}
+      children.select { |child| child.is_a? Method }
     end
 
     def uri_parameters
-      children.select {|child| child.is_a? UriParameters}
+      children.select { |child| child.is_a? Parameter::UriParameter }
+    end
+    
+    private
+    
+    def validate_uri_parameters(uri_parameters)
+      raise InvalidProperty, 'uriParameters property must be a map' unless 
+        uri_parameters.is_a? Hash
+      
+      raise InvalidProperty, 'uriParameters property must be a map with string keys' unless
+        uri_parameters.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'uriParameters property must be a map with map values' unless
+        uri_parameters.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end
