@@ -70,6 +70,38 @@ describe Raml::Method do
         end
       end
     end
+    
+    context 'when the headers parameter is given' do
+      context 'when the headers property is well formed' do
+        let (:data) {
+          YAML.load(%q(
+            headers:
+              Zencoder-Api-Key:
+                displayName: ZEncoder API Key
+              x-Zencoder-job-metadata-{*}:
+                displayName: Job Metadata
+          ))
+        }
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Header instances' do
+          expect( subject.headers ).to all( be_a Raml::Header )
+          expect( subject.headers.map(&:name) ).to contain_exactly('Zencoder-Api-Key','x-Zencoder-job-metadata-{*}')
+        end
+      end
+      context 'when the headers property is not a map' do
+        let(:data) { { 'headers' => 1 } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /headers/ }
+      end
+      context 'when the headers property is not a map with non-string keys' do
+        let(:data) { { 'headers' => { 1 => {}} } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /headers/ }
+      end
+      context 'when the headers property is not a map with non-string keys' do
+        let(:data) { { 'headers' => { '1' => 'x'} } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /headers/ }
+      end
+    end
+    
   end
 
   describe "#document" do
