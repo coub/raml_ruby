@@ -63,7 +63,7 @@ describe Raml::Root do
           'https://app.zencoder.com/api/{version}',
           'https://{apiDomain}.dropbox.com/{version}'
         ].each do |template|
-          expect { Raml::Root.new({ 'title' => 'x', 'baseUri' => template }) }.to_not raise_error
+          expect { Raml::Root.new({ 'title' => 'x', 'baseUri' => template, 'version' => 'v1' }) }.to_not raise_error
         end
       end
     end
@@ -191,6 +191,21 @@ describe Raml::Root do
       it { expect { subject }.to_not raise_error }
       it 'stores all as Raml::Parameter::BaseUriParameter instances' do
         expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::BaseUriParameter )
+      end
+      context 'when the baseUri template does not include a version parameter' do
+        context 'and a version property is not provided' do
+          before { data.delete 'version' }
+          it { expect { subject }.to_not raise_error }
+        end
+      end
+      context 'when the baseUri template includes a version parameter' do
+        context 'and a version property is not provided' do
+          before do
+            data.delete 'version'
+            data['baseUri'] = 'https://{communityDomain}.force.com/{version}/{communityPath}'
+          end
+          it { expect { subject }.to raise_error Raml::RequiredPropertyMissing, /version/ }
+        end
       end
     end
     context 'when the baseUriParameter property is not a map' do

@@ -104,6 +104,9 @@ module Raml
         uri = parse_uri uri
         raise InvalidProperty, 'baseUri property is not a URL or a URL template.' unless
           uri and uri.kind_of? URI::HTTP
+        
+        raise RequiredPropertyMissing, 'version property is required when baseUri template has version parameter' if
+          template.variables.include? 'version' and version.nil?
       end
     end
     
