@@ -5,9 +5,7 @@ module Raml
     extend Common
     is_documentable
     
-    attr_accessor :children
-    attr_accessor :media_type
-    attr_accessor :schema, :example
+    attr_accessor :children, :media_type, :schema, :example
 
     def initialize(media_type, body_data)
       @children = []
