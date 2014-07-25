@@ -168,28 +168,26 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'},{'foo'=>'boo'}] } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
     end
-  end
   
-  context 'when the baseUriParameters parameter is given with valid parameters' do
-    let(:data) {
-      YAML.load(
-        %q(
-          title: Salesforce Chatter Communities REST API
-          version: v28.0
-          baseUri: https://{communityDomain}.force.com/{communityPath}
-          baseUriParameters:
-           communityDomain:
-             displayName: Community Domain
-             type: string
-           communityPath:
-             displayName: Community Path
-             type: string
-             pattern: ^[a-zA-Z0-9][-a-zA-Z0-9]*$
-             minLength: 1
+    context 'when the baseUriParameter property is well formed' do
+      let(:data) {
+        YAML.load(
+          %q(
+            title: Salesforce Chatter Communities REST API
+            version: v28.0
+            baseUri: https://{communityDomain}.force.com/{communityPath}
+            baseUriParameters:
+             communityDomain:
+               displayName: Community Domain
+               type: string
+             communityPath:
+               displayName: Community Path
+               type: string
+               pattern: ^[a-zA-Z0-9][-a-zA-Z0-9]*$
+               minLength: 1
+          )
         )
-      )
-    }
-    context 'when the baseUriParameter property is wellf formed' do
+      }
       it { expect { subject }.to_not raise_error }
       it 'stores all as Raml::Parameter::UriParameter instances' do
         expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::UriParameter )
@@ -211,49 +209,49 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => { 'version' => {}} } }
       it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
     end
-  end
   
-  context 'when the documentation parameter is given and valid' do
-    let(:data) {
-      YAML.load(
-        %q(
-          #%RAML 0.8
-          title: ZEncoder API
-          baseUri: https://app.zencoder.com/api
-          documentation:
-           - title: Home
-             content: |
-               Welcome to the _Zencoder API_ Documentation.
+    context 'when the documentation parameter is given and valid' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: ZEncoder API
+            baseUri: https://app.zencoder.com/api
+            documentation:
+             - title: Home
+               content: |
+                 Welcome to the _Zencoder API_ Documentation.
+          )
         )
-      )
-    }
-    it { expect { subject }.to_not raise_error }
-    it 'stores all as Raml::Documentation instances' do
-      expect( subject.documents ).to all( be_a Raml::Documentation )
+      }
+      it { expect { subject }.to_not raise_error }
+      it 'stores all as Raml::Documentation instances' do
+        expect( subject.documents ).to all( be_a Raml::Documentation )
+      end
     end
-  end
-  context 'when the documentation property is not a array' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => 1 } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /documentation/ }
-  end
-  context 'when the documentation property is an empty array' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [] } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /documentation/ }
-  end
-  context 'when an entry in the documentation property is missing the title' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'content' => 'x'}] } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
-  end
-  context 'when an entry in the documentation property has an empty title' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => '', 'content' => 'x'}] } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
-  end
-  context 'when an entry in the documentation property is missing the content' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x'}] } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
-  end
-  context 'when an entry in the documentation property has an empty content' do
-    let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x', 'content' => ''}] } }
-    it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
+    context 'when the documentation property is not a array' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => 1 } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /documentation/ }
+    end
+    context 'when the documentation property is an empty array' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [] } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /documentation/ }
+    end
+    context 'when an entry in the documentation property is missing the title' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'content' => 'x'}] } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
+    end
+    context 'when an entry in the documentation property has an empty title' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => '', 'content' => 'x'}] } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
+    end
+    context 'when an entry in the documentation property is missing the content' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x'}] } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
+    end
+    context 'when an entry in the documentation property has an empty content' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x', 'content' => ''}] } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
+    end
   end
 end
