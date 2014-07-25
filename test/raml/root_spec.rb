@@ -253,5 +253,27 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x', 'content' => ''}] } }
       it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
     end
+    
+    context 'when top-level resources are defined' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: GitHub API
+            version: v3
+            baseUri: https://api.github.com
+            /user:
+              displayName: Authenticated User
+            /users:
+              displayName: Users
+          )
+        )
+      }
+      it { expect { subject }.to_not raise_error }
+      it 'stores all as Raml::Resource instances' do
+        expect( subject.resources ).to all( be_a Raml::Resource )
+        expect( subject.resources.map(&:name) ).to contain_exactly('/user','/users')
+      end
+    end
   end
 end
