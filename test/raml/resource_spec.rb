@@ -87,6 +87,33 @@ describe Raml::Resource do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /uriParameters/ }
       end
     end
+    
+    context 'when nested resources are defined' do
+      let(:name) { '/{userId}' }
+      let(:data) {
+        YAML.load(
+          %q(
+            uriParameters:
+              userId:
+                type: integer
+            /followers:
+              displayName: Followers
+            /following:
+              displayName: Following
+            /keys:
+              /{keyId}:
+                uriParameters:
+                  keyId:
+                    type: integer
+          )
+        )
+      }
+      it { expect { subject }.to_not raise_error }
+      it 'stores all as Raml::Resource instances' do
+        expect( subject.resources ).to all( be_a Raml::Resource )
+        expect( subject.resources.map(&:name) ).to contain_exactly('/followers','/following', '/keys')
+      end
+    end
   end
   
   describe "#document" do
