@@ -41,17 +41,15 @@ module Raml
     end
 
     def resources
-      @children.select {|child| child.is_a? Resource}
+      children.select {|child| child.is_a? Resource}
     end
 
     def methods
-      @children.select {|child| child.is_a? Method}
+      children.select {|child| child.is_a? Method}
     end
 
     def uri_parameters
-      @children.select {|child| child.is_a? UriParameters}
+      children.select {|child| child.is_a? UriParameters}
     end
-
-
   end
 end
