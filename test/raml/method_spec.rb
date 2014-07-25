@@ -28,16 +28,32 @@ describe Raml::Method do
 
   subject { Raml::Method.new(name, data) }
 
-  it "should instanciate Method" do
-    subject
+  describe '#new' do
+    it "should instanciate Method" do
+      subject
+    end
+    
+    context 'when the method is a method defined in RFC2616 or RFC5789' do
+      %w(options get head post put delete trace connect patch).each do |method|
+        context "when the method is #{method}" do
+          let(:name) { method }
+          it { expect { subject }.to_not raise_error }
+        end
+      end
+    end
+    context 'when the method is an unsupported method' do
+      %w(propfind proppatch mkcol copy move lock unlock).each do |method|
+        context "when the method is #{method}" do
+          let(:name) { method }
+          it { expect { subject }.to raise_error Raml::InvalidMethod }
+        end
+      end
+    end
   end
 
   describe "#document" do
     it "prints out documentation" do
       subject.document
-
-      # puts subject.document
     end
-
   end
 end

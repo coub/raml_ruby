@@ -8,6 +8,9 @@ module Raml
   class RequiredPropertyMissing         < RamlError; end
   class InvalidProperty                 < RamlError; end
   
+  # Methods
+  class InvalidMethod                   < RamlError; end
+  
   # Abstract parameter
   class InvalidParameterType            < RamlError; end
   class InapplicableParameterAttribute  < RamlError; end

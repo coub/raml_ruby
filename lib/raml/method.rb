@@ -11,7 +11,9 @@ module Raml
     def initialize(name, method_data)
       @children = []
       @name = name
-
+      
+      raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
+      
       method_data.each do |key, value|
         case key
         when 'headers'
