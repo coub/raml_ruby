@@ -43,7 +43,25 @@ describe Raml::Body do
             it { expect { subject }.to raise_error Raml::RequiredPropertyMissing, /formParameters/ }
           end
           context 'when a formParameters property is provided' do
-            it { expect { subject }.to_not raise_error }
+            context 'when a formParameters property is valid' do
+              it { expect { subject }.to_not raise_error }
+              it 'stores all as Raml::Parameter::FormParameter instances' do
+                expect( subject.form_parameters ).to all( be_a Raml::Parameter::FormParameter )
+                subject.form_parameters.map(&:name).should contain_exactly('param')
+              end
+            end
+            context 'when the formParameters property is not a map' do
+              before { body_data['formParameters'] = 1 }
+              it { expect { subject }.to raise_error Raml::InvalidProperty, /formParameters/ }
+            end
+            context 'when the formParameters property is not a map with non-string keys' do
+              before { body_data['formParameters'] = { 1 => {}} }
+              it { expect { subject }.to raise_error Raml::InvalidProperty, /formParameters/ }
+            end
+            context 'when the formParameters property is not a map with non-string keys' do
+              before { body_data['formParameters'] = { '1' => 'x'} }
+              it { expect { subject }.to raise_error Raml::InvalidProperty, /formParameters/ }
+            end
           end
           
           context 'when a schema property is not provided' do

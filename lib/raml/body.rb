@@ -15,6 +15,7 @@ module Raml
 
       body_data.each do |key, value|
         if key == "formParameters"
+          validate_form_parameters value
           value.each do |name, form_parameter_data|
             @children << Parameter::FormParameter.new(name, form_parameter_data)
           end
@@ -53,6 +54,17 @@ module Raml
         raise RequiredPropertyMissing, 'formParameters property must be specified for web forms.' if
           form_parameters.empty?
       end
+    end
+    
+    def validate_form_parameters(form_parameters)
+      raise InvalidProperty, 'formParameters property must be a map' unless 
+        form_parameters.is_a? Hash
+      
+      raise InvalidProperty, 'formParameters property must be a map with string keys' unless
+        form_parameters.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'formParameters property must be a map with map values' unless
+        form_parameters.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end
