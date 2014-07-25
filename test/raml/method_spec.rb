@@ -139,6 +139,50 @@ describe Raml::Method do
         end
       end
     end
+    
+    context 'when a queryParameters property is given' do
+      context 'when the queryParameters property is well formed' do
+        let(:data) {
+          YAML.load(
+            %q(
+              description: Get a list of users
+              queryParameters:
+                page:
+                  description: Specify the page that you want to retrieve
+                  type: integer
+                  required: true
+                  example: 1
+                per_page:
+                  description: Specify the amount of items that will be retrieved per page
+                  type: integer
+                  minimum: 10
+                  maximum: 200
+                  default: 30
+                  example: 50
+            )
+          )
+        }
+        
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Parameter::UriParameter instances' do
+          expect( subject.query_parameters ).to all( be_a Raml::Parameter::QueryParameter )
+          subject.query_parameters.map(&:name).should contain_exactly('page', 'per_page')
+        end
+      end
+      context 'when the queryParameters property is not a map' do
+        before { data['queryParameters'] = 1 }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /queryParameters/ }
+      end
+      context 'when the queryParameters property is not a map with non-string keys' do
+        before { data['queryParameters'] = { 1 => {}} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /queryParameters/ }
+      end
+      context 'when the queryParameters property is not a map with non-string keys' do
+        before { data['queryParameters'] = { '1' => 'x'} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /queryParameters/ }
+      end
+    end
+    
   end
 
   describe "#document" do

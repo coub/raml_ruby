@@ -20,6 +20,7 @@ module Raml
             @children << Header.new(name, header_data)
           end
         when 'queryParameters'
+          validate_query_parameters value
           value.each do |name, query_parameter_data|
             @children << Parameter::QueryParameter.new(name, query_parameter_data)
           end
@@ -41,7 +42,7 @@ module Raml
     end
     
     def set_defaults
-      protocols ||= []
+      self.protocols ||= []
     end
 
     def document
@@ -131,6 +132,17 @@ module Raml
         raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
           protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
       end
+    end
+    
+    def validate_query_parameters(query_parameters)
+      raise InvalidProperty, 'queryParameters property must be a map' unless 
+        query_parameters.is_a? Hash
+      
+      raise InvalidProperty, 'queryParameters property must be a map with string keys' unless
+        query_parameters.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'queryParameters property must be a map with map values' unless
+        query_parameters.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end
