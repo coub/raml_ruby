@@ -83,19 +83,19 @@ module Raml
     end
 
     def headers
-      @children.select {|child| child.is_a? Header}
+      children.select { |child| child.is_a? Header }
     end
 
     def query_parameters
-      @children.select {|child| child.is_a? Parameter::QueryParameter}
+      children.select { |child| child.is_a? Parameter::QueryParameter }
     end
 
     def bodies
-      @children.select {|child| child.is_a? Body}
+      children.select { |child| child.is_a? Body }
     end
 
     def responses
-      @children.select {|child| child.is_a? Response}
+      children.select { |child| child.is_a? Response }
     end
 
     private

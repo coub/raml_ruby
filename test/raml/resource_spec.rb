@@ -122,7 +122,7 @@ describe Raml::Resource do
     end
     
     context 'when a baseUriParameters property is given' do
-      context 'when the baseUriParameter property is well formed' do
+      context 'when the baseUriParameters property is well formed' do
         let(:name) { '/files' }
         let(:data) {
           YAML.load(
@@ -141,19 +141,19 @@ describe Raml::Resource do
           subject.base_uri_parameters.map(&:name).should contain_exactly('apiDomain')
         end
       end
-      context 'when the baseUriParameter property is not a map' do
+      context 'when the baseUriParameters property is not a map' do
         before { data['baseUriParameters'] = 1 }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
       end
-      context 'when the baseUriParameter property is not a map with non-string keys' do
+      context 'when the baseUriParameters property is not a map with non-string keys' do
         before { data['baseUriParameters'] = { 1 => {}} }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
       end
-      context 'when the baseUriParameter property is not a map with non-string keys' do
+      context 'when the baseUriParameters property is not a map with non-string keys' do
         before { data['baseUriParameters'] = { '1' => 'x'} }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
       end
-      context 'when the baseUriParameter property has a key for the reserved "version" parameter' do
+      context 'when the baseUriParameters property has a key for the reserved "version" parameter' do
         before { data['baseUriParameters'] = { 'version' => {}} }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
       end
