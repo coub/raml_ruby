@@ -11,9 +11,7 @@ module Raml
     def initialize(name, method_data)
       @children = []
       @name = name
-      
-      raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
-      
+            
       method_data.each do |key, value|
         case key
         when 'headers'
@@ -39,9 +37,10 @@ module Raml
         end
       end
 
+      validate
       set_default_protocol
     end
-
+    
     def set_default_protocol
       #TODO
     end
@@ -89,7 +88,6 @@ module Raml
       lines.join "  \n"
     end
 
-
     def protocol
       @children.select {|child| child.is_a? Protocol}.first
     end
@@ -110,5 +108,11 @@ module Raml
       @children.select {|child| child.is_a? Response}
     end
 
+    private
+    
+    def validate
+      raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
+      raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
+    end
   end
 end

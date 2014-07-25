@@ -50,18 +50,24 @@ describe Raml::Method do
       end
     end
     
-    context 'when description is not given' do
+    context 'when description property is not given' do
       let(:data) { {} }
       it { expect { subject }.to_not raise_error }
     end
-    context 'when description is given' do
-      let(:data) { { 'description' => 'My Description'} }
-      it { expect { subject }.to_not raise_error }
-      it 'should store the value' do
-        subject.description.should eq data['description']
+    context 'when description property is given' do
+      context 'when the description property is not a string' do
+        let(:data) { { 'description' => 1 } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /description/ }
       end
-      it 'uses the description in the documentation' do
-        subject.document.should include data['description']
+      context 'when the description property is a string' do
+        let(:data) { { 'description' => 'My Description' } }
+        it { expect { subject }.to_not raise_error }
+        it 'should store the value' do
+          subject.description.should eq data['description']
+        end
+        it 'uses the description in the documentation' do
+          subject.document.should include data['description']
+        end
       end
     end
   end
