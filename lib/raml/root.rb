@@ -4,8 +4,8 @@ require 'uri_template'
 module Raml
   class Root
     attr_accessor :children
-    attr_accessor :title, :version, :base_uri, :base_uri_parameters,
       :protocols, :media_type, :schemas, :base_uri_parameters, :documentation, :resources
+    attr_accessor :title, :version, :base_uri,
 
     def initialize(root_data)
       @children = []
@@ -13,6 +13,11 @@ module Raml
       root_data.each do |key, value|
         if key.start_with?('/')
           @children << Resource.new(key, value)
+        elsif key == "baseUriParameters"
+          validate_base_uri_parameters value
+          value.each do |name, uri_parameter_data|
+            @children << Parameter::UriParameter.new(name, uri_parameter_data)
+          end
         elsif key == 'documentation'
           value.each do |document|
             @children << Documentation.new(document["title"], document["content"])
@@ -46,6 +51,10 @@ module Raml
       @children.select{|child| child.is_a? Documentation}
     end
 
+    def base_uri_parameters
+      @children.select { |child| child.is_a? Parameter::UriParameter }
+    end
+    
     private
 
     def validate
@@ -132,6 +141,20 @@ module Raml
       else
         self.schemas = {}
       end
+    end
+    
+    def validate_base_uri_parameters(base_uri_parameters)
+      raise InvalidProperty, 'baseUriParameters property must be a map' unless 
+        base_uri_parameters.is_a? Hash
+      
+      raise InvalidProperty, 'baseUriParameters property must be a map with string keys' unless
+        base_uri_parameters.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'baseUriParameters property must be a map with map values' unless
+        base_uri_parameters.values.all?  {|v| v.is_a? Hash }
+      
+      raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
+        base_uri_parameters.include? 'version'
     end
     
     def parse_uri(uri)

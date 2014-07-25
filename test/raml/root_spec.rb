@@ -169,4 +169,47 @@ describe Raml::Root do
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
     end
   end
+  
+  context 'when the baseUriParameter is given with valid parameters' do
+    let(:data) {
+      YAML.load(
+        %q(
+          title: Salesforce Chatter Communities REST API
+          version: v28.0
+          baseUri: https://{communityDomain}.force.com/{communityPath}
+          baseUriParameters:
+           communityDomain:
+             displayName: Community Domain
+             type: string
+           communityPath:
+             displayName: Community Path
+             type: string
+             pattern: ^[a-zA-Z0-9][-a-zA-Z0-9]*$
+             minLength: 1
+        )
+      )
+    }
+    context 'when the baseUriParameter property is wellf formed' do
+      it { expect { subject }.to_not raise_error }
+      it 'stores all as Raml::Parameter::UriParameter instances' do
+        expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::UriParameter )
+      end
+    end
+    context 'when the baseUriParameter property is not a map' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => 1 } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+    end
+    context 'when the baseUriParameter property is not a map with non-string keys' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => { 1 => {}} } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+    end
+    context 'when the baseUriParameter property is not a map with non-string keys' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => { '1' => 'x'} } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+    end
+    context 'when the baseUriParameter property has a key for the reserved "version" parameter' do
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => { 'version' => {}} } }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+    end
+  end
 end
