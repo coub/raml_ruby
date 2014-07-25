@@ -29,8 +29,18 @@ describe Raml::Body do
     end
 
     context 'when the body is not a web form' do
-      it "inits body with schema" do
-        expect( subject.schema ).to eq('job.xsd')
+      context 'when the schema property is valid' do
+        it "inits body with schema" do
+          expect( subject.schema ).to eq('job.xsd')
+        end
+      end
+      context 'when the schema property is not a string' do
+        let (:body_data ) { { 'schema' => 1 } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /schema/ }
+      end
+      context 'when the schema property is an empty string' do
+        let (:body_data ) { { 'schema' => '' } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /schema/ }
       end
     end
     context 'when body is a web form' do
