@@ -1,6 +1,6 @@
 module Raml
   class Method
-    NAMES = %w(options get head post put delete trace connect)
+    NAMES = %w(options get head post put delete trace connect patch)
 
     extend Common
 
