@@ -20,6 +20,7 @@ require_relative 'raml/include'
 require_relative 'raml/parameter/form_parameter'
 require_relative 'raml/parameter/query_parameter'
 require_relative 'raml/parameter/uri_parameter'
+require_relative 'raml/parameter/base_uri_parameter'
 
 module Raml
   def self.load(raml)

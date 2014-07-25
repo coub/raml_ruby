@@ -189,8 +189,8 @@ describe Raml::Root do
         )
       }
       it { expect { subject }.to_not raise_error }
-      it 'stores all as Raml::Parameter::UriParameter instances' do
-        expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::UriParameter )
+      it 'stores all as Raml::Parameter::BaseUriParameter instances' do
+        expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::BaseUriParameter )
       end
     end
     context 'when the baseUriParameter property is not a map' do

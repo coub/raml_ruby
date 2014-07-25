@@ -16,7 +16,7 @@ module Raml
         elsif key == "baseUriParameters"
           validate_base_uri_parameters value
           value.each do |name, uri_parameter_data|
-            @children << Parameter::UriParameter.new(name, uri_parameter_data)
+            @children << Parameter::BaseUriParameter.new(name, uri_parameter_data)
           end
         elsif key == 'documentation'
           validate_documentation value
@@ -59,7 +59,7 @@ module Raml
     end
 
     def base_uri_parameters
-      @children.select { |child| child.is_a? Parameter::UriParameter }
+      @children.select { |child| child.is_a? Parameter::BaseUriParameter }
     end
     
     def resources
