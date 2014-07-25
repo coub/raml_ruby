@@ -102,6 +102,43 @@ describe Raml::Method do
       end
     end
     
+    context 'when the protocols property is missing' do
+      let(:data) { { } }
+      it { expect{ subject }.to_not raise_error }
+    end
+    context 'when the protocols property is given' do
+      context 'when the protocol property is not an array' do
+        let(:data) { { 'protocols' => 'HTTP' } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /protocols/ }
+      end
+      context 'when the protocol property is an array but not all elements are strings' do
+        let(:data) { { 'protocols' => ['HTTP', 1] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /protocols/ }
+      end
+      context 'when the protocol property is an array of strings with invalid values' do
+        let(:data) { { 'protocols' => ['HTTP', 'foo'] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /protocols/ }
+      end
+      [
+        [ 'HTTP'  ],
+        [ 'HTTPS' ],
+        [ 'HTTP', 'HTTPS' ]
+      ].each do |protocols|
+        context "when the protocol property is #{protocols}" do
+          let(:data) { { 'protocols' => protocols } }
+          it { expect{ subject }.to_not raise_error }
+          it 'stores the values' do
+            subject.protocols.should eq protocols
+          end
+        end
+      end
+      context 'when the protocol property is an array of valid values in lowercase' do
+        let(:data) { { 'protocols' => ['http', 'https'] } }
+        it 'uppercases them' do
+          subject.protocols.should eq [ 'HTTP', 'HTTPS' ]
+        end
+      end
+    end
   end
 
   describe "#document" do

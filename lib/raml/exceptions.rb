@@ -15,10 +15,6 @@ module Raml
   class InvalidParameterType            < RamlError; end
   class InapplicableParameterAttribute  < RamlError; end
   class InvalidParameterAttribute       < RamlError; end
-
-  # Protocols
-  class ProtocolMustBeArrayOfStrings    < RamlError; end
-  class ProtocolMustBeHTTPorHTTPS       < RamlError; end
   
   # Body
   class FormParametersMissing           < RamlError; end

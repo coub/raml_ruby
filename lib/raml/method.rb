@@ -6,7 +6,7 @@ module Raml
 
     is_documentable
 
-    attr_accessor :children
+    attr_accessor :children, :protocols
 
     def initialize(name, method_data)
       @children = []
@@ -19,8 +19,6 @@ module Raml
           value.each do |name, header_data|
             @children << Header.new(name, header_data)
           end
-        when 'protocols'
-          @children << Protocol.new(value)
         when 'queryParameters'
           value.each do |name, query_parameter_data|
             @children << Parameter::QueryParameter.new(name, query_parameter_data)
@@ -39,11 +37,11 @@ module Raml
       end
 
       validate
-      set_default_protocol
+      set_defaults
     end
     
-    def set_default_protocol
-      #TODO
+    def set_defaults
+      protocols ||= []
     end
 
     def document
@@ -51,12 +49,7 @@ module Raml
       lines << "####{}**#{@display_name || @name}**"
       lines << "#{@description}"
 
-      if protocol
-        supported_protocols = []
-        supported_protocols << "HTTP" if protocol.http?
-        supported_protocols << "HTTPS" if protocol.https?
-        lines << "Supported HTTP protocols: %s" % supported_protocols
-      end
+      lines << "Supported HTTP protocols: %s" % protocols.join(', ')
 
       if headers.any?
         lines << "**Headers:**"
@@ -89,10 +82,6 @@ module Raml
       lines.join "  \n"
     end
 
-    def protocol
-      @children.select {|child| child.is_a? Protocol}.first
-    end
-
     def headers
       @children.select {|child| child.is_a? Header}
     end
@@ -114,6 +103,8 @@ module Raml
     def validate
       raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
       raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
+      
+      validate_protocols
     end
     
     def validate_headers(headers)
@@ -125,6 +116,21 @@ module Raml
 
       raise InvalidProperty, 'headers property must be a map with map values' unless
         headers.values.all?  {|v| v.is_a? Hash }      
+    end
+    
+    def validate_protocols
+      if protocols
+        raise InvalidProperty, 'protocols property must be an array' unless
+          protocols.is_a? Array
+        
+        raise InvalidProperty, 'protocols property must be an array strings' unless
+          protocols.all? { |p| p.is_a? String }
+        
+        @protocols.map!(&:upcase)
+        
+        raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
+          protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
+      end
     end
   end
 end
