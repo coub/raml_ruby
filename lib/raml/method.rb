@@ -25,6 +25,7 @@ module Raml
             @children << Parameter::QueryParameter.new(name, query_parameter_data)
           end
         when 'body'
+          validate_body value
           value.each do |name, body_data|
             @children << Body.new(name, body_data)
           end
@@ -144,5 +145,17 @@ module Raml
       raise InvalidProperty, 'queryParameters property must be a map with map values' unless
         query_parameters.values.all?  {|v| v.is_a? Hash }      
     end
+
+    def validate_body(body)
+      raise InvalidProperty, 'body property must be a map' unless
+        body.is_a? Hash
+        
+      raise InvalidProperty, 'body property must be a map with string keys' unless
+        body.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'body property must be a map with map values' unless
+        body.values.all?  {|v| v.is_a? Hash }
+    end
+
   end
 end

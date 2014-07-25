@@ -182,7 +182,41 @@ describe Raml::Method do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /queryParameters/ }
       end
     end
-    
+
+    context 'when a body property is given' do
+      context 'when the body property is well formed' do
+        let(:data) {
+          YAML.load(
+            %q(
+            description: Create a Job
+            body:
+              text/xml:
+                schema: job_xml_schema
+              application/json:
+                schema: json_xml_schema
+            )
+          )
+        }
+        
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Body instances' do
+          expect( subject.bodies ).to all( be_a Raml::Body )
+          subject.bodies.map(&:media_type).should contain_exactly('text/xml', 'application/json')
+        end
+      end
+      context 'when the body property is not a map' do
+        before { data['body'] = 1 }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
+      end
+      context 'when the body property is a map with non-string keys' do
+        before { data['body'] = { 1 => {}} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
+      end
+      context 'when the body property is a map with non-map values' do
+        before { data['body'] = { 'text/xml' => 1 } }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
+      end
+    end
   end
 
   describe "#document" do
