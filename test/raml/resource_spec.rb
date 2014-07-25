@@ -114,6 +114,44 @@ describe Raml::Resource do
         expect( subject.resources.map(&:name) ).to contain_exactly('/followers','/following', '/keys')
       end
     end
+    
+    context 'when a baseUriParameters property is given' do
+      context 'when the baseUriParameter property is well formed' do
+        let(:name) { '/files' }
+        let(:data) {
+          YAML.load(
+            %q(
+              displayName: Download files
+              baseUriParameters:
+                apiDomain:
+                  enum: [ "api-content" ]
+            )
+          )
+        }
+        
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Parameter::UriParameter instances' do
+          expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::BaseUriParameter )
+          subject.base_uri_parameters.map(&:name).should contain_exactly('apiDomain')
+        end
+      end
+      context 'when the baseUriParameter property is not a map' do
+        before { data['baseUriParameters'] = 1 }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+      end
+      context 'when the baseUriParameter property is not a map with non-string keys' do
+        before { data['baseUriParameters'] = { 1 => {}} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+      end
+      context 'when the baseUriParameter property is not a map with non-string keys' do
+        before { data['baseUriParameters'] = { '1' => 'x'} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+      end
+      context 'when the baseUriParameter property has a key for the reserved "version" parameter' do
+        before { data['baseUriParameters'] = { 'version' => {}} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
+      end
+    end
   end
   
   describe "#document" do

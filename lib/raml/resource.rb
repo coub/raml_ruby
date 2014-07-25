@@ -20,6 +20,11 @@ module Raml
           value.each do |name, uri_parameter_data|
             @children << Parameter::UriParameter.new(name, uri_parameter_data)
           end
+        elsif key == "baseUriParameters"
+          validate_base_uri_parameters value
+          value.each do |name, uri_parameter_data|
+            @children << Parameter::BaseUriParameter.new(name, uri_parameter_data)
+          end
         else
           send("#{Raml.underscore(key)}=", value)
         end
@@ -46,6 +51,10 @@ module Raml
       children.select { |child| child.is_a? Parameter::UriParameter }
     end
     
+    def base_uri_parameters
+      children.select { |child| child.is_a? Parameter::BaseUriParameter }
+    end
+    
     private
     
     def validate_uri_parameters(uri_parameters)
@@ -57,6 +66,20 @@ module Raml
 
       raise InvalidProperty, 'uriParameters property must be a map with map values' unless
         uri_parameters.values.all?  {|v| v.is_a? Hash }      
+    end
+    
+    def validate_base_uri_parameters(base_uri_parameters)
+      raise InvalidProperty, 'baseUriParameters property must be a map' unless 
+        base_uri_parameters.is_a? Hash
+      
+      raise InvalidProperty, 'baseUriParameters property must be a map with string keys' unless
+        base_uri_parameters.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'baseUriParameters property must be a map with map values' unless
+        base_uri_parameters.values.all?  {|v| v.is_a? Hash }
+      
+      raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
+        base_uri_parameters.include? 'version'
     end
   end
 end
