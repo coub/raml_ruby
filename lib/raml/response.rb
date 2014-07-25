@@ -51,14 +51,15 @@ module Raml
     end
 
     def bodies
-      @children.select {|child| child.is_a? Body}
+      children.select { |child| child.is_a? Body }
     end
 
     def headers
-      @children.select {|child| child.is_a? Header}
+      children.select { |child| child.is_a? Header }
     end
     
     private
+    
     def validate_body(body)
       raise InvalidProperty, 'body property must be a map' unless
         body.is_a? Hash
