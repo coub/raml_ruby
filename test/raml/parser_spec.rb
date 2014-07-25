@@ -27,16 +27,13 @@ describe Raml::Parser do
       file = File.new 'fixtures/include_1.raml'
       parser = Raml::Parser.new file.read, 'fixtures'
       root   = parser.parse
-      root.schemas.should be_an Array
-      root.schemas.size.should be 2
-      root.schemas[0].should be_a Hash
-      root.schemas[0].keys.should contain_exactly('FileUpdate', 'Files', 'Test')
-      root.schemas[0]['FileUpdate'].should eq 'file_update_schema'
-      root.schemas[0]['Files'     ].should eq 'files_schema'
-      root.schemas[0]['Test'      ].should eq 'test_schema'
-      root.schemas[1].should be_a Hash
-      root.schemas[1].keys.should contain_exactly('File')
-      root.schemas[1]['File'      ].should eq 'file_schema'
+      root.schemas.should be_a Hash
+      root.schemas.size.should be 4
+      root.schemas.keys.should contain_exactly('FileUpdate', 'Files', 'Test', 'File')
+      root.schemas['FileUpdate'].should eq 'file_update_schema'
+      root.schemas['Files'     ].should eq 'files_schema'
+      root.schemas['Test'      ].should eq 'test_schema'
+      root.schemas['File'      ].should eq 'file_schema'
     end
     
     context 'when the included file is not redable' do
