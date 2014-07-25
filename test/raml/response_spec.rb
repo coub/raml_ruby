@@ -62,6 +62,27 @@ describe Raml::Response do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
       end
     end
+    
+    context 'when description property is not given' do
+      before { response_data.delete 'description' }
+      it { expect { subject }.to_not raise_error }
+    end
+    context 'when description property is given' do
+      context 'when the description property is not a string' do
+        before { response_data['description'] = 1 }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /description/ }
+      end
+      context 'when the description property is a string' do
+        before { response_data['description'] = 'My Description' }
+        it { expect { subject }.to_not raise_error }
+        it 'should store the value' do
+          subject.description.should eq response_data['description']
+        end
+        it 'uses the description in the documentation' do
+          subject.document.should include response_data['description']
+        end
+      end
+    end
   end
 
   describe "#document" do

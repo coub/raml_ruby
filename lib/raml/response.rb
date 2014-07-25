@@ -25,6 +25,8 @@ module Raml
           send("#{Raml.underscore(key)}=", value)
         end
       end
+      
+      validate
     end
 
     def document
@@ -59,6 +61,10 @@ module Raml
     end
     
     private
+    
+    def validate
+      raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
+    end
     
     def validate_body(body)
       raise InvalidProperty, 'body property must be a map' unless
