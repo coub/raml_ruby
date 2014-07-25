@@ -125,12 +125,10 @@ module Raml
       end
     end
     
-    MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
-    
     def validate_media_type
       if media_type
         raise InvalidProperty, 'mediaType property must be a string' unless media_type.is_a? String
-        raise InvalidProperty, 'mediaType property is malformed'     unless media_type =~ MEDIA_TYPE_RE
+        raise InvalidProperty, 'mediaType property is malformed'     unless media_type =~ Body::MEDIA_TYPE_RE
       end
     end
     

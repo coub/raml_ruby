@@ -1,5 +1,7 @@
 module Raml
   class Body
+    MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
+    
     extend Common
     is_documentable
     
@@ -21,12 +23,9 @@ module Raml
         end
       end
       
-      if web_form?
-        raise FormCantHaveSchema    if @schema
-        raise FormParametersMissing if form_parameters.empty?
-      end
+      validate
     end
-
+    
     def document
       lines = []
       lines << "**%s**:" % @media_type
@@ -42,6 +41,17 @@ module Raml
     
     def web_form?
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? @media_type
+    end
+    
+    private
+    
+    def validate
+      raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
+      
+      if web_form?
+        raise FormCantHaveSchema    if @schema
+        raise FormParametersMissing if form_parameters.empty?
+      end
     end
   end
 end

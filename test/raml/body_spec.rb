@@ -1,16 +1,12 @@
 require_relative 'spec_helper'
 
 describe Raml::Body do
-  let (:media_type) {
-    'text/xml'
-  }
-
-  let (:body_data) {
+  let (:media_type) { 'text/xml' }
+  let (:body_data ) {
     YAML.load(%q(
       schema: !include job.xsd
     ))
-  }
-  
+  }  
   let(:form_body_data) {
     YAML.load(%q(
       formParameters:
@@ -22,8 +18,14 @@ describe Raml::Body do
   subject { Raml::Body.new(media_type, body_data) }
   
   describe '#initialize' do
-    it "inits body with media_type" do
-      expect( subject.media_type ).to eq(media_type)
+    context 'when the media type is valid' do
+      it "inits body with media_type" do
+        expect( subject.media_type ).to eq media_type
+      end
+    end
+    context 'when the media type is invalid' do
+      let(:media_type) { 'foo' }
+      it { expect { subject }.to raise_error Raml::InvalidMediaType }
     end
 
     context 'when the body is not a web form' do
@@ -31,7 +33,6 @@ describe Raml::Body do
         expect( subject.schema ).to eq('job.xsd')
       end
     end
-    
     context 'when body is a web form' do
       let(:body_data) { form_body_data }
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].each do |mtype|

@@ -17,6 +17,7 @@ module Raml
   class InvalidParameterAttribute       < RamlError; end
   
   # Body
+  class InvalidMediaType                < RamlError; end
   class FormParametersMissing           < RamlError; end
   class FormCantHaveSchema              < RamlError; end
 end
