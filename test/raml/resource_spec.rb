@@ -51,7 +51,23 @@ describe Raml::Resource do
         subject.document.should include data['displayName']
       end
     end
+    
+    context 'when description is not given' do
+      let(:data) { {} }
+      it { expect { subject }.to_not raise_error }
+    end
+    context 'when description is given' do
+      let(:data) { { 'description' => 'My Description'} }
+      it { expect { subject }.to_not raise_error }
+      it 'should store the value' do
+        subject.description.should eq data['description']
+      end
+      it 'uses the description in the documentation' do
+        subject.document.should include data['description']
+      end
+    end
   end
+  
   describe "#document" do
     it "prints out documentation" do
       subject.document
