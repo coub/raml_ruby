@@ -217,6 +217,42 @@ describe Raml::Method do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
       end
     end
+    
+    context 'when a responses property is given' do
+      context 'when the responses property is well formed' do
+        let(:data) {
+          YAML.load(
+            %q(
+              responses:
+                200:
+                  body:
+                    application/json:
+                      example: !include examples/instagram-v1-media-popular-example.json
+                503:
+                  description: The service is currently unavailable.
+            )
+          )
+        }
+        
+        it { expect { subject }.to_not raise_error }
+        it 'stores all as Raml::Response instances' do
+          expect( subject.responses ).to all( be_a Raml::Response )
+          subject.responses.map(&:name).should contain_exactly(200, 503)
+        end
+      end
+      context 'when the responses property is not a map' do
+        before { data['responses'] = 1 }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /responses/ }
+      end
+      context 'when the responses property is not a map with non-integer keys' do
+        before { data['responses'] = { '200' => {}} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /responses/ }
+      end
+      context 'when the responses property is not a map with non-string keys' do
+        before { data['responses'] = { 200 => 'x'} }
+        it { expect { subject }.to raise_error Raml::InvalidProperty, /responses/ }
+      end
+    end
   end
 
   describe "#document" do

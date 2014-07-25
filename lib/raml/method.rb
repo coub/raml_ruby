@@ -30,6 +30,7 @@ module Raml
             @children << Body.new(name, body_data)
           end
         when 'responses'
+          validate_responses value
           value.each do |name, response_data|
             @children << Response.new(name, response_data)
           end
@@ -157,5 +158,15 @@ module Raml
         body.values.all?  {|v| v.is_a? Hash }
     end
 
+    def validate_responses(responses)
+      raise InvalidProperty, 'responses property must be a map' unless 
+        responses.is_a? Hash
+      
+      raise InvalidProperty, 'responses property must be a map with integer keys' unless
+        responses.keys.all?  {|k| k.is_a? Integer }
+
+      raise InvalidProperty, 'responses property must be a map with map values' unless
+        responses.values.all?  {|v| v.is_a? Hash }      
+    end
   end
 end
