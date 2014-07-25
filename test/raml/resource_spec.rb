@@ -29,14 +29,32 @@ describe Raml::Resource do
 
   subject { Raml::Resource.new(name, data) }
 
-  it "should instanciate Resource" do
-    subject
+  describe '#new' do
+    it "should instanciate Resource" do
+      subject
+    end
+    
+    context 'when displayName is not given' do
+      let(:data) { {} }
+      it { expect { subject }.to_not raise_error }
+      it 'uses the resource relative URI in the documentation' do
+        subject.document.should include name
+      end
+    end
+    context 'when displayName is given' do
+      let(:data) { { 'displayName' => 'My Name'} }
+      it { expect { subject }.to_not raise_error }
+      it 'should store the value' do
+        subject.display_name.should eq data['displayName']
+      end
+      it 'uses the displayName in the documentation' do
+        subject.document.should include data['displayName']
+      end
+    end
   end
-
   describe "#document" do
     it "prints out documentation" do
       subject.document
     end
-
   end
 end

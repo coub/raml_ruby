@@ -26,18 +26,11 @@ module Raml
     end
 
     def document
-      head = []
-      lines = []
-      head << "**#{@name}**"
-      # head << "**#{@display_name || @name}**"
-      head << "#{@description}"
-
-      @children.each do |child|
-        lines << child.document
-      end
-
-      # lines.map!{|line| Raml.nbsp_indenter(line)}
-      (head + lines).join "  \n"
+      doc = ''
+      doc << "**#{display_name || name}**\n"
+      doc << "#{description}\n" if description
+      doc << children.map(&:document).compact.join('\n')
+      doc
     end
 
     def resources
