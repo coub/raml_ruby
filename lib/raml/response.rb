@@ -13,6 +13,7 @@ module Raml
       response_data.each do |key, value|
         case key
         when 'body'
+          validate_body value
           value.each do |name, body_data|
             @children << Body.new(name, body_data)
           end
@@ -55,6 +56,18 @@ module Raml
 
     def headers
       @children.select {|child| child.is_a? Header}
+    end
+    
+    private
+    def validate_body(body)
+      raise InvalidProperty, 'body property must be a map' unless
+        body.is_a? Hash
+        
+      raise InvalidProperty, 'body property must be a map with string keys' unless
+        body.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'body property must be a map with map values' unless
+        body.values.all?  {|v| v.is_a? Hash }
     end
   end
 end
