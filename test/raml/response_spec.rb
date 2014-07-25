@@ -10,13 +10,13 @@ describe Raml::Response do
       description: Successful response
       body:
         text/xml:
-          schema: !include job.xsd
+          schema: some xml schema
           example: |
             <api-request>
               <input>s3://zencodertesting/test.mov</input>
             </api-request>
         application/json:
-          schema: !include job.schema.json
+          schema: some json schema
           example: |
             {
               "input": "s3://zencodertesting/test.mov"
