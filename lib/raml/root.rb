@@ -4,8 +4,8 @@ require 'uri_template'
 module Raml
   class Root
     attr_accessor :children
-      :protocols, :media_type, :schemas, :base_uri_parameters, :documentation, :resources
     attr_accessor :title, :version, :base_uri,
+      :protocols, :media_type, :schemas, :documentation, :resources
 
     def initialize(root_data)
       @children = []
@@ -19,6 +19,7 @@ module Raml
             @children << Parameter::UriParameter.new(name, uri_parameter_data)
           end
         elsif key == 'documentation'
+          validate_documentation value
           value.each do |document|
             @children << Documentation.new(document["title"], document["content"])
           end
@@ -31,20 +32,26 @@ module Raml
     end
 
     def document(verbose = false)
-      result = ""
-      lines = []
+      doc = ''
 
-      lines << "# #{title}" if title
-      lines << "Version: #{version}" if version
+      doc << "# #{title}\n"           if title
+      doc << "Version: #{version}\n"  if version
 
-      @children.each do |child|
-        lines << child.document
+      documents.each do |child|
+        doc << child.document
+      end
+      
+      base_uri_parameters.each do |child|
+        doc << child.document
+      end
+      
+      resources.each do |child|
+        doc << child.document
       end
 
-      result = lines.join "\n"
-
-      puts result if verbose
-      result
+      puts doc if verbose
+      
+      doc
     end
 
     def documents
@@ -53,6 +60,10 @@ module Raml
 
     def base_uri_parameters
       @children.select { |child| child.is_a? Parameter::UriParameter }
+    end
+    
+    def resources
+      @children.select { |child| child.is_a? Resource }
     end
     
     private
@@ -157,6 +168,14 @@ module Raml
         base_uri_parameters.include? 'version'
     end
     
+    def validate_documentation(documentation)
+      raise InvalidProperty, 'documentation property must be an array' unless 
+        documentation.is_a? Array
+      
+      raise InvalidProperty, 'documentation property must include at least one document or not be included' if 
+        documentation.empty?
+    end
+        
     def parse_uri(uri)
       URI.parse uri
     rescue URI::InvalidURIError
