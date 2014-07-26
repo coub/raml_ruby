@@ -236,6 +236,19 @@ describe Raml::Parameter::AbstractParameter do
       end
     end
     
+    context 'when example property is given' do
+      context 'when the example property is a string' do
+        let(:parameter_data) { { 'example' =>  'My Attribute' } }
+        it { expect { subject }.to_not raise_error }
+        it 'should store the value' do
+          subject.example.should eq parameter_data['example']
+        end
+        it 'uses the description in the documentation' do
+          subject.document.should include parameter_data['example']
+        end
+      end
+    end
+    
     context 'when the parameter has multiple types' do
       let(:parameter_data) {
         YAML.load %q(
