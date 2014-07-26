@@ -18,6 +18,7 @@ module Raml
             @children << Body.new(name, body_data)
           end
         when 'headers'
+          validate_headers value
           value.each do |name, header_data|
             @children << Header.new(name, header_data)
           end
@@ -75,6 +76,17 @@ module Raml
 
       raise InvalidProperty, 'body property must be a map with map values' unless
         body.values.all?  {|v| v.is_a? Hash }
+    end
+    
+    def validate_headers(headers)
+      raise InvalidProperty, 'headers property must be a map' unless 
+        headers.is_a? Hash
+      
+      raise InvalidProperty, 'headers property must be a map with string keys' unless
+        headers.keys.all?  {|k| k.is_a? String }
+
+      raise InvalidProperty, 'headers property must be a map with map values' unless
+        headers.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end
