@@ -139,9 +139,9 @@ describe Raml::Root do
       end
     end
     context 'when the schemas property is an array with multiple maps' do
-      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'},{'boo'=>'bar'}] } }
+      let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar', 'roo'=>'rar'},{'boo'=>'bar'}] } }
       it 'returns the merged maps in the #schema method' do
-        subject.schemas.should eq({'foo'=>'bar','boo'=>'bar'})
+        subject.schemas.should eq({'foo'=>'bar', 'roo' => 'rar', 'boo'=>'bar'})
       end
     end
     context 'when the schemas property is not an array' do
