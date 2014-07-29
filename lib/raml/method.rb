@@ -16,26 +16,18 @@ module Raml
         case key
         when 'headers'
           validate_headers value
-          value.each do |name, header_data|
-            @children << Header.new(name, header_data)
-          end
+          @children += value.map { |h_name, h_data| Header.new h_name, h_data }
         when 'queryParameters'
           validate_query_parameters value
-          value.each do |name, query_parameter_data|
-            @children << Parameter::QueryParameter.new(name, query_parameter_data)
-          end
+          @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
         when 'body'
           validate_body value
-          value.each do |name, body_data|
-            @children << Body.new(name, body_data)
-          end
+          @children += value.map { |b_name, b_data| Body.new b_name, b_data }
         when 'responses'
           validate_responses value
-          value.each do |name, response_data|
-            @children << Response.new(name, response_data)
-          end
+          @children += value.map { |r_name, r_data| Response.new r_name, r_data }
         else
-          send("#{Raml.underscore(key)}=", value)
+          send "#{Raml.underscore key}=", value
         end
       end
 
