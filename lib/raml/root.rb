@@ -3,26 +3,22 @@ require 'uri_template'
 
 module Raml
   class Root
-    attr_accessor :children
-    attr_accessor :title, :version, :base_uri,
-      :protocols, :media_type, :schemas, :documentation, :resources
+    attr_accessor :children   , :title      , :version  , :base_uri     ,
+                  :protocols  , :media_type , :schemas  , :documentation
 
     def initialize(root_data)
       @children = []
 
       root_data.each do |key, value|
-        if key.start_with?('/')
+        case key
+        when /\A\//
           @children << Resource.new(key, value)
-        elsif key == "baseUriParameters"
+        when 'baseUriParameters'
           validate_base_uri_parameters value
-          value.each do |name, uri_parameter_data|
-            @children << Parameter::BaseUriParameter.new(name, uri_parameter_data)
-          end
-        elsif key == 'documentation'
+          @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data }
+        when 'documentation'
           validate_documentation value
-          value.each do |document|
-            @children << Documentation.new(document["title"], document["content"])
-          end
+          @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
         else
           self.send("#{Raml.underscore(key)}=", value)
         end
