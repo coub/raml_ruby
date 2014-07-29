@@ -290,5 +290,60 @@ describe Raml::Root do
         expect( subject.resources.map(&:name) ).to contain_exactly('/user','/users')
       end
     end
+
+    context 'when the traits property is defined' do
+      context 'when the traits property is an array of maps with string keys and and map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{},'boo'=>{}}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the traits property is an traits with a single map' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}}] } }
+        it 'returns the Trait in the #traits method' do
+            expect( subject.traits ).to all( be_a Raml::Trait )
+            subject.traits.size.should be 1
+            expect( subject.traits.map(&:name) ).to contain_exactly('foo')
+        end
+        context 'when the traits property is an traits with a single map with multiple traits' do
+          let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{},'boo'=>{}}] } }
+          it 'returns the Traits in the #traits method' do
+            expect( subject.traits ).to all( be_a Raml::Trait )
+            subject.traits.size.should be 2
+            expect( subject.traits.map(&:name) ).to contain_exactly('foo', 'boo')
+          end
+        end
+      end
+      context 'when the traits property is an array with multiple maps' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}},{'boo'=>{}}] } }
+        it 'returns the merged maps in the #traits method' do
+          expect( subject.traits ).to all( be_a Raml::Trait )
+          subject.traits.size.should be 2
+          expect( subject.traits.map(&:name) ).to contain_exactly('foo', 'boo')
+        end
+      end
+      context 'when the traits property is not an array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => 'x' } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+      context 'when the traits property is an empty array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the traits property is an array with some non-map elements' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}}, 1] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+      context 'when the traits property is an array of maps with non-string keys' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{1=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+      context 'when the traits property is an array of maps with non-map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>1}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+      context 'when the traits property has duplicate trait names' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}},{'foo'=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+    end
   end
 end

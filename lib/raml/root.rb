@@ -19,6 +19,9 @@ module Raml
         when 'documentation'
           validate_documentation value
           @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
+        when 'traits'
+          validate_traits value
+          @children += value.map { |h| h.map { |name, data| Trait.new name, data } }.flatten
         else
           self.send("#{Raml.underscore(key)}=", value)
         end
@@ -60,6 +63,10 @@ module Raml
     
     def resources
       @children.select { |child| child.is_a? Resource }
+    end
+
+    def traits
+      @children.select { |child| child.is_a? Trait }
     end
     
     private
@@ -172,7 +179,24 @@ module Raml
       raise InvalidProperty, 'documentation property must include at least one document or not be included' if 
         documentation.empty?
     end
-        
+    
+    def validate_traits(traits)
+      raise InvalidProperty, 'traits property must be an array'          unless 
+        traits.is_a? Array
+      
+      raise InvalidProperty, 'traits property must be an array of maps'  unless
+        traits.all? {|s| s.is_a? Hash}
+      
+      raise InvalidProperty, 'traits property must be an array of maps with string keys'  unless 
+        traits.all? {|t| t.keys.all?   {|k| k.is_a? String }}
+      
+      raise InvalidProperty, 'traits property must be an array of maps with map values'   unless 
+        traits.all? {|t| t.values.all? {|v| v.is_a? Hash }}
+      
+      raise InvalidProperty, 'traits property contains duplicate trait names'             unless 
+        traits.map(&:keys).flatten.uniq!.nil?
+    end
+
     def parse_uri(uri)
       URI.parse uri
     rescue URI::InvalidURIError

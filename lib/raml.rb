@@ -13,6 +13,7 @@ require_relative 'raml/response'
 require_relative 'raml/body'
 require_relative 'raml/header'
 require_relative 'raml/documentation'
+require_relative 'raml/trait'
 require_relative 'raml/exceptions'
 require_relative 'raml/include'
 
