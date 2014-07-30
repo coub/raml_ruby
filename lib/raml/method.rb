@@ -1,164 +1,50 @@
 module Raml
-  class Method
+  class Method < AbstractMethod
     NAMES = %w(options get head post put delete trace connect patch)
 
-    extend Common
+    def initialize(name, method_data, root)
+      is = method_data.delete('is') || []
 
-    is_documentable
+      super name, method_data
 
-    attr_accessor :children, :protocols
-
-    def initialize(name, method_data)
-      @children = []
-      @name = name
-            
-      method_data.each do |key, value|
-        case key
-        when 'headers'
-          validate_headers value
-          @children += value.map { |h_name, h_data| Header.new h_name, h_data }
-        when 'queryParameters'
-          validate_query_parameters value
-          @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
-        when 'body'
-          validate_body value
-          @children += value.map { |b_name, b_data| Body.new b_name, b_data }
-        when 'responses'
-          validate_responses value
-          @children += value.map { |r_name, r_data| Response.new r_name, r_data }
+      validate_is is
+      
+      @children += is.map do |trait|
+        if trait.is_a? Hash
+          if trait.keys.size == 1 and root.traits.any? { |t| t.name == trait.keys[0] }
+            raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
+              trait.values[0].is_a? Hash
+            TraitReference.new( *trait.first )
+          else
+            Trait.new '_', trait
+          end
         else
-          send "#{Raml.underscore key}=", value
+          TraitReference.new trait
         end
       end
-
-      validate
-      set_defaults
-    end
-    
-    def set_defaults
-      self.protocols ||= []
     end
 
-    def document
-      lines = []
-      lines << "####{}**#{@display_name || @name}**"
-      lines << "#{@description}"
-
-      lines << "Supported HTTP protocols: %s" % protocols.join(', ')
-
-      if headers.any?
-        lines << "**Headers:**"
-        headers.each do |header|
-          lines << header.document
-        end
-      end
-
-      if query_parameters.any?
-        lines << "**Query Parameters:**"
-        query_parameters.each do |query_parameter|
-          lines << query_parameter.document
-        end
-      end
-
-      if bodies.any?
-        lines << "**Body:**"
-        bodies.each do |body|
-          lines << body.document
-        end
-      end
-
-      if responses.any?
-        lines << "**Responses:**"
-        responses.each do |response|
-          lines << response.document
-        end
-      end
-
-      lines.join "  \n"
+    def traits
+      children.select { |child| child.is_a? Trait }
     end
 
-    def headers
-      children.select { |child| child.is_a? Header }
-    end
-
-    def query_parameters
-      children.select { |child| child.is_a? Parameter::QueryParameter }
-    end
-
-    def bodies
-      children.select { |child| child.is_a? Body }
-    end
-
-    def responses
-      children.select { |child| child.is_a? Response }
+    def trait_references
+      children.select { |child| child.is_a? TraitReference }
     end
 
     private
-    
+
     def validate
       raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
-      raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
-      
-      validate_protocols
+      super
     end
-    
-    def validate_headers(headers)
-      raise InvalidProperty, 'headers property must be a map' unless 
-        headers.is_a? Hash
-      
-      raise InvalidProperty, 'headers property must be a map with string keys' unless
-        headers.keys.all?  {|k| k.is_a? String }
 
-      raise InvalidProperty, 'headers property must be a map with map values' unless
-        headers.values.all?  {|v| v.is_a? Hash }      
-    end
-    
-    def validate_protocols
-      if protocols
-        raise InvalidProperty, 'protocols property must be an array' unless
-          protocols.is_a? Array
-        
-        raise InvalidProperty, 'protocols property must be an array strings' unless
-          protocols.all? { |p| p.is_a? String }
-        
-        @protocols.map!(&:upcase)
-        
-        raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
-          protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
+    def validate_is(is)
+      raise InvalidProperty, 'is property must be an arrary' unless is.is_a? Array
+      unless is.all? { |t| [String, Hash].include? t.class }
+        raise InvalidProperty, 
+          'is property must be an array of items that are trait names, maps of name and params, or definition maps'
       end
-    end
-    
-    def validate_query_parameters(query_parameters)
-      raise InvalidProperty, 'queryParameters property must be a map' unless 
-        query_parameters.is_a? Hash
-      
-      raise InvalidProperty, 'queryParameters property must be a map with string keys' unless
-        query_parameters.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'queryParameters property must be a map with map values' unless
-        query_parameters.values.all?  {|v| v.is_a? Hash }      
-    end
-
-    def validate_body(body)
-      raise InvalidProperty, 'body property must be a map' unless
-        body.is_a? Hash
-        
-      raise InvalidProperty, 'body property must be a map with string keys' unless
-        body.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'body property must be a map with map values' unless
-        body.values.all?  {|v| v.is_a? Hash }
-    end
-
-    def validate_responses(responses)
-      raise InvalidProperty, 'responses property must be a map' unless 
-        responses.is_a? Hash
-      
-      raise InvalidProperty, 'responses property must be a map with integer keys' unless
-        responses.keys.all?  {|k| k.is_a? Integer }
-
-      raise InvalidProperty, 'responses property must be a map with map values' unless
-        responses.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end
