@@ -12,7 +12,7 @@ module Raml
       root_data.each do |key, value|
         case key
         when /\A\//
-          @children << Resource.new(key, value)
+          @children << Resource.new(key, value, self)
         when 'baseUriParameters'
           validate_base_uri_parameters value
           @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data }

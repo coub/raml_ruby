@@ -6,25 +6,21 @@ module Raml
 
     is_documentable
 
-    def initialize(name, resource_data)
+    def initialize(name, resource_data, root)
       @children = []
       @name = name
 
       resource_data.each do |key, value|
         if key.start_with?('/')
-          @children << Resource.new(key, value)
+          @children << Resource.new(key, value, root)
         elsif Raml::Method::NAMES.include?(key)
-          @children << Method.new(key, value)
+          @children << Method.new(key, value, root)
         elsif key == "uriParameters"
           validate_uri_parameters value
-          value.each do |name, uri_parameter_data|
-            @children << Parameter::UriParameter.new(name, uri_parameter_data)
-          end
+          @children += value.map { |uname, udata| Parameter::UriParameter.new uname, udata }
         elsif key == "baseUriParameters"
           validate_base_uri_parameters value
-          value.each do |name, uri_parameter_data|
-            @children << Parameter::BaseUriParameter.new(name, uri_parameter_data)
-          end
+          @children += value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata }
         else
           send("#{Raml.underscore(key)}=", value)
         end

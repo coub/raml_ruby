@@ -26,8 +26,9 @@ describe Raml::Resource do
                     }
     ))
   }
+  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com' }
 
-  subject { Raml::Resource.new(name, data) }
+  subject { Raml::Resource.new(name, data, root) }
 
   describe '#new' do
     it "should instanciate Resource" do
