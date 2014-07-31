@@ -10,7 +10,7 @@ module Raml
   
   # Methods
   class InvalidMethod                   < RamlError; end
-  
+
   # Parameters
   class InvalidParameterType            < RamlError; end
   class InapplicableParameterAttribute  < RamlError; end
@@ -18,4 +18,7 @@ module Raml
   
   # Body
   class InvalidMediaType                < RamlError; end
+
+  # ResourceType
+  class InvalidResourceType             < RamlError; end
 end

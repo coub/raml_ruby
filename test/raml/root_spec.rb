@@ -291,19 +291,74 @@ describe Raml::Root do
       end
     end
 
+    context 'when the resourceTypes property is defined' do
+      context 'when the resourceTypes property is an array of maps with string keys and and map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{},'boo'=>{}}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the resourceTypes property is an array with a single map' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}}] } }
+        it 'returns the ResourceType in the #resource_types method' do
+            expect( subject.resource_types ).to all( be_a Raml::ResourceType )
+            subject.resource_types.size.should be 1
+            expect( subject.resource_types.map(&:name) ).to contain_exactly('foo')
+        end
+        context 'when the resourceTypes property is an array with a single map with multiple types' do
+          let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{},'boo'=>{}}] } }
+          it 'returns the ResourceTypes in the #resource_types method' do
+            expect( subject.resource_types ).to all( be_a Raml::ResourceType )
+            subject.resource_types.size.should be 2
+            expect( subject.resource_types.map(&:name) ).to contain_exactly('foo', 'boo')
+          end
+        end
+      end
+      context 'when the resourceTypes property is an array with multiple maps' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}},{'boo'=>{}}] } }
+        it 'returns the merged maps in the #resource_types method' do
+          expect( subject.resource_types ).to all( be_a Raml::ResourceType )
+          subject.resource_types.size.should be 2
+          expect( subject.resource_types.map(&:name) ).to contain_exactly('foo', 'boo')
+        end
+      end
+      context 'when the resourceTypes property is not an array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => 'x' } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /resourceTypes/ }
+      end
+      context 'when the resourceTypes property is an empty array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the resourceTypes property is an array with some non-map elements' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}}, 1] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /resourceTypes/ }
+      end
+      context 'when the resourceTypes property is an array of maps with non-string keys' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{1=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /resourceTypes/ }
+      end
+      context 'when the resourceTypes property is an array of maps with non-map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>1}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /resourceTypes/ }
+      end
+      context 'when the resourceTypes property has duplicate type names' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}},{'foo'=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /resourceTypes/ }
+      end
+    end
+
     context 'when the traits property is defined' do
       context 'when the traits property is an array of maps with string keys and and map values' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{},'boo'=>{}}] } }
         it { expect{ subject }.to_not raise_error }
       end
-      context 'when the traits property is an traits with a single map' do
+      context 'when the traits property is an array with a single map' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}}] } }
         it 'returns the Trait in the #traits method' do
             expect( subject.traits ).to all( be_a Raml::Trait )
             subject.traits.size.should be 1
             expect( subject.traits.map(&:name) ).to contain_exactly('foo')
         end
-        context 'when the traits property is an traits with a single map with multiple traits' do
+        context 'when the traits property is an array with a single map with multiple traits' do
           let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{},'boo'=>{}}] } }
           it 'returns the Traits in the #traits method' do
             expect( subject.traits ).to all( be_a Raml::Trait )

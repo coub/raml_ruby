@@ -19,6 +19,9 @@ module Raml
         when 'documentation'
           validate_documentation value
           @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
+        when 'resourceTypes'
+          validate_resource_types value
+          @children += value.map { |h| h.map { |name, data| ResourceType.new name, data, self } }.flatten
         when 'traits'
           validate_traits value
           @children += value.map { |h| h.map { |name, data| Trait.new name, data } }.flatten
@@ -63,6 +66,10 @@ module Raml
     
     def resources
       @children.select { |child| child.is_a? Resource }
+    end
+
+    def resource_types
+      @children.select { |child| child.is_a? ResourceType }
     end
 
     def traits
@@ -180,6 +187,23 @@ module Raml
         documentation.empty?
     end
     
+    def validate_resource_types(types)
+      raise InvalidProperty, 'resourceTypes property must be an array'          unless 
+        types.is_a? Array
+      
+      raise InvalidProperty, 'resourceTypes property must be an array of maps'  unless
+        types.all? {|s| s.is_a? Hash}
+      
+      raise InvalidProperty, 'resourceTypes property must be an array of maps with string keys'  unless 
+        types.all? {|t| t.keys.all?   {|k| k.is_a? String }}
+      
+      raise InvalidProperty, 'resourceTypes property must be an array of maps with map values'   unless 
+        types.all? {|t| t.values.all? {|v| v.is_a? Hash }}
+      
+      raise InvalidProperty, 'resourceTypes property contains duplicate type names'              unless 
+        types.map(&:keys).flatten.uniq!.nil?
+    end
+
     def validate_traits(traits)
       raise InvalidProperty, 'traits property must be an array'          unless 
         traits.is_a? Array

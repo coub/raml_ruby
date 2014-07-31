@@ -159,8 +159,66 @@ describe Raml::Resource do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
       end
     end
+
+    context 'when an type property is given' do
+     let(:root) { 
+        Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com',  'resourceTypes' => [
+          { 'collection'        => {} },
+          { 'member'            => {} },
+          { 'auditableResource' => {} }
+        ]
+      }
+      context 'when the property is valid' do
+        context 'when the property is a resource type reference' do
+          before { data['type'] = 'collection' }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the resource type reference' do
+            subject.type_reference.should be_a Raml::ResourceTypeReference
+            subject.type_reference.name.should == 'collection'
+            subject.type.should be_nil
+          end
+        end
+        context 'when the property is a resource type reference with parameters' do
+          before { data['type'] = {'collection' => {'maxSize' => 10}} }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the resource type reference' do
+            subject.type_reference.should be_a Raml::ResourceTypeReference
+            subject.type_reference.name.should == 'collection'
+            subject.type.should be_nil
+          end
+        end
+        context 'when the property is a resource type definitions' do
+          let(:definition) {
+            YAML.load(%q(
+              usage: This resourceType should be used for any collection of items
+              description: The collection of <<resourcePathName>>
+              get:
+                description: Get all <<resourcePathName>>, optionally filtered
+            ))
+          }
+          before { data['type'] = definition }
+
+          it { expect { subject }.to_not raise_error }
+          it 'should store the traits' do
+            subject.type.should be_a Raml::ResourceType
+            subject.type.usage.should == definition['usage']
+            subject.type_reference.should be_nil
+          end
+        end
+      end
+      context 'when the property is invalid' do
+        context 'when the type property is not a string or a map' do
+          before { data['type'] = 1 }
+          it { expect { subject }.to raise_error Raml::InvalidProperty, /type/ }
+        end
+        context 'when the property is a resource type name with parameters, but the params are not a map' do
+          before { data['type'] = { 'collection' => 1 } }
+          it { expect { subject }.to raise_error Raml::InvalidProperty, /type/ }
+        end
+      end
+    end
   end
-  
+
   describe "#document" do
     it "prints out documentation" do
       subject.document
