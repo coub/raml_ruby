@@ -23,6 +23,23 @@ module Raml
           validate_base_uri_parameters value
           @children += value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata }
 
+        when 'is'
+          validate_is value
+          @children += value.map do |trait|
+            if trait.is_a? Hash
+              if trait.keys.size == 1 and root.traits.any? { |t| t.name == trait.keys[0] }
+                raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
+                  trait.values[0].is_a? Hash
+                TraitReference.new( *trait.first )
+              else
+                Trait.new '_', trait
+              end
+            else
+              TraitReference.new trait
+            end
+          end
+
+
         else
           send "#{Raml.underscore(key)}=", value
         end
@@ -51,6 +68,14 @@ module Raml
       children.select { |child| child.is_a? Parameter::BaseUriParameter }
     end
     
+    def traits
+      children.select { |child| child.is_a? Trait }
+    end
+
+    def trait_references
+      children.select { |child| child.is_a? TraitReference }
+    end
+
     private
     
     def validate
@@ -80,6 +105,14 @@ module Raml
       
       raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
         base_uri_parameters.include? 'version'
+    end
+
+    def validate_is(is)
+      raise InvalidProperty, 'is property must be an arrary' unless is.is_a? Array
+      unless is.all? { |t| [String, Hash].include? t.class }
+        raise InvalidProperty, 
+          'is property must be an array of items that are trait names, maps of name and params, or definition maps'
+      end
     end
   end
 end

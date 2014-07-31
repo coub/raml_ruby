@@ -217,6 +217,80 @@ describe Raml::Resource do
         end
       end
     end
+    
+    context 'when an is property is given' do
+     let(:root) { 
+        Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com',  'traits' => [
+          { 'secured'     => {} },
+          { 'paged'       => {} },
+          { 'rateLimited' => {} }
+        ]
+      }
+      context 'when the property is valid' do
+        context 'when the property is an array of trait references' do
+          let(:data) { { 'is' => [ 'secured', 'paged' ] } }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the trait references' do
+            subject.trait_references.should all( be_a Raml::TraitReference )
+            subject.trait_references.map(&:name).should contain_exactly('secured', 'paged')
+          end
+        end
+        context 'when the property is an array of trait references with parameters' do
+          let(:data) { { 
+            'is' => [ 
+              {'secured' => {'tokenName' => 'access_token'}}, 
+              {'paged'   => {'maxPages'  => 10            }} 
+            ] 
+          } }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the trait references' do
+            subject.trait_references.should all( be_a Raml::TraitReference )
+            subject.trait_references.map(&:name).should contain_exactly('secured', 'paged')
+          end
+        end
+        context 'when the property is an array of trait definitions' do
+          let(:data) { { 
+            'is' => [ 
+              {'queryParameters' => {'tokenName' => {'description'=>'foo'}}}, 
+              {'queryParameters' => {'numPages'  => {'description'=>'bar'}}}
+            ] 
+          } }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the traits' do
+            subject.traits.should all( be_a Raml::Trait )
+            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('tokenName', 'numPages')
+          end
+        end
+        context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
+          let(:data) { { 
+            'is' => [ 
+              {'secured' => {'tokenName' => 'access_token'}}, 
+              {'queryParameters' => {'numPages'  => {'description'=>'bar'}}},
+              'rateLimited'
+            ] 
+          } }
+          it { expect { subject }.to_not raise_error }
+          it 'should store the traits' do
+            subject.trait_references.map(&:name).should contain_exactly('secured', 'rateLimited')
+            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('numPages')
+          end
+        end
+      end
+      context 'when the property is invalid' do
+        context 'when the property is not an array' do
+          let(:data) { { 'is' => 1 } }
+          it { expect { subject }.to raise_error Raml::InvalidProperty, /is/ }
+        end
+        context 'when the property is an array with elements other than a string or map' do
+          let(:data) { { 'is' => [1] } }
+          it { expect { subject }.to raise_error Raml::InvalidProperty, /is/ }
+        end
+        context 'when the property is an array an element that appears to be a trait name with parameters, but the params are not a map' do
+          let(:data) { { 'is' => [ { 'secured' => 1 } ] } }
+          it { expect { subject }.to raise_error Raml::InvalidProperty, /is/ }
+        end
+      end
+    end
   end
 
   describe "#document" do
