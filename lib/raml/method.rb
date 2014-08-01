@@ -11,7 +11,7 @@ module Raml
       
       @children += is.map do |trait|
         if trait.is_a? Hash
-          if trait.keys.size == 1 and root.traits.any? { |t| t.name == trait.keys[0] }
+          if trait.keys.size == 1 and root.traits.include? trait.keys.first
             raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
               trait.values[0].is_a? Hash
             TraitReference.new( *trait.first )

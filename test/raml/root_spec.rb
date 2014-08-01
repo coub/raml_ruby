@@ -135,13 +135,19 @@ describe Raml::Root do
     context 'when the schemas property is an array with a single map' do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'}] } }
       it 'returns that map in the #schema method' do
-        subject.schemas.should eq({'foo'=>'bar'})
+        subject.schemas.should be_a Hash
+        subject.schemas.keys.should contain_exactly('foo')
+        subject.schemas['foo'].should be_a Raml::Schema
+        subject.schemas['foo'].value.should == 'bar'
       end
     end
     context 'when the schemas property is an array with multiple maps' do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar', 'roo'=>'rar'},{'boo'=>'bar'}] } }
       it 'returns the merged maps in the #schema method' do
-        subject.schemas.should eq({'foo'=>'bar', 'roo' => 'rar', 'boo'=>'bar'})
+        subject.schemas.should be_a Hash
+        subject.schemas.keys.should contain_exactly('foo', 'roo', 'boo')
+        subject.schemas.values.should all(be_a Raml::Schema)
+        subject.schemas.values.map(&:value).should contain_exactly('bar', 'rar', 'bar')
       end
     end
     context 'when the schemas property is not an array' do
@@ -299,25 +305,28 @@ describe Raml::Root do
       context 'when the resourceTypes property is an array with a single map' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}}] } }
         it 'returns the ResourceType in the #resource_types method' do
-            expect( subject.resource_types ).to all( be_a Raml::ResourceType )
-            subject.resource_types.size.should be 1
-            expect( subject.resource_types.map(&:name) ).to contain_exactly('foo')
+          subject.resource_types.should be_a Hash
+          subject.resource_types.keys.should contain_exactly('foo')
+          subject.resource_types['foo'].should be_a Raml::ResourceType
+          subject.resource_types['foo'].name.should == 'foo'
         end
         context 'when the resourceTypes property is an array with a single map with multiple types' do
           let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{},'boo'=>{}}] } }
           it 'returns the ResourceTypes in the #resource_types method' do
-            expect( subject.resource_types ).to all( be_a Raml::ResourceType )
-            subject.resource_types.size.should be 2
-            expect( subject.resource_types.map(&:name) ).to contain_exactly('foo', 'boo')
+            subject.resource_types.should be_a Hash
+            subject.resource_types.keys.should contain_exactly('foo', 'boo')
+            subject.resource_types.values.should all(be_a Raml::ResourceType)
+            subject.resource_types.values.map(&:name).should contain_exactly('foo', 'boo')
           end
         end
       end
       context 'when the resourceTypes property is an array with multiple maps' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'resourceTypes' => [{'foo'=>{}},{'boo'=>{}}] } }
         it 'returns the merged maps in the #resource_types method' do
-          expect( subject.resource_types ).to all( be_a Raml::ResourceType )
-          subject.resource_types.size.should be 2
-          expect( subject.resource_types.map(&:name) ).to contain_exactly('foo', 'boo')
+          subject.resource_types.should be_a Hash
+          subject.resource_types.keys.should contain_exactly('foo', 'boo')
+          subject.resource_types.values.should all(be_a Raml::ResourceType)
+          subject.resource_types.values.map(&:name).should contain_exactly('foo', 'boo')
         end
       end
       context 'when the resourceTypes property is not an array' do
@@ -354,25 +363,28 @@ describe Raml::Root do
       context 'when the traits property is an array with a single map' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}}] } }
         it 'returns the Trait in the #traits method' do
-            expect( subject.traits ).to all( be_a Raml::Trait )
-            subject.traits.size.should be 1
-            expect( subject.traits.map(&:name) ).to contain_exactly('foo')
+          subject.traits.should be_a Hash
+          subject.traits.keys.should contain_exactly('foo')
+          subject.traits['foo'].should be_a Raml::Trait
+          subject.traits['foo'].name.should == 'foo'
         end
         context 'when the traits property is an array with a single map with multiple traits' do
           let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{},'boo'=>{}}] } }
           it 'returns the Traits in the #traits method' do
-            expect( subject.traits ).to all( be_a Raml::Trait )
-            subject.traits.size.should be 2
-            expect( subject.traits.map(&:name) ).to contain_exactly('foo', 'boo')
+            subject.traits.should be_a Hash
+            subject.traits.keys.should contain_exactly('foo', 'boo')
+            subject.traits.values.should all(be_a Raml::Trait)
+            subject.traits.values.map(&:name).should contain_exactly('foo', 'boo')
           end
         end
       end
       context 'when the traits property is an array with multiple maps' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}},{'boo'=>{}}] } }
         it 'returns the merged maps in the #traits method' do
-          expect( subject.traits ).to all( be_a Raml::Trait )
-          subject.traits.size.should be 2
-          expect( subject.traits.map(&:name) ).to contain_exactly('foo', 'boo')
+          subject.traits.should be_a Hash
+          subject.traits.keys.should contain_exactly('foo', 'boo')
+          subject.traits.values.should all(be_a Raml::Trait)
+          subject.traits.values.map(&:name).should contain_exactly('foo', 'boo')
         end
       end
       context 'when the traits property is not an array' do

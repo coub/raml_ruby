@@ -12,7 +12,7 @@ module Raml
         when 'type'
           validate_type value
           if value.is_a? Hash
-            if value.keys.size == 1 and root.resource_types.any? { |t| t.name == value.keys[0] }
+            if value.keys.size == 1 and root.resource_types.include? value.keys.first
               raise InvalidProperty, 'type property with map of resource type name but params are not a map' unless 
                 value.values[0].is_a? Hash
               @children << ResourceTypeReference.new( *value.first )

@@ -3,8 +3,9 @@ require 'uri_template'
 
 module Raml
   class Root
-    attr_accessor :children   , :title      , :version  , :base_uri     ,
-                  :protocols  , :media_type , :schemas  , :documentation
+    attr_accessor :children   , :title          , :version  , :base_uri     ,
+                  :protocols  , :media_type     , :schemas  , :documentation,
+                  :traits     , :resource_types
 
     def initialize(root_data)
       @children = []
@@ -24,17 +25,22 @@ module Raml
           @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
 
         when 'schemas'
-          @schemas = validate_schemas value
-          @schemas.merge(@schemas) { |k, val| Schema.new val }
+          validate_schemas value
+          @schemas = value.reduce({}) { |memo, map| memo.merge! map }
+          @schemas.merge!(@schemas) { |k, val| Schema.new val }
           @children += @schemas.values
 
         when 'resourceTypes'
           validate_resource_types value
-          @children += value.map { |h| h.map { |name, data| ResourceType.new name, data, self } }.flatten
+          @resource_types = value.reduce({}) { |memo, map| memo.merge! map }
+          @resource_types.merge!(@resource_types) { |name, data| ResourceType.new name, data, self }
+          @children += @resource_types.values
 
         when 'traits'
           validate_traits value
-          @children += value.map { |h| h.map { |name, data| Trait.new name, data, self } }.flatten
+          @traits = value.reduce({}) { |memo, map| memo.merge! map }
+          @traits.merge!(@traits) { |name, data| Trait.new name, data, self }
+          @children += @traits.values
 
         else
           begin
@@ -81,14 +87,6 @@ module Raml
     
     def resources
       @children.select { |child| child.is_a? Resource }
-    end
-
-    def resource_types
-      @children.select { |child| child.is_a? ResourceType }
-    end
-
-    def traits
-      @children.select { |child| child.is_a? Trait }
     end
     
     private
@@ -171,8 +169,6 @@ module Raml
       
       raise InvalidProperty, 'schemas property contains duplicate schema names'             unless 
         schemas.map(&:keys).flatten.uniq!.nil?
-        
-      schemas.reduce({}) { |memo, schema| memo.merge! schema }
     end
     
     def validate_base_uri_parameters(base_uri_parameters)
