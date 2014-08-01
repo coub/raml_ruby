@@ -1,9 +1,9 @@
 require 'json-schema'
 
 module Raml
-	attr_accessor :value
-
   class Schema
+		attr_accessor :value
+
   	def initialize(schema)
   		@value = schema
 

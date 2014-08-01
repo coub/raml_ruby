@@ -30,10 +30,10 @@ describe Raml::Parser do
       root.schemas.should be_a Hash
       root.schemas.size.should be 4
       root.schemas.keys.should contain_exactly('FileUpdate', 'Files', 'Test', 'File')
-      root.schemas['FileUpdate'].should eq 'file_update_schema'
-      root.schemas['Files'     ].should eq 'files_schema'
-      root.schemas['Test'      ].should eq 'test_schema'
-      root.schemas['File'      ].should eq 'file_schema'
+      root.schemas['FileUpdate'].value.should eq 'file_update_schema'
+      root.schemas['Files'     ].value.should eq 'files_schema'
+      root.schemas['Test'      ].value.should eq 'test_schema'
+      root.schemas['File'      ].value.should eq 'file_schema'
     end
     
     context 'when the included file is not redable' do
