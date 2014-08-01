@@ -24,7 +24,7 @@ module Raml
           if root.schemas.include? value
             @schema = SchemaReference.new value
           else
-            @schema = Schema.new value
+            @schema = Schema.new '_', value
           end
 
         else

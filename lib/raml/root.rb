@@ -27,7 +27,7 @@ module Raml
         when 'schemas'
           validate_schemas value
           @schemas = value.reduce({}) { |memo, map| memo.merge! map }
-          @schemas.merge!(@schemas) { |k, val| Schema.new val }
+          @schemas.merge!(@schemas) { |name, data| Schema.new name, data }
           @children += @schemas.values
 
         when 'resourceTypes'

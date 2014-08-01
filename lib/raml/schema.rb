@@ -2,9 +2,10 @@ require 'json-schema'
 
 module Raml
   class Schema
-		attr_accessor :value
+		attr_accessor :name, :value
 
-  	def initialize(schema)
+  	def initialize(name, schema)
+  		@name  = name
   		@value = schema
 
   		validate_json if json_schema?

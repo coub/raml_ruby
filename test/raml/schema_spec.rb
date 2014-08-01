@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe Raml::Schema do
-  subject { Raml::Schema.new schema }
+  subject { Raml::Schema.new 'MySchema', schema }
   
   describe '#new' do
     context 'with a valid schema' do
@@ -25,6 +25,12 @@ describe Raml::Schema do
         it { expect { subject }.to_not raise_error }
         it { subject.should be_json_schema }
         it { subject.should_not be_xml_schema }
+        it 'stores the schema in value' do
+          subject.value.should == schema
+        end
+        it 'stores the name in name' do
+          subject.name.should == 'MySchema'
+        end
       end
       context 'with a XML Schema' do
         let(:schema) do 
