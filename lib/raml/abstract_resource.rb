@@ -41,7 +41,11 @@ module Raml
 
 
         else
-          send "#{Raml.underscore(key)}=", value
+          begin
+            send "#{Raml.underscore(key)}=", value
+          rescue
+            raise UnknownProperty, "#{key} is an unknown property."
+          end
         end
       end
       

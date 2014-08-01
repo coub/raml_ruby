@@ -37,7 +37,11 @@ module Raml
           @children += value.map { |h| h.map { |name, data| Trait.new name, data, self } }.flatten
 
         else
-          self.send("#{Raml.underscore(key)}=", value)
+          begin
+            send "#{Raml.underscore(key)}=", value
+          rescue
+            raise UnknownProperty, "#{key} is an unknown property."
+          end
         end
       end
 

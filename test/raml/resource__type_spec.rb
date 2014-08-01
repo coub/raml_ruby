@@ -42,9 +42,8 @@ describe Raml::ResourceType do
     context 'with invalid arguments' do
     	context 'when the resource type has nested resources' do
     		before { data['/foo'] = {} }
-    		it { expect { subject }.to raise_error Raml::InvalidResourceType }
+    		it { expect { subject }.to raise_error Raml::UnknownProperty, /\/foo/ }
     	end
     end
-
   end
 end

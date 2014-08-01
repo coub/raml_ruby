@@ -7,6 +7,7 @@ module Raml
   # Properties
   class RequiredPropertyMissing         < RamlError; end
   class InvalidProperty                 < RamlError; end
+  class UnknownProperty                 < RamlError; end
   
   class InvalidSchema                   < RamlError; end
 
@@ -20,7 +21,4 @@ module Raml
   
   # Body
   class InvalidMediaType                < RamlError; end
-
-  # ResourceType
-  class InvalidResourceType             < RamlError; end
 end
