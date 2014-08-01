@@ -8,6 +8,8 @@ module Raml
   class RequiredPropertyMissing         < RamlError; end
   class InvalidProperty                 < RamlError; end
   
+  class InvalidSchema                   < RamlError; end
+
   # Methods
   class InvalidMethod                   < RamlError; end
 

@@ -32,7 +32,7 @@ module Raml
                   trait.values[0].is_a? Hash
                 TraitReference.new( *trait.first )
               else
-                Trait.new '_', trait
+                Trait.new '_', trait, root
               end
             else
               TraitReference.new trait

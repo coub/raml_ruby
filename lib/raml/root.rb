@@ -8,23 +8,34 @@ module Raml
 
     def initialize(root_data)
       @children = []
+      @schemas  = {}
 
       root_data.each do |key, value|
         case key
         when /\A\//
           @children << Resource.new(key, value, self)
+
         when 'baseUriParameters'
           validate_base_uri_parameters value
           @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data }
+
         when 'documentation'
           validate_documentation value
           @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
+
+        when 'schemas'
+          @schemas = validate_schemas value
+          @schemas.merge(@schemas) { |k, val| Schema.new val }
+          @children += @schemas.values
+
         when 'resourceTypes'
           validate_resource_types value
           @children += value.map { |h| h.map { |name, data| ResourceType.new name, data, self } }.flatten
+
         when 'traits'
           validate_traits value
-          @children += value.map { |h| h.map { |name, data| Trait.new name, data } }.flatten
+          @children += value.map { |h| h.map { |name, data| Trait.new name, data, self } }.flatten
+
         else
           self.send("#{Raml.underscore(key)}=", value)
         end
@@ -83,7 +94,6 @@ module Raml
       validate_base_uri
       validate_protocols
       validate_media_type
-      validate_schemas
     end
 
     def validate_title
@@ -142,27 +152,23 @@ module Raml
       end
     end
     
-    def validate_schemas
-      if schemas
-        raise InvalidProperty, 'schemas property must be an array'          unless 
-          schemas.is_a? Array
+    def validate_schemas(schemas)
+      raise InvalidProperty, 'schemas property must be an array'          unless 
+        schemas.is_a? Array
+      
+      raise InvalidProperty, 'schemas property must be an array of maps'  unless
+        schemas.all? {|s| s.is_a? Hash}
+      
+      raise InvalidProperty, 'schemas property must be an array of maps with string keys'   unless 
+        schemas.all? {|s| s.keys.all?   {|k| k.is_a? String }}
+      
+      raise InvalidProperty, 'schemas property must be an array of maps with string values' unless 
+        schemas.all? {|s| s.values.all? {|v| v.is_a? String }}
+      
+      raise InvalidProperty, 'schemas property contains duplicate schema names'             unless 
+        schemas.map(&:keys).flatten.uniq!.nil?
         
-        raise InvalidProperty, 'schemas property must be an array of maps'  unless
-          schemas.all? {|s| s.is_a? Hash}
-        
-        raise InvalidProperty, 'schemas property must be an array of maps with string keys'   unless 
-          schemas.all? {|s| s.keys.all?   {|k| k.is_a? String }}
-        
-        raise InvalidProperty, 'schemas property must be an array of maps with string values' unless 
-          schemas.all? {|s| s.values.all? {|v| v.is_a? String }}
-        
-        raise InvalidProperty, 'schemas property contains duplicate schema names'             unless 
-          schemas.map(&:keys).flatten.uniq!.nil?
-        
-        self.schemas = schemas.reduce({}) { |memo, schema| memo.merge! schema }
-      else
-        self.schemas = {}
-      end
+      schemas.reduce({}) { |memo, schema| memo.merge! schema }
     end
     
     def validate_base_uri_parameters(base_uri_parameters)

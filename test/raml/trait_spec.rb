@@ -14,8 +14,9 @@ describe Raml::Trait do
           required: true
     ))
   }
+  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com' }
 
-  subject { Raml::Trait.new(name, data) }
+  subject { Raml::Trait.new name, data, root }
 
   describe '#new' do
   	context 'when the trait name is not an HTTP method name' do

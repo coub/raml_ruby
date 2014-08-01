@@ -6,7 +6,7 @@ module Raml
 
     attr_accessor :children, :protocols
 
-    def initialize(name, method_data)
+    def initialize(name, method_data, root)
       @children = []
       @name = name
             
@@ -20,10 +20,10 @@ module Raml
           @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
         when 'body'
           validate_body value
-          @children += value.map { |b_name, b_data| Body.new b_name, b_data }
+          @children += value.map { |b_name, b_data| Body.new b_name, b_data, root }
         when 'responses'
           validate_responses value
-          @children += value.map { |r_name, r_data| Response.new r_name, r_data }
+          @children += value.map { |r_name, r_data| Response.new r_name, r_data, root }
         else
           send "#{Raml.underscore key}=", value
         end

@@ -4,7 +4,18 @@ describe Raml::Body do
   let (:media_type) { 'text/xml' }
   let (:body_data ) {
     YAML.load(%q(
-      schema: !include job.xsd
+      schema: |
+        {
+          "$schema": "http://json-schema.org/draft-03/schema#",
+          "properties": {
+              "input": {
+                  "required": false,
+                  "type": "string"
+              }
+          },
+          "required": false,
+          "type": "object"
+        }
     ))
   }  
   let(:form_body_data) {
@@ -14,8 +25,9 @@ describe Raml::Body do
           type: string
     ))
   }
+  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'Job' => 'xxx'}] }
 
-  subject { Raml::Body.new(media_type, body_data) }
+  subject { Raml::Body.new media_type, body_data, root }
   
   describe '#initialize' do
     context 'when the media type is valid' do
@@ -29,9 +41,15 @@ describe Raml::Body do
     end
 
     context 'when the body is not a web form' do
-      context 'when the schema property is valid' do
+      context 'when the schema property is valid schema' do
         it "inits body with schema" do
-          expect( subject.schema ).to eq('job.xsd')
+          expect( subject.schema ).to be_an Raml::Schema
+        end
+      end
+      context 'when the schema property is valid schema reference' do
+        let (:body_data ) { { 'schema' => 'Job' } }
+        it "inits body with schema" do
+          expect( subject.schema ).to be_an Raml::SchemaReference
         end
       end
       context 'when the schema property is not a string' do
@@ -80,7 +98,18 @@ describe Raml::Body do
           context 'when a schema property is provided' do
             let(:body_data) {
               YAML.load %q(
-                schema: !include job.xsd
+                schema: |
+                  {
+                    "$schema": "http://json-schema.org/draft-03/schema#",
+                    "properties": {
+                        "input": {
+                            "required": false,
+                            "type": "string"
+                        }
+                    },
+                    "required": false,
+                    "type": "object"
+                  }
                 formParameters:
                   param:
                     type: string

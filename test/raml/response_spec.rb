@@ -28,8 +28,9 @@ describe Raml::Response do
           displayName: Job Metadata
     ))
   }
+  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com' }
 
-  subject { Raml::Response.new(name, response_data) }
+  subject { Raml::Response.new name, response_data, root }
 
   describe '#new' do
     it "inits with name" do

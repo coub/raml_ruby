@@ -6,7 +6,7 @@ module Raml
 
     attr_accessor :children
 
-    def initialize(name, response_data)
+    def initialize(name, response_data, root)
       @children = []
       @name = name
 
@@ -14,9 +14,8 @@ module Raml
         case key
         when 'body'
           validate_body value
-          value.each do |name, body_data|
-            @children << Body.new(name, body_data)
-          end
+          @children += value.map { |bname, bdata| Body.new bname, bdata, root }
+        
         when 'headers'
           validate_headers value
           value.each do |name, header_data|

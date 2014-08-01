@@ -7,6 +7,9 @@ require_relative 'raml/abstract_method'
 require_relative 'raml/abstract_resource'
 
 require_relative 'raml/protocol'
+
+require_relative 'raml/schema'
+require_relative 'raml/schema_reference'
 require_relative 'raml/method'
 require_relative 'raml/parser'
 require_relative 'raml/resource'
