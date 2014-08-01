@@ -20,7 +20,7 @@ module Raml
             @children << self.class.new(name, parameter)
           end
         elsif parameter_data.is_a? Hash
-          parameter_data.each { |name, value| instance_variable_set("@#{Raml.underscore(name)}", value) }
+          parameter_data.each { |pname, pvalue| instance_variable_set("@#{Raml.underscore(pname)}", pvalue) }
 
           set_defaults
           validate
@@ -31,7 +31,7 @@ module Raml
         lines = []
 
         if @children.any?
-          lines = @children.map &:document
+          lines = @children.map(&:document)
         else
           lines << "*#{@display_name || @name}:*"
           lines << "&nbsp;&nbsp;#{@description}" if @description

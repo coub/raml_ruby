@@ -15,15 +15,19 @@ module Raml
         when 'headers'
           validate_headers value
           @children += value.map { |h_name, h_data| Header.new h_name, h_data }
+
         when 'queryParameters'
           validate_query_parameters value
           @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
+
         when 'body'
           validate_body value
           @children += value.map { |b_name, b_data| Body.new b_name, b_data, root }
+
         when 'responses'
           validate_responses value
           @children += value.map { |r_name, r_data| Response.new r_name, r_data, root }
+
         else
           send "#{Raml.underscore key}=", value
         end

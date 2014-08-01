@@ -6,7 +6,6 @@ require_relative 'raml/parameter/abstract_parameter'
 require_relative 'raml/abstract_method'
 require_relative 'raml/abstract_resource'
 
-require_relative 'raml/protocol'
 
 require_relative 'raml/schema'
 require_relative 'raml/schema_reference'
@@ -51,8 +50,8 @@ module Raml
     documentation = parser.parse.document
 
     if out_file
-      file = File.open(out_file, 'w') do |f|
-        f.write(documentation)
+      File.open(out_file, 'w') do |f|
+        f.write documentation
       end
     else
       documentation

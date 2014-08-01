@@ -1,10 +1,7 @@
 require_relative 'spec_helper'
 
 describe Raml::Response do
-  let (:name) {
-    "200"
-  }
-
+  let (:name) { "200" }
   let (:response_data) {
     YAML.load(%q(
       description: Successful response

@@ -37,10 +37,6 @@ describe Raml::Parameter::UriParameter do
 
     it "prints out documentation" do
       subject.document
-
-      # puts "\n"
-      # puts subject.document
-      # puts "\n"
     end
   end
 end

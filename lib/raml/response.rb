@@ -18,9 +18,8 @@ module Raml
         
         when 'headers'
           validate_headers value
-          value.each do |name, header_data|
-            @children << Header.new(name, header_data)
-          end
+          @children += value.map { |hname, hdata| Header.new hname, hdata }
+
         else
           send("#{Raml.underscore(key)}=", value)
         end

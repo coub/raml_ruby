@@ -29,10 +29,6 @@ describe Raml::Parameter::QueryParameter do
 
     it "prints out documentation" do
       subject.document
-
-      # puts "\n"
-      # puts subject.document
-      # puts "\n"
     end
   end
 end
