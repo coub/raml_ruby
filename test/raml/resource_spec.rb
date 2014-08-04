@@ -78,7 +78,7 @@ describe Raml::Resource do
       context 'when the uriParameters property is well formed' do
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Parameter::UriParameter instances' do
-          expect( subject.uri_parameters ).to all( be_a Raml::Parameter::UriParameter )
+          expect( subject.uri_parameters.values ).to all( be_a Raml::Parameter::UriParameter )
         end
       end
       context 'when the uriParameters property is not a map' do
@@ -117,8 +117,8 @@ describe Raml::Resource do
       }
       it { expect { subject }.to_not raise_error }
       it 'stores all as Raml::Resource instances' do
-        expect( subject.resources ).to all( be_a Raml::Resource )
-        expect( subject.resources.map(&:name) ).to contain_exactly('/followers','/following', '/keys')
+        expect( subject.resources.values ).to all( be_a Raml::Resource )
+        expect( subject.resources.keys   ).to contain_exactly('/followers','/following', '/keys')
       end
     end
     
@@ -138,8 +138,8 @@ describe Raml::Resource do
         
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Parameter::UriParameter instances' do
-          expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::BaseUriParameter )
-          subject.base_uri_parameters.map(&:name).should contain_exactly('apiDomain')
+          expect( subject.base_uri_parameters.values ).to all( be_a Raml::Parameter::BaseUriParameter )
+          subject.base_uri_parameters.keys.should contain_exactly('apiDomain')
         end
       end
       context 'when the baseUriParameters property is not a map' do
@@ -258,7 +258,7 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.should all( be_a Raml::Trait )
-            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('tokenName', 'numPages')
+            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('tokenName', 'numPages')
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
@@ -272,7 +272,7 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.trait_references.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('numPages')
+            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
           end
         end
       end

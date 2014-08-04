@@ -42,9 +42,9 @@ describe Raml::Response do
       context 'when the body property is well formed' do
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Body instances' do
-          expect( subject.bodies ).to all( be_a Raml::Body )
+          expect( subject.bodies.values ).to all( be_a Raml::Body )
           expect( subject.bodies.size ).to eq(2)
-          subject.bodies.map(&:media_type).should contain_exactly('text/xml', 'application/json')
+          subject.bodies.keys.should contain_exactly('text/xml', 'application/json')
         end
       end
       context 'when the body property is not a map' do
@@ -86,8 +86,8 @@ describe Raml::Response do
       context 'when the headers property is well formed' do
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Header instances' do
-          expect( subject.headers ).to all( be_a Raml::Header )
-          expect( subject.headers.map(&:name) ).to contain_exactly('Zencoder-Api-Key','x-Zencoder-job-metadata-{*}')
+          expect( subject.headers.values ).to all( be_a Raml::Header )
+          expect( subject.headers.keys ).to contain_exactly('Zencoder-Api-Key','x-Zencoder-job-metadata-{*}')
         end
       end
       context 'when the headers property is not a map' do

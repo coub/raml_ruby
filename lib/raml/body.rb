@@ -5,7 +5,7 @@ module Raml
     extend Common
     is_documentable
     
-    attr_accessor :children, :media_type, :schema, :example
+    attr_accessor :children, :media_type, :example
 
     def initialize(media_type, body_data, root)
       @children = []
@@ -22,9 +22,9 @@ module Raml
         when 'schema'
           validate_schema value
           if root.schemas.include? value
-            @schema = SchemaReference.new value
+            @children << SchemaReference.new(value)
           else
-            @schema = Schema.new '_', value
+            @children << Schema.new('_', value)
           end
 
         else
@@ -48,10 +48,10 @@ module Raml
       lines.join "  \n"
     end
     
-    def form_parameters
-      @children.select { |child| child.is_a? Parameter::FormParameter }
-    end
+    children_by :form_parameters, :name, Parameter::FormParameter
     
+    child_of :schema, [ Schema, SchemaReference ]
+
     def web_form?
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? @media_type
     end

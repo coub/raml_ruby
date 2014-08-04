@@ -24,13 +24,8 @@ module Raml
       end
     end
 
-    def traits
-      children.select { |child| child.is_a? Trait }
-    end
-
-    def trait_references
-      children.select { |child| child.is_a? TraitReference }
-    end
+    children_of :traits          , Trait
+    children_of :trait_references, TraitReference
 
     private
 

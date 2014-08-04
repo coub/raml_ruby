@@ -60,25 +60,12 @@ module Raml
       doc
     end
 
-    def methods
-      children.select { |child| child.is_a? Method }
-    end
+    children_by :methods            , :name, Raml::Method
+    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter
+    children_by :uri_parameters     , :name, Parameter::UriParameter
 
-    def uri_parameters
-      children.select { |child| child.is_a? Parameter::UriParameter }
-    end
-    
-    def base_uri_parameters
-      children.select { |child| child.is_a? Parameter::BaseUriParameter }
-    end
-    
-    def traits
-      children.select { |child| child.is_a? Trait }
-    end
-
-    def trait_references
-      children.select { |child| child.is_a? TraitReference }
-    end
+    children_of :traits          , Trait
+    children_of :trait_references, TraitReference
 
     private
     

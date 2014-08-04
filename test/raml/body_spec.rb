@@ -74,8 +74,8 @@ describe Raml::Body do
             context 'when a formParameters property is valid' do
               it { expect { subject }.to_not raise_error }
               it 'stores all as Raml::Parameter::FormParameter instances' do
-                expect( subject.form_parameters ).to all( be_a Raml::Parameter::FormParameter )
-                subject.form_parameters.map(&:name).should contain_exactly('param')
+                expect( subject.form_parameters.values ).to all( be_a Raml::Parameter::FormParameter )
+                subject.form_parameters.keys.should contain_exactly('param')
               end
             end
             context 'when the formParameters property is not a map' do
@@ -144,7 +144,7 @@ describe Raml::Body do
       let(:body_data) { form_body_data }
       it 'returns form parameters' do
         subject.form_parameters { should_not be_empty }
-        subject.form_parameters.all? { |fp| fp.is_a? Raml::Parameter::FormParameter }.should be true
+        expect( subject.form_parameters.values ).to all( be_a Raml::Parameter::FormParameter )
       end
     end
   end

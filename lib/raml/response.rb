@@ -40,14 +40,14 @@ module Raml
 
       if bodies.any?
         lines << "**Body:**"
-        bodies.each do |body|
+        bodies.values.each do |body|
           lines << body.document
         end
       end
 
       if headers.any?
         lines << "**Headers:**"
-        headers.each do |header|
+        headers.values.each do |header|
           lines << header.document
         end
       end
@@ -55,13 +55,8 @@ module Raml
       lines.join "\n\n"
     end
 
-    def bodies
-      children.select { |child| child.is_a? Body }
-    end
-
-    def headers
-      children.select { |child| child.is_a? Header }
-    end
+    children_by :bodies , :media_type, Body
+    children_by :headers, :name      , Header
     
     private
     

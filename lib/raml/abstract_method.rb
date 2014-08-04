@@ -9,7 +9,7 @@ module Raml
     def initialize(name, method_data, root)
       @children = []
       @name = name
-            
+      
       method_data.each do |key, value|
         case key
         when 'headers'
@@ -54,28 +54,28 @@ module Raml
 
       if headers.any?
         lines << "**Headers:**"
-        headers.each do |header|
+        headers.values.each do |header|
           lines << header.document
         end
       end
 
       if query_parameters.any?
         lines << "**Query Parameters:**"
-        query_parameters.each do |query_parameter|
+        query_parameters.values.each do |query_parameter|
           lines << query_parameter.document
         end
       end
 
       if bodies.any?
         lines << "**Body:**"
-        bodies.each do |body|
+        bodies.values.each do |body|
           lines << body.document
         end
       end
 
       if responses.any?
         lines << "**Responses:**"
-        responses.each do |response|
+        responses.values.each do |response|
           lines << response.document
         end
       end
@@ -83,21 +83,10 @@ module Raml
       lines.join "  \n"
     end
 
-    def headers
-      children.select { |child| child.is_a? Header }
-    end
-
-    def query_parameters
-      children.select { |child| child.is_a? Parameter::QueryParameter }
-    end
-
-    def bodies
-      children.select { |child| child.is_a? Body }
-    end
-
-    def responses
-      children.select { |child| child.is_a? Response }
-    end
+    children_by :headers          , :name       , Header
+    children_by :query_parameters , :name       , Parameter::QueryParameter
+    children_by :bodies           , :media_type , Body
+    children_by :responses        , :name       , Response
 
     private
     

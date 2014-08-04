@@ -3,9 +3,10 @@ require 'uri_template'
 
 module Raml
   class Root
+    extend Common
+
     attr_accessor :children   , :title          , :version  , :base_uri     ,
-                  :protocols  , :media_type     , :schemas  , :documentation,
-                  :traits     , :resource_types
+                  :protocols  , :media_type     , :documentation
 
     def initialize(root_data)
       @children = []
@@ -26,22 +27,18 @@ module Raml
 
         when 'schemas'
           validate_schemas value
-          @schemas = value.reduce({}) { |memo, map| memo.merge! map }
-          @schemas.merge!(@schemas) { |name, data| Schema.new name, data }
-          @children += @schemas.values
+          @children += value.reduce({}) { |memo, map | memo.merge! map }.
+                             map        { |name, data| Schema.new name, data }
 
         when 'resourceTypes'
           validate_resource_types value
-          @resource_types = value.reduce({}) { |memo, map| memo.merge! map }
-          @resource_types.merge!(@resource_types) { |name, data| ResourceType.new name, data, self }
-          @children += @resource_types.values
+          @children += value.reduce({}) { |memo, map | memo.merge! map }.
+                             map        { |name, data| ResourceType.new name, data, self }
 
         when 'traits'
           validate_traits value
-          @traits = value.reduce({}) { |memo, map| memo.merge! map }
-          @traits.merge!(@traits) { |name, data| Trait.new name, data, self }
-          @children += @traits.values
-
+          @children += value.reduce({}) { |memo, map | memo.merge! map }.
+                             map        { |name, data| Trait.new name, data, self }
         else
           begin
             send "#{Raml.underscore(key)}=", value
@@ -77,18 +74,25 @@ module Raml
       doc
     end
 
-    def documents
-      @children.select{|child| child.is_a? Documentation}
+    children_of :documents, Documentation
+
+    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter    
+    children_by :resources          , :name, Resource
+    children_by :schemas            , :name, Schema
+    children_by :traits             , :name, Trait
+    children_by :resource_types     , :name, ResourceType
+
+    def expand
+      unless @expanded
+        # Inline schemas.
+        expand_schema @children
+        # Apply trait and resource types, including parameters.
+        # XXX
+    
+      end
+      @expanded = true 
     end
 
-    def base_uri_parameters
-      @children.select { |child| child.is_a? Parameter::BaseUriParameter }
-    end
-    
-    def resources
-      @children.select { |child| child.is_a? Resource }
-    end
-    
     private
 
     def validate
@@ -237,6 +241,17 @@ module Raml
       URITemplate::RFC6570.new base_uri
     rescue URITemplate::RFC6570::Invalid
       raise InvalidProperty, 'baseUri property is not a URL or a URL template.'
+    end
+
+    def expand_schema(nodes)
+      nodes.map! do |node|
+        if node.is_a? SchemaReference
+          schemas[node.name]
+        else
+          expand_schema node.children if node.respond_to? :children
+          node
+        end
+      end
     end
   end
 end

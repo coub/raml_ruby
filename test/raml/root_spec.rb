@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe Raml::Root do
-  let (:data) {
+  let(:data) {
     YAML.load(
       %q(
         #%RAML 0.8
@@ -196,7 +196,7 @@ describe Raml::Root do
       }
       it { expect { subject }.to_not raise_error }
       it 'stores all as Raml::Parameter::BaseUriParameter instances' do
-        expect( subject.base_uri_parameters ).to all( be_a Raml::Parameter::BaseUriParameter )
+        expect( subject.base_uri_parameters.values ).to all( be_a Raml::Parameter::BaseUriParameter )
       end
       context 'when the baseUri template does not include a version parameter' do
         context 'and a version property is not provided' do
@@ -292,8 +292,8 @@ describe Raml::Root do
       }
       it { expect { subject }.to_not raise_error }
       it 'stores all as Raml::Resource instances' do
-        expect( subject.resources ).to all( be_a Raml::Resource )
-        expect( subject.resources.map(&:name) ).to contain_exactly('/user','/users')
+        expect( subject.resources.values ).to all( be_a Raml::Resource )
+        expect( subject.resources.keys   ).to contain_exactly('/user','/users')
       end
     end
 
@@ -410,6 +410,74 @@ describe Raml::Root do
       context 'when the traits property has duplicate trait names' do
         let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'traits' => [{'foo'=>{}},{'foo'=>{}}] } }
         it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
+      end
+    end
+  end
+
+  describe '#expand' do
+    context 'when the syntax trees contains SchemaReferences' do
+      context 'in the resource body' do
+        let(:data) {
+          YAML.load(
+            %q(
+              #%RAML 0.8
+              title: ZEncoder API
+              baseUri: https://app.zencoder.com/api
+              schemas:
+                - XMLJob: |
+                    <xs:schema attributeFormDefault="unqualified"
+                               elementFormDefault="qualified"
+                               xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                      <xs:element name="api-request">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element type="xs:string" name="input"/>
+                          </xs:sequence>
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:schema>
+                  JSONJob: |
+                    {
+                      "$schema": "http://json-schema.org/draft-03/schema#",
+                      "properties": {
+                          "input": {
+                              "required": false,
+                              "type": "string"
+                          }
+                      },
+                      "required": false,
+                      "type": "object"
+                    }
+              /jobs:
+                displayName: Jobs
+                post:
+                  description: Create a Job
+                  body:
+                    text/xml:
+                      schema: XMLJob
+                    application/json:
+                      schema: JSONJob
+                  responses:
+                    200:
+                      body:
+                        text/xml:
+                          schema: XMLJob
+                        application/json:
+                          schema: JSONJob
+            )
+          )
+        }
+        it 'replaces them with Schemas' do
+          subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
+          subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::SchemaReference
+          subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
+          subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::SchemaReference
+          subject.expand
+          subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::Schema
+          subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::Schema
+          subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::Schema
+          subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::Schema
+        end
       end
     end
   end

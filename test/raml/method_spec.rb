@@ -85,8 +85,8 @@ describe Raml::Method do
         }
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Header instances' do
-          expect( subject.headers ).to all( be_a Raml::Header )
-          expect( subject.headers.map(&:name) ).to contain_exactly('Zencoder-Api-Key','x-Zencoder-job-metadata-{*}')
+          expect( subject.headers.values ).to all( be_a Raml::Header )
+          expect( subject.headers.keys   ).to contain_exactly('Zencoder-Api-Key','x-Zencoder-job-metadata-{*}')
         end
       end
       context 'when the headers property is not a map' do
@@ -166,8 +166,8 @@ describe Raml::Method do
         
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Parameter::UriParameter instances' do
-          expect( subject.query_parameters ).to all( be_a Raml::Parameter::QueryParameter )
-          subject.query_parameters.map(&:name).should contain_exactly('page', 'per_page')
+          expect( subject.query_parameters.values ).to all( be_a Raml::Parameter::QueryParameter )
+          subject.query_parameters.keys.should contain_exactly('page', 'per_page')
         end
       end
       context 'when the queryParameters property is not a map' do
@@ -201,8 +201,8 @@ describe Raml::Method do
         
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Body instances' do
-          expect( subject.bodies ).to all( be_a Raml::Body )
-          subject.bodies.map(&:media_type).should contain_exactly('text/xml', 'application/json')
+          expect( subject.bodies.values ).to all( be_a Raml::Body )
+          subject.bodies.keys.should contain_exactly('text/xml', 'application/json')
         end
       end
       context 'when the body property is not a map' do
@@ -237,8 +237,8 @@ describe Raml::Method do
         
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Response instances' do
-          expect( subject.responses ).to all( be_a Raml::Response )
-          subject.responses.map(&:name).should contain_exactly(200, 503)
+          expect( subject.responses.values ).to all( be_a Raml::Response )
+          subject.responses.keys.should contain_exactly(200, 503)
         end
       end
       context 'when the responses property is not a map' do
@@ -295,7 +295,7 @@ describe Raml::Method do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.should all( be_a Raml::Trait )
-            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('tokenName', 'numPages')
+            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('tokenName', 'numPages')
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
@@ -309,7 +309,7 @@ describe Raml::Method do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.trait_references.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.map(&:query_parameters).flatten.map(&:name).should contain_exactly('numPages')
+            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
           end
         end
       end

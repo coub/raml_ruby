@@ -3,32 +3,34 @@ require_relative 'raml/version'
 require_relative 'raml/common'
 
 require_relative 'raml/parameter/abstract_parameter'
-require_relative 'raml/abstract_method'
-require_relative 'raml/abstract_resource'
-
-
-require_relative 'raml/schema'
-require_relative 'raml/schema_reference'
-require_relative 'raml/method'
-require_relative 'raml/parser'
-require_relative 'raml/resource'
-require_relative 'raml/resource_type_reference'
-require_relative 'raml/resource_type'
-require_relative 'raml/root'
-require_relative 'raml/response'
-require_relative 'raml/body'
-require_relative 'raml/header'
-require_relative 'raml/documentation'
-require_relative 'raml/trait_reference'
-require_relative 'raml/trait'
-require_relative 'raml/exceptions'
-require_relative 'raml/include'
-
-
 require_relative 'raml/parameter/form_parameter'
 require_relative 'raml/parameter/query_parameter'
 require_relative 'raml/parameter/uri_parameter'
 require_relative 'raml/parameter/base_uri_parameter'
+
+require_relative 'raml/schema'
+require_relative 'raml/schema_reference'
+
+require_relative 'raml/header'
+require_relative 'raml/body'
+require_relative 'raml/response'
+
+require_relative 'raml/abstract_method'
+require_relative 'raml/trait_reference'
+require_relative 'raml/trait'
+require_relative 'raml/method'
+require_relative 'raml/abstract_resource'
+
+require_relative 'raml/parser'
+require_relative 'raml/resource_type_reference'
+require_relative 'raml/resource_type'
+require_relative 'raml/resource'
+require_relative 'raml/documentation'
+require_relative 'raml/exceptions'
+require_relative 'raml/include'
+require_relative 'raml/root'
+
+
 
 module Raml
   def self.load(raml)

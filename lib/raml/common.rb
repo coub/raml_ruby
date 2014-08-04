@@ -1,4 +1,5 @@
 module Raml
+
   module Common
     def is_documentable
       attr_accessor :description
@@ -7,15 +8,8 @@ module Raml
 
       self.instance_eval do
         define_method :document do
-          name = ["#{@display_name || @name}","#{@description}"].join "\n"
-
-          lines = [name]
-          if @children
-            @children.each do |child|
-              lines << child.document
-            end
-          end
-
+          lines = [ "#{@display_name || @name}\n#{@description}" ]
+          lines += @children.map { |child| child.document } if @children
           lines.join "\n\n"
         end
       end
@@ -24,10 +18,39 @@ module Raml
     def has_name
       attr_accessor :name
     end
+
+    def child_of(name, type)
+      type = [ type ] unless type.is_a? Array
+
+      self.instance_eval do
+        define_method name do
+          @children.select { |child| type.include? child.class }.first
+        end
+      end
+    end
+
+    def children_of(name, type)
+      self.instance_eval do
+        define_method name do
+          @children.select { |child| child.is_a? type }
+        end
+      end
+    end
+
+    def children_by(name, key, type)
+      self.instance_eval do
+        define_method name do
+          Hash[
+            @children.
+              select { |child| child.is_a? type }.
+              map    { |child| [ child.send(key.to_sym), child ] }
+          ]
+        end
+      end
+    end
   end
 
-  # Transforms camel cased identificators
-  # to underscored
+  # Transforms camel cased identificators to underscored.
   def self.underscore(camel_cased_word)
     camel_cased_word.to_s.gsub(/::/, '/').
       gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').

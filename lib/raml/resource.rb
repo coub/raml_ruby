@@ -32,17 +32,10 @@ module Raml
       super
     end
 
-    def resources
-      children.select { |child| child.is_a? Resource }
-    end
+    children_by :resources, :name, Resource
 
-    def type
-      children.select { |child| child.is_a? ResourceType }.first
-    end
-
-    def type_reference
-      children.select { |child| child.is_a? ResourceTypeReference }.first
-    end
+    child_of :type          , ResourceType
+    child_of :type_reference, ResourceTypeReference
     
     private
     
