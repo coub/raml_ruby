@@ -199,7 +199,7 @@ describe Raml::Resource do
           before { data['type'] = definition }
 
           it { expect { subject }.to_not raise_error }
-          it 'should store the traits' do
+          it 'should store the resource type' do
             subject.type.should be_a Raml::ResourceType
             subject.type.usage.should == definition['usage']
             subject.type_reference.should be_nil
@@ -231,8 +231,8 @@ describe Raml::Resource do
           let(:data) { { 'is' => [ 'secured', 'paged' ] } }
           it { expect { subject }.to_not raise_error }
           it 'should store the trait references' do
-            subject.trait_references.should all( be_a Raml::TraitReference )
-            subject.trait_references.map(&:name).should contain_exactly('secured', 'paged')
+            subject.traits.should all( be_a Raml::TraitReference )
+            subject.traits.map(&:name).should contain_exactly('secured', 'paged')
           end
         end
         context 'when the property is an array of trait references with parameters' do
@@ -244,8 +244,8 @@ describe Raml::Resource do
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the trait references' do
-            subject.trait_references.should all( be_a Raml::TraitReference )
-            subject.trait_references.map(&:name).should contain_exactly('secured', 'paged')
+            subject.traits.should all( be_a Raml::TraitReference )
+            subject.traits.map(&:name).should contain_exactly('secured', 'paged')
           end
         end
         context 'when the property is an array of trait definitions' do
@@ -271,8 +271,8 @@ describe Raml::Resource do
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
-            subject.trait_references.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
+            subject.traits.select {|t| t.is_a? Raml::TraitReference }.map(&:name).should contain_exactly('secured', 'rateLimited')
+            subject.traits.select {|t| t.is_a? Raml::Trait }.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
           end
         end
       end

@@ -24,8 +24,7 @@ module Raml
       end
     end
 
-    children_of :traits          , Trait
-    children_of :trait_references, TraitReference
+    children_of :traits, [ Trait, TraitReference ]
 
     private
 

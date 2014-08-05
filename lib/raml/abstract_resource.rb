@@ -64,8 +64,7 @@ module Raml
     children_by :base_uri_parameters, :name, Parameter::BaseUriParameter
     children_by :uri_parameters     , :name, Parameter::UriParameter
 
-    children_of :traits          , Trait
-    children_of :trait_references, TraitReference
+    children_of :traits, [ Trait, TraitReference ]
 
     private
     

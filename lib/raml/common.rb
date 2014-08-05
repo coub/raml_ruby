@@ -30,9 +30,11 @@ module Raml
     end
 
     def children_of(name, type)
+      type = [ type ] unless type.is_a? Array
+      
       self.instance_eval do
         define_method name do
-          @children.select { |child| child.is_a? type }
+          @children.select { |child| type.include? child.class }
         end
       end
     end
