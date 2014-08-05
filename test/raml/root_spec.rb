@@ -416,68 +416,115 @@ describe Raml::Root do
 
   describe '#expand' do
     context 'when the syntax trees contains SchemaReferences' do
-      context 'in the resource body' do
-        let(:data) {
-          YAML.load(
-            %q(
-              #%RAML 0.8
-              title: ZEncoder API
-              baseUri: https://app.zencoder.com/api
-              schemas:
-                - XMLJob: |
-                    <xs:schema attributeFormDefault="unqualified"
-                               elementFormDefault="qualified"
-                               xmlns:xs="http://www.w3.org/2001/XMLSchema">
-                      <xs:element name="api-request">
-                        <xs:complexType>
-                          <xs:sequence>
-                            <xs:element type="xs:string" name="input"/>
-                          </xs:sequence>
-                        </xs:complexType>
-                      </xs:element>
-                    </xs:schema>
-                  JSONJob: |
-                    {
-                      "$schema": "http://json-schema.org/draft-03/schema#",
-                      "properties": {
-                          "input": {
-                              "required": false,
-                              "type": "string"
-                          }
-                      },
-                      "required": false,
-                      "type": "object"
-                    }
-              /jobs:
-                displayName: Jobs
-                post:
-                  description: Create a Job
-                  body:
-                    text/xml:
-                      schema: XMLJob
-                    application/json:
-                      schema: JSONJob
-                  responses:
-                    200:
-                      body:
-                        text/xml:
-                          schema: XMLJob
-                        application/json:
-                          schema: JSONJob
-            )
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: ZEncoder API
+            baseUri: https://app.zencoder.com/api
+            schemas:
+              - XMLJob: |
+                  <xs:schema attributeFormDefault="unqualified"
+                             elementFormDefault="qualified"
+                             xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                    <xs:element name="api-request">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="input"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:schema>
+                JSONJob: |
+                  {
+                    "$schema": "http://json-schema.org/draft-03/schema#",
+                    "properties": {
+                        "input": {
+                            "required": false,
+                            "type": "string"
+                        }
+                    },
+                    "required": false,
+                    "type": "object"
+                  }
+            /jobs:
+              displayName: Jobs
+              post:
+                description: Create a Job
+                body:
+                  text/xml:
+                    schema: XMLJob
+                  application/json:
+                    schema: JSONJob
+                responses:
+                  200:
+                    body:
+                      text/xml:
+                        schema: XMLJob
+                      application/json:
+                        schema: JSONJob
           )
-        }
-        it 'replaces them with Schemas' do
-          subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
-          subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::SchemaReference
-          subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
-          subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::SchemaReference
-          subject.expand
-          subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::Schema
-          subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::Schema
-          subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::Schema
-          subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::Schema
-        end
+        )
+      }
+      it 'replaces them with Schemas' do
+        subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
+        subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::SchemaReference
+        subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::SchemaReference
+        subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::SchemaReference
+        subject.expand
+        subject.resources['/jobs'].methods['post'].bodies['text/xml'        ].schema.should be_a Raml::Schema
+        subject.resources['/jobs'].methods['post'].bodies['application/json'].schema.should be_a Raml::Schema
+        subject.resources['/jobs'].methods['post'].responses[200].bodies['text/xml'        ].schema.should be_a Raml::Schema
+        subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::Schema
+      end
+    end
+    context 'when the syntax trees contains TraitReferences' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: Example API
+            version: v1
+            baseUri: https://app.zencoder.com/api
+            traits:
+              - paged:
+                  queryParameters:
+                    start:
+                      type: number
+                secured:
+                  queryParameters:
+                    auth_token:
+                      type: string
+              - searchable:
+                  queryParameters:
+                    query:
+                      type: string
+            /jobs:
+              is: [ secured ]
+              get:
+                is: [ paged, searchable ]
+              post:
+                description: Create a Job.
+              /status:
+                get:
+                  is: [ paged ]
+          )
+        )
+      }
+      it 'replaces them with Schemas' do
+        subject.resources['/jobs'].traits.should all( be_a Raml::TraitReference )
+        subject.resources['/jobs'].traits.map(&:name).should contain_exactly('secured')
+        subject.resources['/jobs'].methods['get'].traits.should all( be_a Raml::TraitReference )
+        subject.resources['/jobs'].methods['get'].traits.map(&:name).should contain_exactly('paged', 'searchable')
+        subject.resources['/jobs'].resources['/status'].methods['get'].traits.should all( be_a Raml::TraitReference )
+        subject.resources['/jobs'].resources['/status'].methods['get'].traits.map(&:name).should contain_exactly('paged')
+        subject.expand
+        subject.resources['/jobs'].traits.should all( be_a Raml::Trait )
+        subject.resources['/jobs'].traits.map(&:name).should contain_exactly('secured')
+        subject.resources['/jobs'].methods['get'].traits.should all( be_a Raml::Trait )
+        subject.resources['/jobs'].methods['get'].traits.map(&:name).should contain_exactly('paged', 'searchable')
+        subject.resources['/jobs'].resources['/status'].methods['get'].traits.should all( be_a Raml::Trait )
+        subject.resources['/jobs'].resources['/status'].methods['get'].traits.map(&:name).should contain_exactly('paged')
       end
     end
   end

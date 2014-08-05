@@ -85,7 +85,8 @@ module Raml
     def expand
       unless @expanded
         # Inline schemas.
-        expand_schema @children
+        inline_reference SchemaReference, schemas, @children
+        inline_reference TraitReference , traits , @children
         # Apply trait and resource types, including parameters.
         # XXX
     
@@ -243,12 +244,12 @@ module Raml
       raise InvalidProperty, 'baseUri property is not a URL or a URL template.'
     end
 
-    def expand_schema(nodes)
+    def inline_reference(reference_type, map, nodes)
       nodes.map! do |node|
-        if node.is_a? SchemaReference
-          schemas[node.name]
+        if node.is_a? reference_type
+          map[node.name]
         else
-          expand_schema node.children if node.respond_to? :children
+          inline_reference reference_type, map, node.children if node.respond_to? :children
           node
         end
       end
