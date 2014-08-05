@@ -173,18 +173,16 @@ describe Raml::Resource do
           before { data['type'] = 'collection' }
           it { expect { subject }.to_not raise_error }
           it 'should store the resource type reference' do
-            subject.type_reference.should be_a Raml::ResourceTypeReference
-            subject.type_reference.name.should == 'collection'
-            subject.type.should be_nil
+            subject.type.should be_a Raml::ResourceTypeReference
+            subject.type.name.should == 'collection'
           end
         end
         context 'when the property is a resource type reference with parameters' do
           before { data['type'] = {'collection' => {'maxSize' => 10}} }
           it { expect { subject }.to_not raise_error }
           it 'should store the resource type reference' do
-            subject.type_reference.should be_a Raml::ResourceTypeReference
-            subject.type_reference.name.should == 'collection'
-            subject.type.should be_nil
+            subject.type.should be_a Raml::ResourceTypeReference
+            subject.type.name.should == 'collection'
           end
         end
         context 'when the property is a resource type definitions' do
@@ -202,7 +200,6 @@ describe Raml::Resource do
           it 'should store the resource type' do
             subject.type.should be_a Raml::ResourceType
             subject.type.usage.should == definition['usage']
-            subject.type_reference.should be_nil
           end
         end
       end

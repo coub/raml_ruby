@@ -34,8 +34,7 @@ module Raml
 
     children_by :resources, :name, Resource
 
-    child_of :type          , ResourceType
-    child_of :type_reference, ResourceTypeReference
+    child_of :type, [ ResourceType, ResourceTypeReference ]
     
     private
     
