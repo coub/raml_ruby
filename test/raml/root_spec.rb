@@ -527,5 +527,37 @@ describe Raml::Root do
         subject.resources['/jobs'].resources['/status'].methods['get'].traits.map(&:name).should contain_exactly('paged')
       end
     end
+    context 'when the syntax trees contains ResourceTypeReference' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: Example API
+            version: v1
+            baseUri: https://app.zencoder.com/api
+            resourceTypes:
+              - collection:
+                  description: The collection.
+              - member:
+                  description: The collection.
+            /jobs:
+              type: collection
+              /status:
+                type: member
+          )
+        )
+      }
+      it 'replaces them with Schemas' do
+        subject.resources['/jobs'].type.should be_a Raml::ResourceTypeReference
+        subject.resources['/jobs'].type.name.should == 'collection'
+        subject.resources['/jobs'].resources['/status'].type.should be_a Raml::ResourceTypeReference
+        subject.resources['/jobs'].resources['/status'].type.name.should == 'member'
+        subject.expand
+        subject.resources['/jobs'].type.should be_a Raml::ResourceType
+        subject.resources['/jobs'].type.name.should == 'collection'
+        subject.resources['/jobs'].resources['/status'].type.should be_a Raml::ResourceType
+        subject.resources['/jobs'].resources['/status'].type.name.should == 'member'
+      end
+    end
   end
 end
