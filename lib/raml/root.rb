@@ -3,10 +3,10 @@ require 'uri_template'
 
 module Raml
   class Root
-    extend Common
+    include Parent
 
-    attr_accessor :children   , :title          , :version  , :base_uri     ,
-                  :protocols  , :media_type     , :documentation
+    attr_accessor :title      , :version    , :base_uri     ,
+                  :protocols  , :media_type , :documentation
 
     def initialize(root_data)
       @children = []

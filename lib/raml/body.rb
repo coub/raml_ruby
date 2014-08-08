@@ -1,11 +1,11 @@
 module Raml
   class Body
+    include Documentable
+    include Parent
+
     MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
-    
-    extend Common
-    is_documentable
-    
-    attr_accessor :children, :media_type, :example
+        
+    attr_accessor :media_type, :example
 
     def initialize(media_type, body_data, root)
       @children = []

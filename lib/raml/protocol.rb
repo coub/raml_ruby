@@ -1,7 +1,6 @@
 module Raml
   class Protocol
-    extend Common
-    is_documentable
+    include Documentable
 
     attr_accessor :http, :https
 

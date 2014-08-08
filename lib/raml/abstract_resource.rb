@@ -1,10 +1,7 @@
 module Raml
   class AbstractResource
-    attr_accessor :children
-
-    extend Common
-
-    is_documentable
+    include Documentable
+    include Parent
 
     def initialize(name, resource_data, root)
       @children ||= []

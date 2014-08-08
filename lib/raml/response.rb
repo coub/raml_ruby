@@ -1,10 +1,7 @@
 module Raml
   class Response
-    extend Common
-
-    is_documentable
-
-    attr_accessor :children
+    include Documentable
+    include Parent
 
     def initialize(name, response_data, root)
       @children = []

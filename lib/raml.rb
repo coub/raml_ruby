@@ -1,6 +1,7 @@
 require_relative 'raml/version'
 
-require_relative 'raml/common'
+require_relative 'raml/mixin/documentable'
+require_relative 'raml/mixin/parent'
 
 require_relative 'raml/parameter/abstract_parameter'
 require_relative 'raml/parameter/form_parameter'
@@ -58,5 +59,22 @@ module Raml
     else
       documentation
     end
+  end
+
+  # Transforms camel cased identificators to underscored.
+  def self.underscore(camel_cased_word)
+    camel_cased_word.to_s.gsub(/::/, '/').
+      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+      gsub(/([a-z\d])([A-Z])/,'\1_\2').
+      tr("-", "_").
+      downcase
+  end
+
+  def self.code_indenter(code)
+    code.split("\n").map{|line| ' ' * 4 + line}.join("\n")
+  end
+
+  def self.nbsp_indenter(text, indent_depth = 4)
+    text.split("\n").map{|line| '&nbsp;' * indent_depth + line}.join("\n")
   end
 end

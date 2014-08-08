@@ -1,15 +1,14 @@
 module Raml
   module Parameter
     class AbstractParameter
-      extend Common
+      include Documentable
+      include Parent
 
       VALID_TYPES = %w(string number integer date boolean file)
 
-      is_documentable
-      
       attr_accessor :type       , :enum     , :pattern  , :min_length , 
                     :max_length , :minimum  , :maximum  , :example    , 
-                    :repeat     , :required , :default  , :children
+                    :repeat     , :required , :default
 
       def initialize(name, parameter_data)
         @name     = name

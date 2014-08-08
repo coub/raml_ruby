@@ -1,10 +1,9 @@
 module Raml
   class AbstractMethod
-    extend Common
+    include Documentable
+    include Parent
 
-    is_documentable
-
-    attr_accessor :children, :protocols
+    attr_accessor :protocols
 
     def initialize(name, method_data, root)
       @children = []
