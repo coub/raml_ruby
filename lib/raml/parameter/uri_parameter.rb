@@ -8,4 +8,3 @@ module Raml
     end
   end
 end
-

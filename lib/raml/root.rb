@@ -4,6 +4,7 @@ require 'uri_template'
 module Raml
   class Root
     include Parent
+    include Validation
 
     attr_accessor :title      , :version    , :base_uri     ,
                   :protocols  , :media_type , :documentation
@@ -108,7 +109,7 @@ module Raml
       if title.nil?
         raise RequiredPropertyMissing, 'Missing root title property.'
       else
-        raise InvalidProperty, 'Root title property must be a string' unless title.is_a? String
+        validate_string :title, title
       end
     end
     
@@ -116,7 +117,7 @@ module Raml
       if base_uri.nil?
         raise RequiredPropertyMissing, 'Missing root baseUri property'
       else
-        raise InvalidProperty, 'baseUri property must be a string' unless base_uri.is_a? String
+        validate_string :base_uri, base_uri
       end
       
       # Check whether its a URL.
@@ -140,11 +141,7 @@ module Raml
     
     def validate_protocols
       if protocols
-        raise InvalidProperty, 'protocols property must be an array' unless
-          protocols.is_a? Array
-        
-        raise InvalidProperty, 'protocols property must be an array strings' unless
-          protocols.all? { |p| p.is_a? String }
+        validate_array :protocols, protocols, String
         
         @protocols.map!(&:upcase)
         
@@ -155,17 +152,13 @@ module Raml
     
     def validate_media_type
       if media_type
-        raise InvalidProperty, 'mediaType property must be a string' unless media_type.is_a? String
-        raise InvalidProperty, 'mediaType property is malformed'     unless media_type =~ Body::MEDIA_TYPE_RE
+        validate_string :media_type, media_type
+        raise InvalidProperty, 'mediaType property is malformed' unless media_type =~ Body::MEDIA_TYPE_RE
       end
     end
     
     def validate_schemas(schemas)
-      raise InvalidProperty, 'schemas property must be an array'          unless 
-        schemas.is_a? Array
-      
-      raise InvalidProperty, 'schemas property must be an array of maps'  unless
-        schemas.all? {|s| s.is_a? Hash}
+      validate_array :schemas, schemas, Hash
       
       raise InvalidProperty, 'schemas property must be an array of maps with string keys'   unless 
         schemas.all? {|s| s.keys.all?   {|k| k.is_a? String }}
@@ -178,33 +171,21 @@ module Raml
     end
     
     def validate_base_uri_parameters(base_uri_parameters)
-      raise InvalidProperty, 'baseUriParameters property must be a map' unless 
-        base_uri_parameters.is_a? Hash
-      
-      raise InvalidProperty, 'baseUriParameters property must be a map with string keys' unless
-        base_uri_parameters.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'baseUriParameters property must be a map with map values' unless
-        base_uri_parameters.values.all?  {|v| v.is_a? Hash }
+      validate_hash :base_uri_parameters, base_uri_parameters, String, Hash
       
       raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
         base_uri_parameters.include? 'version'
     end
     
     def validate_documentation(documentation)
-      raise InvalidProperty, 'documentation property must be an array' unless 
-        documentation.is_a? Array
+      validate_array :documentation, documentation
       
       raise InvalidProperty, 'documentation property must include at least one document or not be included' if 
         documentation.empty?
     end
     
     def validate_resource_types(types)
-      raise InvalidProperty, 'resourceTypes property must be an array'          unless 
-        types.is_a? Array
-      
-      raise InvalidProperty, 'resourceTypes property must be an array of maps'  unless
-        types.all? {|s| s.is_a? Hash}
+      validate_array :resource_types, types, Hash
       
       raise InvalidProperty, 'resourceTypes property must be an array of maps with string keys'  unless 
         types.all? {|t| t.keys.all?   {|k| k.is_a? String }}
@@ -217,11 +198,7 @@ module Raml
     end
 
     def validate_traits(traits)
-      raise InvalidProperty, 'traits property must be an array'          unless 
-        traits.is_a? Array
-      
-      raise InvalidProperty, 'traits property must be an array of maps'  unless
-        traits.all? {|s| s.is_a? Hash}
+      validate_array :traits, traits, Hash
       
       raise InvalidProperty, 'traits property must be an array of maps with string keys'  unless 
         traits.all? {|t| t.keys.all?   {|k| k.is_a? String }}

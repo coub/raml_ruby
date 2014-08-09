@@ -2,6 +2,7 @@ module Raml
   class AbstractResource
     include Documentable
     include Parent
+    include Validation
 
     def initialize(name, resource_data, root)
       @children ||= []
@@ -13,7 +14,7 @@ module Raml
           @children << Method.new(key, value, root)
 
         when 'uriParameters'
-          validate_uri_parameters value
+          validate_hash key, value, String, Hash
           @children += value.map { |uname, udata| Parameter::UriParameter.new uname, udata }
 
         when 'baseUriParameters'
@@ -21,7 +22,7 @@ module Raml
           @children += value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata }
 
         when 'is'
-          validate_is value
+          validate_array key, value, [String, Hash]
           @children += value.map do |trait|
             if trait.is_a? Hash
               if trait.keys.size == 1 and root.traits.include? trait.keys.first
@@ -63,43 +64,17 @@ module Raml
 
     children_of :traits, [ Trait, TraitReference ]
 
+    def apply_traits
+      methods.values.each { |method| method.apply_traits traits }
+    end
+
     private
-    
-    def validate
-      raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
-    end
-    
-    def validate_uri_parameters(uri_parameters)
-      raise InvalidProperty, 'uriParameters property must be a map' unless 
-        uri_parameters.is_a? Hash
-      
-      raise InvalidProperty, 'uriParameters property must be a map with string keys' unless
-        uri_parameters.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'uriParameters property must be a map with map values' unless
-        uri_parameters.values.all?  {|v| v.is_a? Hash }      
-    end
-    
+        
     def validate_base_uri_parameters(base_uri_parameters)
-      raise InvalidProperty, 'baseUriParameters property must be a map' unless 
-        base_uri_parameters.is_a? Hash
-      
-      raise InvalidProperty, 'baseUriParameters property must be a map with string keys' unless
-        base_uri_parameters.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'baseUriParameters property must be a map with map values' unless
-        base_uri_parameters.values.all?  {|v| v.is_a? Hash }
+      validate_hash :base_uri_parameters, base_uri_parameters, String, Hash
       
       raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
         base_uri_parameters.include? 'version'
-    end
-
-    def validate_is(is)
-      raise InvalidProperty, 'is property must be an arrary' unless is.is_a? Array
-      unless is.all? { |t| [String, Hash].include? t.class }
-        raise InvalidProperty, 
-          'is property must be an array of items that are trait names, maps of name and params, or definition maps'
-      end
     end
   end
 end

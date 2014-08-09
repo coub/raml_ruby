@@ -10,7 +10,7 @@ module Raml
           true
 
         when 'type'
-          validate_type value
+          validate_property :type, value, [ Hash, String ]
           if value.is_a? Hash
             if value.keys.size == 1 and root.resource_types.include? value.keys.first
               raise InvalidProperty, 'type property with map of resource type name but params are not a map' unless 
@@ -36,11 +36,8 @@ module Raml
 
     child_of :type, [ ResourceType, ResourceTypeReference ]
     
-    private
-    
-    def validate_type(type)
-      raise InvalidProperty, 'type property must be a string resource type reference or a reference type definition map.' unless
-        [ Hash, String ].include? type.class
+    def apply_traits(resource_traits)
+      resources.values.each { |method| method.apply_traits traits }
     end
   end
 end

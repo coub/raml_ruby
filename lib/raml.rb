@@ -2,6 +2,7 @@ require_relative 'raml/version'
 
 require_relative 'raml/mixin/documentable'
 require_relative 'raml/mixin/parent'
+require_relative 'raml/mixin/validation'
 
 require_relative 'raml/parameter/abstract_parameter'
 require_relative 'raml/parameter/form_parameter'
@@ -68,6 +69,11 @@ module Raml
       gsub(/([a-z\d])([A-Z])/,'\1_\2').
       tr("-", "_").
       downcase
+  end
+
+  def self.camel_case(underscored_word)
+    w = underscored_word.to_s.split('_')
+    (w[0...1] + w[1..-1].map(&:capitalize)).join
   end
 
   def self.code_indenter(code)

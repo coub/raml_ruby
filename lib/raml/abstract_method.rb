@@ -2,6 +2,7 @@ module Raml
   class AbstractMethod
     include Documentable
     include Parent
+    include Validation
 
     attr_accessor :protocols
 
@@ -12,19 +13,19 @@ module Raml
       method_data.each do |key, value|
         case key
         when 'headers'
-          validate_headers value
+          validate_hash key, value, String, Hash
           @children += value.map { |h_name, h_data| Header.new h_name, h_data }
 
         when 'queryParameters'
-          validate_query_parameters value
+          validate_hash key, value, String, Hash
           @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
 
         when 'body'
-          validate_body value
+          validate_hash key, value, String, Hash
           @children += value.map { |b_name, b_data| Body.new b_name, b_data, root }
 
         when 'responses'
-          validate_responses value
+          validate_hash key, value, Integer, Hash
           @children += value.map { |r_name, r_data| Response.new r_name, r_data, root }
 
         else
@@ -90,68 +91,19 @@ module Raml
     private
     
     def validate
-      raise InvalidProperty, 'description property mus be a string' unless description.nil? or description.is_a? String
-      
+      super      
       validate_protocols
-    end
-    
-    def validate_headers(headers)
-      raise InvalidProperty, 'headers property must be a map' unless 
-        headers.is_a? Hash
-      
-      raise InvalidProperty, 'headers property must be a map with string keys' unless
-        headers.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'headers property must be a map with map values' unless
-        headers.values.all?  {|v| v.is_a? Hash }      
     end
     
     def validate_protocols
       if protocols
-        raise InvalidProperty, 'protocols property must be an array' unless
-          protocols.is_a? Array
-        
-        raise InvalidProperty, 'protocols property must be an array strings' unless
-          protocols.all? { |p| p.is_a? String }
+        validate_array :protocols, protocols, String
         
         @protocols.map!(&:upcase)
         
         raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
           protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
       end
-    end
-    
-    def validate_query_parameters(query_parameters)
-      raise InvalidProperty, 'queryParameters property must be a map' unless 
-        query_parameters.is_a? Hash
-      
-      raise InvalidProperty, 'queryParameters property must be a map with string keys' unless
-        query_parameters.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'queryParameters property must be a map with map values' unless
-        query_parameters.values.all?  {|v| v.is_a? Hash }      
-    end
-
-    def validate_body(body)
-      raise InvalidProperty, 'body property must be a map' unless
-        body.is_a? Hash
-        
-      raise InvalidProperty, 'body property must be a map with string keys' unless
-        body.keys.all?  {|k| k.is_a? String }
-
-      raise InvalidProperty, 'body property must be a map with map values' unless
-        body.values.all?  {|v| v.is_a? Hash }
-    end
-
-    def validate_responses(responses)
-      raise InvalidProperty, 'responses property must be a map' unless 
-        responses.is_a? Hash
-      
-      raise InvalidProperty, 'responses property must be a map with integer keys' unless
-        responses.keys.all?  {|k| k.is_a? Integer }
-
-      raise InvalidProperty, 'responses property must be a map with map values' unless
-        responses.values.all?  {|v| v.is_a? Hash }      
     end
   end
 end

@@ -63,6 +63,8 @@ module Raml
       end
 
       def validate
+        super
+        
         raise InvalidParameterType unless VALID_TYPES.include? type
         
         validate_enum

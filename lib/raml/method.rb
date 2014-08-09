@@ -7,8 +7,8 @@ module Raml
 
       super
 
-      validate_is is
-      
+      validate_array :is, is, [String, Hash]
+
       @children += is.map do |trait|
         if trait.is_a? Hash
           if trait.keys.size == 1 and root.traits.include? trait.keys.first
@@ -31,14 +31,6 @@ module Raml
     def validate
       raise InvalidMethod, "#{@name} is an unsupported HTTP method" unless NAMES.include? @name
       super
-    end
-
-    def validate_is(is)
-      raise InvalidProperty, 'is property must be an arrary' unless is.is_a? Array
-      unless is.all? { |t| [String, Hash].include? t.class }
-        raise InvalidProperty, 
-          'is property must be an array of items that are trait names, maps of name and params, or definition maps'
-      end
     end
   end
 end
