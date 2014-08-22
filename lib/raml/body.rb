@@ -1,6 +1,5 @@
 module Raml
   class Body
-    include Documentable
     include Parent
     include Validation
 
@@ -60,8 +59,6 @@ module Raml
     private
     
     def validate
-      super
-
       raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
       
       if web_form?
