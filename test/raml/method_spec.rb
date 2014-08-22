@@ -398,6 +398,13 @@ describe Raml::Method do
              method.merge(trait).responses.keys.should contain_exactly(200, 404)
           end
         end
+        context 'usage property' do
+          let(:trait_data) { { 'usage' => 'trait usage' } }
+          it 'does not add the usage property to the method' do
+             method.merge(trait)
+             expect { method.usage }.to raise_error NoMethodError
+          end
+        end
       end
       context 'when the method has that property set' do
         context 'description property' do
