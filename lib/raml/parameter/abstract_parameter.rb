@@ -2,13 +2,24 @@ module Raml
   module Parameter
     class AbstractParameter
       include Documentable
+      include Merge
       include Parent
 
       VALID_TYPES = %w(string number integer date boolean file)
 
-      attr_accessor :type       , :enum     , :pattern  , :min_length , 
-                    :max_length , :minimum  , :maximum  , :example    , 
-                    :repeat     , :required , :default
+      ABSTRACT_PARAM_ATTRIBUTES = [ 
+        :type       , :enum     , :pattern  , :min_length , 
+        :max_length , :minimum  , :maximum  , :example    , 
+        :repeat     , :required , :default
+      ]
+
+      attr_accessor(*ABSTRACT_PARAM_ATTRIBUTES)
+
+      attr_reader_default :type    , 'string'
+      attr_reader_default :repeat  , false
+      attr_reader_default :required, false
+
+      children_by :types, :type, AbstractParameter
 
       def initialize(name, parameter_data)
         @name     = name
@@ -21,7 +32,6 @@ module Raml
         elsif parameter_data.is_a? Hash
           parameter_data.each { |pname, pvalue| instance_variable_set("@#{Raml.underscore(pname)}", pvalue) }
 
-          set_defaults
           validate
         end
       end
@@ -53,18 +63,60 @@ module Raml
       def has_multiple_types?
         not children.empty?
       end
-            
-      private
+      
+      def merge(base)
+        raise MergeError, "#{self.class} names don't match." if name != base.name
 
-      def set_defaults
-        self.type     ||= 'string'
-        self.repeat     = false if repeat.nil?
-        self.required   = false if required.nil?
+        super
+
+        case [ has_multiple_types?, base.has_multiple_types? ]
+        when [ true , true  ]
+          match, no_match = base.types.values.partition { |param| types.include? param.type }
+
+          # Merge parameters with the same type.
+          match = Hash[ match.map { |param| [ param.type, param ] } ]
+          types.each { |type, param| param.merge match[type] if match[type] }
+
+          # Add parameters with no matching type.
+          @children.concat no_match
+
+        when [ true , false ]
+          if types[base.type]
+            types[base.type].merge base
+          else
+            @children << base
+          end
+
+        when [ false, true  ]
+          if base.types[self.type]
+            self.merge base.types[self.type]
+            @children << self.clone
+            @children.concat base.types.values.reject { |type| self.type == type.type }
+            reset
+
+          else
+            @children << self.clone
+            @children.concat base.types.values
+            reset
+          end
+
+        when [ false, false ]
+          merge_attributes ABSTRACT_PARAM_ATTRIBUTES, base
+        end
+
+        self
       end
+
+      def reset
+        super
+        ABSTRACT_PARAM_ATTRIBUTES.each { |attr| instance_variable_set "@#{attr}", nil }
+      end
+
+      private
 
       def validate
         super
-        
+
         raise InvalidParameterType unless VALID_TYPES.include? type
         
         validate_enum

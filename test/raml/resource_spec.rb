@@ -295,4 +295,30 @@ describe Raml::Resource do
       subject.document
     end
   end
+
+  describe '#apply_traits' do
+    let(:resource_data) { {
+      'is' => [
+        { 'description' => 'trait2 description' },
+        { 'description' => 'trait1 description' } 
+      ],
+      'get'  => {},
+      'post' => {},
+      '/foo' => {},
+      '/bar' => {}
+    } }
+    let(:resource) { Raml::Resource.new('/foo', resource_data, root)  }
+    it 'calls apply_traits on all its methods passing it the resource traits' do
+      resource.traits.size.should eq 2
+      resource.methods.size.should eq 2
+      resource.methods.values.each { |method| mock(method).apply_traits(resource.traits) {} }
+      resource.apply_traits
+    end
+    it 'should call apply_trait on child resources without arguments' do
+      resource.traits.size.should eq 2
+      resource.resources.size.should eq 2
+      resource.resources.values.each { |resource| mock(resource).apply_traits {} }
+      resource.apply_traits
+    end
+  end
 end

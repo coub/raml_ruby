@@ -1,6 +1,7 @@
 module Raml
   class Response
     include Documentable
+    include Merge
     include Parent
     include Validation
 
@@ -54,6 +55,16 @@ module Raml
     end
 
     children_by :bodies , :media_type, Body
-    children_by :headers, :name      , Header    
+    children_by :headers, :name      , Header
+
+    def merge(base)
+      raise MergeError, "Response status codes don't match." if name != base.name
+
+      super
+      merge_parameters base, :headers
+      merge_parameters base, :bodies          , :media_type
+
+      self
+    end
   end
 end

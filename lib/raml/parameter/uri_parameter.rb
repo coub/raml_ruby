@@ -1,10 +1,7 @@
 module Raml
   module Parameter
     class UriParameter < AbstractParameter
-      def set_defaults
-        self.required = true if required.nil?
-        super
-      end
+      attr_reader_default :required, true
     end
   end
 end

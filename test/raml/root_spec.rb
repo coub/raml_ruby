@@ -559,5 +559,61 @@ describe Raml::Root do
         subject.resources['/jobs'].resources['/status'].type.name.should == 'member'
       end
     end
+
+    context 'when the syntax tree contains ResourceTypes' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: Example API
+            version: v1
+            baseUri: https://app.zencoder.com/api
+            resourceTypes:
+              - collection:
+                  description: The collection.
+              - member:
+                  description: The collection.
+            /jobs:
+              type: collection
+              /status:
+                type: member
+          )
+        )
+      }
+      it 'applies traits to resource types' do
+        subject.resource_types.size.should eq 2
+        subject.resource_types.values.each { |resource_type| mock(resource_type).apply_traits {} }
+        subject.expand
+      end
+    end
+
+    context 'when the syntax tree contains Resources' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: Example API
+            version: v1
+            baseUri: https://app.zencoder.com/api
+            resourceTypes:
+              - collection:
+                  description: The collection.
+              - member:
+                  description: The collection.
+            /jobs:
+              type: collection
+              /status:
+                type: member
+            /users:
+              type: collection
+          )
+        )
+      }
+      it 'applies traits to resource types' do
+        subject.resources.size.should eq 2
+        subject.resources.values.each { |resource| mock(resource).apply_traits {} }
+        subject.expand
+      end
+    end
   end
 end

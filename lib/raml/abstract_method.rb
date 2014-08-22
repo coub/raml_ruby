@@ -1,10 +1,15 @@
 module Raml
   class AbstractMethod
     include Documentable
+    include Merge
     include Parent
     include Validation
 
-    attr_accessor :protocols
+    ABSTRACT_METHOD_ATTRIBUTES = [ :protocols ]
+
+    attr_accessor(*ABSTRACT_METHOD_ATTRIBUTES)
+
+    attr_reader_default :protocols, []
 
     def initialize(name, method_data, root)
       @children = []
@@ -38,13 +43,8 @@ module Raml
       end
 
       validate
-      set_defaults
     end
     
-    def set_defaults
-      self.protocols ||= []
-    end
-
     def document
       lines = []
       lines << "####{}**#{@display_name || @name}**"
@@ -88,6 +88,17 @@ module Raml
     children_by :bodies           , :media_type , Body
     children_by :responses        , :name       , Response
 
+    def merge(base)
+      super
+      merge_attributes ABSTRACT_METHOD_ATTRIBUTES, base
+      merge_parameters base, :headers
+      merge_parameters base, :query_parameters
+      merge_parameters base, :bodies          , :media_type
+      merge_parameters base, :responses
+
+      self
+    end
+
     private
     
     def validate
@@ -96,13 +107,13 @@ module Raml
     end
     
     def validate_protocols
-      if protocols
-        validate_array :protocols, protocols, String
+      if @protocols
+        validate_array :protocols, @protocols, String
         
         @protocols.map!(&:upcase)
         
         raise InvalidProperty, 'protocols property elements must be HTTP or HTTPS' unless 
-          protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
+          @protocols.all? { |p| [ 'HTTP', 'HTTPS'].include? p }
       end
     end
   end

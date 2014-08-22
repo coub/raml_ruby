@@ -163,4 +163,95 @@ describe Raml::Body do
       end
     end
   end
+
+  describe '#merge' do
+    context 'when body and mixin have different media types' do
+      let(:body ) { Raml::Body.new 'foo/bar', {}, root }
+      let(:mixin) { Raml::Body.new 'foo/boo', {}, root }
+      it { expect { body.merge mixin }.to raise_error Raml::MergeError }
+    end
+    context 'when body and mixin have the same media type' do
+      let(:body ) { Raml::Body.new 'foo/bar', body_data , root }
+      let(:mixin) { Raml::Body.new 'foo/bar', mixin_data, root }
+
+      context 'when the body to merge in has a property set' do
+        context 'when the body to merge into does not have the property set' do
+          let(:body_data) { {} }
+          context 'example property' do
+            let(:mixin_data) { {'example' => 'body example'} }
+            it 'merges in the property' do
+              body.merge(mixin).example.should eq mixin.example
+            end
+          end
+          context 'schema property' do
+            let(:mixin_data) { {'schema' => 'mixin schema'} }
+            it 'merges in the property' do
+              body.merge(mixin).schema.should be_a Raml::Schema
+              body.schema.should eq mixin.schema
+            end
+          end
+          context 'formParameters properties' do
+            let(:mixin_data) { { 
+              'formParameters' => {
+                'param1' => {'description' => 'foo'}, 
+                'param2' => {'description' => 'bar'}
+              }
+            } }
+            it 'adds the form parameters to the body' do
+               body.merge(mixin).form_parameters.keys.should contain_exactly('param1', 'param2')
+            end
+          end
+        end
+        context 'when the body to merge into has the property set' do
+          context 'example property' do
+            let(:body_data ) { {'example' => 'body example'}  }
+            let(:mixin_data) { {'example' => 'mixin example'} }
+            it 'keeps its property' do
+              body.merge(mixin).example.should eq 'body example'
+            end
+          end
+          context 'schema property' do
+            let(:body_data ) { {'schema' => 'body schema' } }
+            let(:mixin_data) { {'schema' => 'mixin schema'} }
+            it 'keeps its property' do
+              body.schema.should_not eq mixin.schema
+              body.schema.value.should eq 'body schema'
+            end
+          end
+          context 'formParameters properties' do
+            let(:body_data) { { 
+              'formParameters' => {
+                'param1' => {'description' => 'foo'}, 
+                'param2' => {'description' => 'bar'}
+              }
+            } }
+            context 'when the merged in body form parameters are different from the form parametes of the body merged into' do
+              let(:mixin_data) { { 
+                'formParameters' => {
+                  'param3' => {'description' => 'foo2'}, 
+                  'param4' => {'description' => 'bar2'}
+                }
+              } }
+              it 'adds the form parameters to the body' do
+                 body.merge(mixin).form_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
+              end
+            end
+            context 'when the merged in body form parameters overlap with the form parametes of the body merged into' do
+              let(:mixin_data) { { 
+                'formParameters' => {
+                  'param2' => {'displayName' => 'Param 3'}, 
+                  'param3' => {'description' => 'foo2'}, 
+                  'param4' => {'description' => 'bar2'}
+                }
+              } }
+              it 'merges the matching orm parameters and adds the non-matching orm parameters to the body' do
+                 body.merge(mixin).form_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
+                 body.form_parameters['param2'].display_name.should eq mixin.form_parameters['param2'].display_name
+              end
+            end        
+          end
+        end
+      end
+    end
+  end
 end

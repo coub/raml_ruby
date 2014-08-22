@@ -335,4 +335,301 @@ describe Raml::Method do
       subject.document
     end
   end
+
+  describe '#merge' do
+    let(:method) { Raml::Method.new 'get'       , method_data, root }
+    let(:trait ) { Raml::Trait.new  'trait_name', trait_data , root }
+    context 'when the trait has a property set' do
+      context 'when the method does not have that property set' do
+        let(:method_data) { {} }
+        context 'description property' do
+          let(:trait_data) { {description: 'trait description'} }
+          it 'sets the property in the method' do
+            method.merge(trait).description.should eq trait.description
+          end
+        end
+        context 'protocols property' do
+          let(:trait_data) { {protocols: ['HTTPS']} }
+          it 'sets the property in the method' do
+            method.merge(trait).protocols.should eq trait.protocols
+          end
+        end
+        context 'headers properties' do
+          let(:trait_data) { { 
+            'headers' => {
+              'header1' => {'description' => 'foo'}, 
+              'header2' => {'description' => 'bar'}
+            }
+          } }
+          it 'adds the headers to the method' do
+             method.merge(trait).headers.keys.should contain_exactly('header1', 'header2')
+          end
+        end
+        context 'queryParameters properties' do
+          let(:trait_data) { { 
+            'queryParameters' => {
+              'param1' => {'description' => 'foo'}, 
+              'param2' => {'description' => 'bar'}
+            }
+          } }
+          it 'adds the headers to the method' do
+             method.merge(trait).query_parameters.keys.should contain_exactly('param1', 'param2')
+          end
+        end
+        context 'body property' do
+          let(:trait_data) { { 
+            'body' => {
+              'text/mime1' => {'schema' => 'foo'}, 
+              'text/mime2' => {'schema' => 'bar'}
+            }
+          } }
+          it 'adds the body media types to the method' do
+             method.merge(trait).bodies.keys.should contain_exactly('text/mime1', 'text/mime2')
+          end
+        end
+        context 'responses property' do
+          let(:trait_data) { { 
+            'responses' => {
+              200 => {'description' => 'foo'}, 
+              404 => {'description' => 'bar'}
+            }
+          } }
+          it 'adds the responses to the method' do
+             method.merge(trait).responses.keys.should contain_exactly(200, 404)
+          end
+        end
+      end
+      context 'when the method has that property set' do
+        context 'description property' do
+          let(:method_data) { {description: 'method description'} }
+          let(:trait_data ) { {description: 'trait description' } }
+          it 'keeps the method property' do
+            method.merge(trait).description.should eq 'method description'
+          end
+        end
+        context 'protocols property' do
+          let(:method_data) { {protocols: ['HTTP' ]} }
+          let(:trait_data ) { {protocols: ['HTTPS']} }
+          it 'keeps the method property' do
+            method.merge(trait).protocols.should eq ['HTTP']
+          end
+        end
+        context 'headers properties' do
+          let(:method_data) { { 
+            'headers' => {
+              'header1' => {'description' => 'foo'}, 
+              'header2' => {'description' => 'bar'}
+            }
+          } }
+          context 'when the trait headers are different from the method headers' do
+            let(:trait_data) { { 
+              'headers' => {
+                'header3' => {'description' => 'foo2'}, 
+                'header4' => {'description' => 'bar2'}
+              }
+            } }
+            it 'adds the headers to the method' do
+               method.merge(trait).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
+            end
+          end
+          context 'when the trait headers overlap the the method headers' do
+            let(:trait_data) { { 
+              'headers' => {
+                'header2' => {'displayName' => 'Header 3'}, 
+                'header3' => {'description' => 'foo2'}, 
+                'header4' => {'description' => 'bar2'}
+              }
+            } }
+            it 'merges the matching headers and adds the non-matching headers to the method' do
+               method.merge(trait).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
+               method.headers['header2'].display_name.should eq trait.headers['header2'].display_name
+            end
+          end        
+        end
+        context 'queryParameters properties' do
+          let(:method_data) { { 
+            'queryParameters' => {
+              'param1' => {'description' => 'foo'}, 
+              'param2' => {'description' => 'bar'}
+            }
+          } }
+          context 'when the trait query parameters are different from the method headers' do
+            let(:trait_data) { { 
+              'queryParameters' => {
+                'param3' => {'description' => 'foo2'}, 
+                'param4' => {'description' => 'bar2'}
+              }
+            } }
+            it 'adds the query parameters to the method' do
+               method.merge(trait).query_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
+            end
+          end
+          context 'when the trait query parameters overlap the the method query parameters' do
+            let(:trait_data) { { 
+              'queryParameters' => {
+                'param2' => {'displayName' => 'Param 3'}, 
+                'param3' => {'description' => 'foo2'}, 
+                'param4' => {'description' => 'bar2'}
+              }
+            } }
+            it 'merges the matching headers and adds the non-matching headers to the method' do
+               method.merge(trait).query_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
+               method.query_parameters['param2'].display_name.should eq trait.query_parameters['param2'].display_name
+            end
+          end         
+        end
+        context 'body property' do
+          let(:method_data) { { 
+            'body' => {
+              'text/mime1' => {'schema' => 'foo'}, 
+              'text/mime2' => {'schema' => 'bar'}
+            }
+          } }
+          context 'when the trait query parameters are different from the method headers' do
+            let(:trait_data) { { 
+              'body' => {
+                'text/mime3' => {'schema' => 'foo2'}, 
+                'text/mime4' => {'schema' => 'bar2'}
+              }
+            } }
+            it 'adds the body media types to the method' do
+               method.merge(trait).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
+            end
+          end
+          context 'when the trait query parameters overlap the the method query parameters' do
+            let(:trait_data) { { 
+              'body' => {
+                'text/mime2' => {'example' => 'Example 2'}, 
+                'text/mime3' => {'schema'  => 'foo2'}, 
+                'text/mime4' => {'schema'  => 'bar2'}
+              }
+            } }
+            it 'merges the matching media types and adds the non-matching media types to the method' do
+               method.merge(trait).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
+               method.bodies['text/mime2'].example.should eq trait.bodies['text/mime2'].example
+            end
+          end  
+        end
+        context 'responses property' do
+          let(:method_data) { { 
+            'responses' => {
+              200 => {'description' => 'foo', 'body' => { 'text/mime1' => {'schema' => 'schema1'} } }, 
+              404 => {'description' => 'bar'}
+            }
+          } }
+          context 'when the trait response status codes are different from the method responses status codes' do
+            let(:trait_data) { { 
+              'responses' => {
+                201 => {'description' => 'foo2'}, 
+                403 => {'description' => 'bar2'}
+              }
+            } }
+            it 'adds the body media types to the method' do
+               method.merge(trait).responses.keys.should contain_exactly(200, 404, 201, 403)
+            end
+          end
+          context 'when the trait query parameters overlap the the method query parameters' do
+            let(:trait_data) { { 
+              'responses' => {
+                200 => {'description' => 'foo', 'body' => { 'text/mime2' => {'schema' => 'schema2'} } }, 
+                201 => {'description' => 'foo2'}, 
+                403 => {'description' => 'bar2'}
+              }
+            } }
+            it 'merges the matching media types and adds the non-matching media types to the method' do
+               method.merge(trait).responses.keys.should contain_exactly(200, 404, 201, 403)
+               method.responses[200].bodies.keys.should contain_exactly('text/mime1', 'text/mime2')
+            end
+          end  
+        end
+      end
+    end
+  end
+
+  describe '#apply_traits' do
+    let(:method) { Raml::Method.new 'get', method_data, root }
+    before {  method.apply_traits resource_traits }
+    context 'when given no resource traits' do
+      let(:resource_traits) { [] }
+      context 'when method has a trait' do
+        let(:method_data) { { 'is' => [ { 'description' => 'trait description' } ] } }
+        it 'applies the method trait' do
+          method.description.should eq 'trait description'
+        end
+      end
+      context 'when the method has multiple traits' do
+        let(:method_data) { { 
+          'is' => [ 
+            { 
+              'description' => 'trait description',
+              'headers'     => { 'header1' => { 'description' => 'header1' } }
+            },
+            {
+              'description' => 'trait description 2',
+              'headers'     => { 'header2' => { 'description' => 'header2' } }
+            } 
+          ]
+        } }
+        it 'applies them in order of precedence, right to left' do
+          method.description.should eq 'trait description 2'
+          method.headers.keys.should contain_exactly('header1', 'header2')
+        end
+      end
+    end
+    context 'when given resource traits' do
+      let(:resource_traits) { [ Raml::Trait.new('foo', { 'description' => 'resource trait description' }, root) ] }
+      context 'when the method has no traits' do
+        let(:method_data) { {} }
+        it 'applies the resource trait' do
+          method.description.should eq 'resource trait description'
+        end
+      end
+      context 'when the method has traits' do
+        let(:resource_traits) {
+          [ 
+            { 
+              'description' => 'trait4 description',
+              'headers'     => { 
+                'header3' => { 'description' => 'trait4' },
+                'header4' => { 'description' => 'trait4' } 
+              }
+            },
+            {
+              'description' => 'trait3 description',
+              'headers'     => { 
+                'header2' => { 'description' => 'trait3' },
+                'header3' => { 'description' => 'trait3' }
+              }
+            } 
+          ].map { |t| Raml::Trait.new('_', t, root) }
+        }
+        let(:method_data) { { 
+          'description' => 'method description',
+          'is' => [ 
+            { 
+              'description' => 'trait2 description',
+              'headers'     => { 
+                'header1' => { 'description' => 'trait2' },
+                'header2' => { 'description' => 'trait2' }
+              }
+            },
+            {
+              'description' => 'trait1 description',
+              'headers'     => { 
+                'header1' => { 'description' => 'trait1' }
+              }
+            } 
+          ]
+        } }
+        it 'applies method traits first in reverse order, then resource traits in reverse order' do
+          method.description.should eq 'method description'
+          method.headers.keys.should contain_exactly('header1','header2', 'header3', 'header4')
+          method.headers['header1'].description.should eq 'trait1'
+          method.headers['header2'].description.should eq 'trait2'
+          method.headers['header3'].description.should eq 'trait3'
+          method.headers['header4'].description.should eq 'trait4'
+        end
+      end
+    end
+  end
 end

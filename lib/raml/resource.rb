@@ -35,9 +35,10 @@ module Raml
     children_by :resources, :name, Resource
 
     child_of :type, [ ResourceType, ResourceTypeReference ]
-    
-    def apply_traits(resource_traits)
-      resources.values.each { |method| method.apply_traits traits }
+
+    def apply_traits
+      super
+      resources.values.each(&:apply_traits)
     end
   end
 end

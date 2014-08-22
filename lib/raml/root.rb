@@ -85,15 +85,15 @@ module Raml
 
     def expand
       unless @expanded
-        # Inline schemas.
-        inline_reference SchemaReference      , schemas, @children
-        inline_reference TraitReference       , traits , @children
+        inline_reference SchemaReference      , schemas        , @children
+        inline_reference TraitReference       , traits         , @children
         inline_reference ResourceTypeReference, resource_types , @children
-        # Apply trait and resource types, including parameters.
-        # XXX
-    
+
+        resource_types.values.each(&:apply_traits)
+        resources.values.each(&:apply_traits)
+        
+        @expanded = true 
       end
-      @expanded = true 
     end
 
     private

@@ -1,11 +1,13 @@
 module Raml
   class Body
+    include Merge
     include Parent
     include Validation
 
     MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
-        
-    attr_accessor :media_type, :example
+    BODY_PARAM_ATTRIBUTES = [ :example ]
+
+    attr_accessor :media_type, *BODY_PARAM_ATTRIBUTES
 
     def initialize(media_type, body_data, root)
       @children = []
@@ -56,6 +58,21 @@ module Raml
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? @media_type
     end
     
+    def merge(base)
+      raise MergeError, "Media types don't match." if media_type != base.media_type
+      
+      super
+      merge_attributes BODY_PARAM_ATTRIBUTES, base
+      merge_parameters base, :form_parameters
+
+      if base.schema
+        @children.delete_if { |c| [ Schema, SchemaReference ].include? c.class } if schema
+        @children << base.schema
+      end
+
+      self
+    end
+
     private
     
     def validate

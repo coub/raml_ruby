@@ -21,4 +21,6 @@ module Raml
   
   # Body
   class InvalidMediaType                < RamlError; end
+
+  class MergeError                      < RamlError; end
 end

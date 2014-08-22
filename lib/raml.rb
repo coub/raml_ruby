@@ -1,6 +1,8 @@
 require_relative 'raml/version'
+require_relative 'raml/module'
 
 require_relative 'raml/mixin/documentable'
+require_relative 'raml/mixin/merge'
 require_relative 'raml/mixin/parent'
 require_relative 'raml/mixin/validation'
 
@@ -31,8 +33,6 @@ require_relative 'raml/documentation'
 require_relative 'raml/exceptions'
 require_relative 'raml/include'
 require_relative 'raml/root'
-
-
 
 module Raml
   def self.load(raml)
