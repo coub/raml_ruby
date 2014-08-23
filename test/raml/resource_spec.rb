@@ -296,6 +296,33 @@ describe Raml::Resource do
     end
   end
 
+  describe '#apply_resource_type' do
+    let(:resource_data) { {
+      'type' => {
+        'get' => { 'description' => 'resource type description' }
+      },
+      'get'  => {},
+      'post' => {},
+      '/foo' => {},
+      '/bar' => {}
+    } }
+    let(:resource) { Raml::Resource.new('/foo', resource_data, root)  }
+    context 'when it has a resource type' do
+      it 'merges the resource type to the resource' do
+        resource.type.should be_a Raml::ResourceType
+        mock(resource).merge(resource.type)
+        resource.apply_resource_type
+      end
+    end
+    context 'when it has nested resources' do
+      it 'calls #apply_resource_type on the nested resources' do
+        resource.resources.size.should eq 2
+        resource.resources.values.each { |resource| mock(resource).apply_resource_type {} }
+        resource.apply_resource_type
+      end
+    end
+  end
+
   describe '#apply_traits' do
     let(:resource_data) { {
       'is' => [
@@ -319,6 +346,52 @@ describe Raml::Resource do
       resource.resources.size.should eq 2
       resource.resources.values.each { |resource| mock(resource).apply_traits {} }
       resource.apply_traits
+    end
+  end
+
+  describe '#merge' do
+    let(:resource) { Raml::Resource.new('/foo', resource_data, root)  }
+    context 'when called with something other than a ResourceType' do
+      let(:resource_data) { {} }
+      it do
+        expect { resource.merge(Raml::ResourceTypeReference.new('bar')) }.to raise_error Raml::MergeError
+      end
+    end
+    context 'when called with a ResourceType' do
+      let(:resource_type) { Raml::ResourceType.new('bar', resource_type_data, root)  }
+      let(:resource_data) { {
+        'is' => [ 'secured' ],
+        'baseUriParameters' => { 'apiDomain' => { 'enum' => ['api']   } },
+        'uriParameters'     => { 'userId'    => { 'type' => 'integer' } },
+        'get' => {
+          'queryParameters' => { 'id'        => { 'type' => 'integer' } }
+        }
+      } }
+      let(:resource_type_data) { {
+        'usage' => 'resource usage',
+        'is'    => [ 'paged' ],
+        'baseUriParameters' => { 'apiDomain' => { 'enum'      => ['static'] } },
+        'uriParameters'     => { 'language'  => { 'default'   => 'en'       } },
+        'get' => {
+          'queryParameters' => { 'query'     => { 'maxLength' => 100        } }
+        },
+        'post' => {
+          'description' => 'create a new one'
+        }
+      } }
+      it 'merges the resource type into the resource' do
+        resource.merge resource_type
+        resource.traits.map { |trait_ref| trait_ref.name }.should eq [ 'paged', 'secured' ]
+        resource.base_uri_parameters.keys.should contain_exactly('apiDomain')
+        resource.base_uri_parameters['apiDomain'].enum.should eq ['api']
+        resource.uri_parameters.keys.should contain_exactly('userId', 'language')
+        resource.methods.keys.should contain_exactly('get', 'post')
+        resource.methods['get'].query_parameters.keys.should contain_exactly('id', 'query')
+      end
+      it 'does not add the usage property to the resource' do
+        resource.merge resource_type
+         expect { resource.usage }.to raise_error NoMethodError
+      end
     end
   end
 end

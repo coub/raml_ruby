@@ -1,5 +1,7 @@
 module Raml
   class Resource < AbstractResource
+    include Merge
+
     def initialize(name, resource_data, root)
       @children ||= []
 
@@ -36,9 +38,28 @@ module Raml
 
     child_of :type, [ ResourceType, ResourceTypeReference ]
 
+    def apply_resource_type
+      merge type if type
+      resources.values.each(&:apply_resource_type)
+    end
+
     def apply_traits
       super
       resources.values.each(&:apply_traits)
+    end
+
+    def merge(base)
+      raise MergeError, 'Trying to merge ResourceTypeReference into Resource.' unless base.is_a? ResourceType
+
+      super
+
+      merge_parameters base, :methods
+      merge_parameters base, :base_uri_parameters
+      merge_parameters base, :uri_parameters
+      # insert them in the front, so they have the least priority
+      @children.unshift(*base.traits)
+
+      self
     end
   end
 end

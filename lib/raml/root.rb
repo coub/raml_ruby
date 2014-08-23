@@ -89,9 +89,9 @@ module Raml
         inline_reference TraitReference       , traits         , @children
         inline_reference ResourceTypeReference, resource_types , @children
 
-        resource_types.values.each(&:apply_traits)
+        resources.values.each(&:apply_resource_type)
         resources.values.each(&:apply_traits)
-        
+
         @expanded = true 
       end
     end
