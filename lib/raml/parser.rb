@@ -18,7 +18,7 @@ module Raml
     private
     
     def register_include_tag
-      YAML.add_tag '!include', Raml::Include
+      YAML.add_tag '!include', Raml::Parser::Include
     end
     
     def expand_includes(val, cwd)
@@ -35,7 +35,7 @@ module Raml
         val      = arg2 ? arg2 : arg1
         child_wd = cwd
         
-        if val.is_a? Raml::Include
+        if val.is_a? Raml::Parser::Include
           child_wd = expand_includes_working_dir cwd, val.path
           val      = val.content cwd
         end

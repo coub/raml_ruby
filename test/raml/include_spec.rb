@@ -1,8 +1,8 @@
 require_relative 'spec_helper'
 require 'ostruct'
 
-describe Raml::Include do
-  let(:include) { Raml::Include.new }
+describe Raml::Parser::Include do
+  let(:include) { Raml::Parser::Include.new }
   describe '#init_with' do
     it 'fetches the path from the given Psych::Coder instance' do
       include.init_with OpenStruct.new scalar: 'path_to_file'

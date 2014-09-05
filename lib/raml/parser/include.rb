@@ -1,4 +1,4 @@
-module Raml
+class Raml::Parser
   class Include
     attr_reader :path
     
@@ -12,7 +12,7 @@ module Raml
       @content = YAML.load @content if is_yaml?
       @content
     rescue => e
-      raise CantIncludeFile, e
+      raise Raml::CantIncludeFile, e
     end
     
     private

@@ -1,7 +1,12 @@
 require_relative 'raml/version'
 
-require_relative 'raml/module'
-require_relative 'raml/hash'
+require_relative 'raml/patch/module'
+require_relative 'raml/patch/hash'
+
+require_relative 'raml/exceptions'
+
+require_relative 'raml/parser'
+require_relative 'raml/parser/include'
 
 require_relative 'raml/mixin/documentable'
 require_relative 'raml/mixin/global'
@@ -9,35 +14,35 @@ require_relative 'raml/mixin/merge'
 require_relative 'raml/mixin/parent'
 require_relative 'raml/mixin/validation'
 
-require_relative 'raml/template'
+require_relative 'raml/node/parameter/abstract_parameter'
+require_relative 'raml/node/parameter/form_parameter'
+require_relative 'raml/node/parameter/query_parameter'
+require_relative 'raml/node/parameter/uri_parameter'
+require_relative 'raml/node/parameter/base_uri_parameter'
 
-require_relative 'raml/parameter/abstract_parameter'
-require_relative 'raml/parameter/form_parameter'
-require_relative 'raml/parameter/query_parameter'
-require_relative 'raml/parameter/uri_parameter'
-require_relative 'raml/parameter/base_uri_parameter'
+require_relative 'raml/node/schema'
+require_relative 'raml/node/schema_reference'
 
-require_relative 'raml/schema'
-require_relative 'raml/schema_reference'
+require_relative 'raml/node/header'
+require_relative 'raml/node/body'
+require_relative 'raml/node/response'
 
-require_relative 'raml/header'
-require_relative 'raml/body'
-require_relative 'raml/response'
+require_relative 'raml/node/trait_reference'
+require_relative 'raml/node/resource_type_reference'
 
-require_relative 'raml/abstract_method'
-require_relative 'raml/trait_reference'
-require_relative 'raml/trait'
-require_relative 'raml/method'
-require_relative 'raml/abstract_resource'
+require_relative 'raml/node/template'
 
-require_relative 'raml/parser'
-require_relative 'raml/resource_type_reference'
-require_relative 'raml/resource_type'
-require_relative 'raml/resource'
-require_relative 'raml/documentation'
-require_relative 'raml/exceptions'
-require_relative 'raml/include'
-require_relative 'raml/root'
+require_relative 'raml/node/abstract_method'
+require_relative 'raml/node/trait'
+require_relative 'raml/node/method'
+
+require_relative 'raml/node/abstract_resource'
+require_relative 'raml/node/resource_type'
+require_relative 'raml/node/resource'
+
+require_relative 'raml/node/documentation'
+
+require_relative 'raml/node/root'
 
 module Raml
   def self.load(raml)
