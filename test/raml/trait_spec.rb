@@ -24,7 +24,7 @@ describe Raml::Trait do
     end
     context 'when the usage property is given' do
 	    it 'stores the usage property' do
-	    	subject.usage.should eq data['usage']
+	    	subject.instantiate({}).usage.should eq data['usage']
 	    end
 	  end
   end

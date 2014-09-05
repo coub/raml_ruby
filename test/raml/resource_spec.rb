@@ -26,7 +26,8 @@ describe Raml::Resource do
                     }
     ))
   }
-  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com' }
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
 
   subject { Raml::Resource.new(name, data, root) }
 
@@ -199,7 +200,7 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the resource type' do
             subject.type.should be_a Raml::ResourceType
-            subject.type.usage.should == definition['usage']
+            subject.send(:instantiate_resource_type).usage.should == definition['usage']
           end
         end
       end
@@ -255,7 +256,8 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.should all( be_a Raml::Trait )
-            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('tokenName', 'numPages')
+            subject.traits[0].data.should eq ({'queryParameters' => {'tokenName' => {'description'=>'foo'}}})
+            subject.traits[1].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
@@ -269,7 +271,7 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.select {|t| t.is_a? Raml::TraitReference }.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.select {|t| t.is_a? Raml::Trait }.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
+            subject.traits.select {|t| t.is_a? Raml::Trait }[0].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
       end
@@ -310,7 +312,10 @@ describe Raml::Resource do
     context 'when it has a resource type' do
       it 'merges the resource type to the resource' do
         resource.type.should be_a Raml::ResourceType
-        mock(resource).merge(resource.type)
+        mock.proxy(resource).instantiate_resource_type { |instantiated_type| 
+          mock(resource).merge(instantiated_type)
+          instantiated_type
+        }
         resource.apply_resource_type
       end
     end
@@ -335,13 +340,13 @@ describe Raml::Resource do
       '/bar' => {}
     } }
     let(:resource) { Raml::Resource.new('/foo', resource_data, root)  }
-    it 'calls apply_traits on all its methods passing it the resource traits' do
+    it 'calls apply_traits on all its methods' do
       resource.traits.size.should eq 2
       resource.methods.size.should eq 2
-      resource.methods.values.each { |method| mock(method).apply_traits(resource.traits) {} }
+      resource.methods.values.each { |method| mock(method).apply_traits {} }
       resource.apply_traits
     end
-    it 'should call apply_trait on child resources without arguments' do
+    it 'should call apply_trait on child resources without the resource traits' do
       resource.traits.size.should eq 2
       resource.resources.size.should eq 2
       resource.resources.values.each { |resource| mock(resource).apply_traits {} }
@@ -357,8 +362,16 @@ describe Raml::Resource do
         expect { resource.merge(Raml::ResourceTypeReference.new('bar')) }.to raise_error Raml::MergeError
       end
     end
-    context 'when called with a ResourceType' do
-      let(:resource_type) { Raml::ResourceType.new('bar', resource_type_data, root)  }
+    context 'when called with a ResourceType::Instance' do
+      let(:root_data) { {
+        'title'   => 'x', 
+        'baseUri' => 'http://foo.com',
+        'traits'  => [ {
+          'secured' => { 'usage' => 'requires authentication' },
+          'paged'   => { 'usage' => 'allows for paging'       }
+        } ]
+      } }
+      let(:resource_type) { Raml::ResourceType.new('bar', resource_type_data, root).instantiate({})  }
       let(:resource_data) { {
         'is' => [ 'secured' ],
         'baseUriParameters' => { 'apiDomain' => { 'enum' => ['api']   } },

@@ -1,6 +1,7 @@
 module Raml
   class AbstractMethod
     include Documentable
+    include Global
     include Merge
     include Parent
     include Validation
@@ -11,9 +12,10 @@ module Raml
 
     attr_reader_default :protocols, []
 
-    def initialize(name, method_data, root)
+    def initialize(name, method_data, parent)
       @children = []
-      @name = name
+      @name     = name
+      @parent   = parent
       
       method_data.each do |key, value|
         case key
@@ -27,11 +29,11 @@ module Raml
 
         when 'body'
           validate_hash key, value, String, Hash
-          @children += value.map { |b_name, b_data| Body.new b_name, b_data, root }
+          @children += value.map { |b_name, b_data| Body.new b_name, b_data, self }
 
         when 'responses'
           validate_hash key, value, Integer, Hash
-          @children += value.map { |r_name, r_data| Response.new r_name, r_data, root }
+          @children += value.map { |r_name, r_data| Response.new r_name, r_data, self }
 
         else
           begin

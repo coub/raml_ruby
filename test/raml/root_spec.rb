@@ -478,87 +478,6 @@ describe Raml::Root do
         subject.resources['/jobs'].methods['post'].responses[200].bodies['application/json'].schema.should be_a Raml::Schema
       end
     end
-    context 'when the syntax trees contains TraitReferences' do
-      let(:data) {
-        YAML.load(
-          %q(
-            #%RAML 0.8
-            title: Example API
-            version: v1
-            baseUri: https://app.zencoder.com/api
-            traits:
-              - paged:
-                  queryParameters:
-                    start:
-                      type: number
-                secured:
-                  queryParameters:
-                    auth_token:
-                      type: string
-              - searchable:
-                  queryParameters:
-                    query:
-                      type: string
-            /jobs:
-              is: [ secured ]
-              get:
-                is: [ paged, searchable ]
-              post:
-                description: Create a Job.
-              /status:
-                get:
-                  is: [ paged ]
-          )
-        )
-      }
-      it 'replaces them with Schemas' do
-        subject.resources['/jobs'].traits.should all( be_a Raml::TraitReference )
-        subject.resources['/jobs'].traits.map(&:name).should contain_exactly('secured')
-        subject.resources['/jobs'].methods['get'].traits.should all( be_a Raml::TraitReference )
-        subject.resources['/jobs'].methods['get'].traits.map(&:name).should contain_exactly('paged', 'searchable')
-        subject.resources['/jobs'].resources['/status'].methods['get'].traits.should all( be_a Raml::TraitReference )
-        subject.resources['/jobs'].resources['/status'].methods['get'].traits.map(&:name).should contain_exactly('paged')
-        subject.expand
-        subject.resources['/jobs'].traits.should all( be_a Raml::Trait )
-        subject.resources['/jobs'].traits.map(&:name).should contain_exactly('secured')
-        subject.resources['/jobs'].methods['get'].traits.should all( be_a Raml::Trait )
-        subject.resources['/jobs'].methods['get'].traits.map(&:name).should contain_exactly('paged', 'searchable')
-        subject.resources['/jobs'].resources['/status'].methods['get'].traits.should all( be_a Raml::Trait )
-        subject.resources['/jobs'].resources['/status'].methods['get'].traits.map(&:name).should contain_exactly('paged')
-      end
-    end
-    context 'when the syntax trees contains ResourceTypeReference' do
-      let(:data) {
-        YAML.load(
-          %q(
-            #%RAML 0.8
-            title: Example API
-            version: v1
-            baseUri: https://app.zencoder.com/api
-            resourceTypes:
-              - collection:
-                  description: The collection.
-              - member:
-                  description: The collection.
-            /jobs:
-              type: collection
-              /status:
-                type: member
-          )
-        )
-      }
-      it 'replaces them with Schemas' do
-        subject.resources['/jobs'].type.should be_a Raml::ResourceTypeReference
-        subject.resources['/jobs'].type.name.should == 'collection'
-        subject.resources['/jobs'].resources['/status'].type.should be_a Raml::ResourceTypeReference
-        subject.resources['/jobs'].resources['/status'].type.name.should == 'member'
-        subject.expand
-        subject.resources['/jobs'].type.should be_a Raml::ResourceType
-        subject.resources['/jobs'].type.name.should == 'collection'
-        subject.resources['/jobs'].resources['/status'].type.should be_a Raml::ResourceType
-        subject.resources['/jobs'].resources['/status'].type.name.should == 'member'
-      end
-    end
 
     context 'when the syntax tree contains Resources' do
       let(:data) {
@@ -582,9 +501,14 @@ describe Raml::Root do
           )
         )
       }
-      it 'applies traits to resource types' do
+      it 'applies traits to resources' do
         subject.resources.size.should eq 2
         subject.resources.values.each { |resource| mock(resource).apply_traits {} }
+        subject.expand
+      end
+      it 'applies resource types to the resources' do
+        subject.resources.size.should eq 2
+        subject.resources.values.each { |resource| mock(resource).apply_resource_type {} }
         subject.expand
       end
     end

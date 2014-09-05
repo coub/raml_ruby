@@ -1,17 +1,19 @@
 module Raml
   class AbstractResource
     include Documentable
+    include Global
     include Parent
     include Validation
 
-    def initialize(name, resource_data, root)
+    def initialize(name, resource_data, parent)
       @children ||= []
-      @name = name
+      @name       = name
+      @parent     = parent
 
       resource_data.each do |key, value|
         case key
         when *Raml::Method::NAMES
-          @children << Method.new(key, value, root)
+          @children << Method.new(key, value, self)
 
         when 'uriParameters'
           validate_hash key, value, String, Hash
@@ -25,14 +27,16 @@ module Raml
           validate_array key, value, [String, Hash]
           @children += value.map do |trait|
             if trait.is_a? Hash
-              if trait.keys.size == 1 and root.traits.include? trait.keys.first
+              if trait.keys.size == 1 and trait_declarations.include? trait.keys.first
                 raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
                   trait.values[0].is_a? Hash
                 TraitReference.new( *trait.first )
               else
-                Trait.new '_', trait, root
+                Trait.new '_', trait, self
               end
             else
+              raise UnknownTraitReference, "#{trait} referenced in resource but not found in traits declaration." unless
+                trait_declarations.include? trait
               TraitReference.new trait
             end
           end
@@ -64,12 +68,25 @@ module Raml
 
     children_of :traits, [ Trait, TraitReference ]
 
+    def resource_path
+      @parent.resource_path + self.name
+    end
+
     def apply_traits
-      methods.values.each { |method| method.apply_traits traits }
+      methods.values.each(&:apply_traits)
     end
 
     private
-        
+    
+    def validate
+      validate_parent
+      super
+    end
+
+    def validate_parent
+      raise InvalidParent, "Parent of resource cannot be nil." if @parent.nil?
+    end
+
     def validate_base_uri_parameters(base_uri_parameters)
       validate_hash :base_uri_parameters, base_uri_parameters, String, Hash
       

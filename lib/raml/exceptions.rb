@@ -9,6 +9,7 @@ module Raml
   class InvalidProperty                 < RamlError; end
   class UnknownProperty                 < RamlError; end
   
+  class InvalidParent                   < RamlError; end
   class InvalidSchema                   < RamlError; end
 
   # Methods
@@ -22,5 +23,9 @@ module Raml
   # Body
   class InvalidMediaType                < RamlError; end
 
+  class UnknownTraitReference           < RamlError; end
+  class UnknownResourceTypeReference    < RamlError; end
   class MergeError                      < RamlError; end
+  class UnknownTypeOrTraitParameter     < RamlError; end
+  class UnknownTypeOrTraitParamFunction < RamlError; end
 end

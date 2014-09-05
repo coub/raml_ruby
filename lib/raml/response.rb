@@ -1,19 +1,21 @@
 module Raml
   class Response
     include Documentable
+    include Global
     include Merge
     include Parent
     include Validation
 
-    def initialize(name, response_data, root)
+    def initialize(name, response_data, parent)
       @children = []
-      @name = name
+      @name     = name
+      @parent   = parent
 
       response_data.each do |key, value|
         case key
         when 'body'
           validate_hash key, value, String, Hash
-          @children += value.map { |bname, bdata| Body.new bname, bdata, root }
+          @children += value.map { |bname, bdata| Body.new bname, bdata, self }
         
         when 'headers'
           validate_hash key, value, String, Hash

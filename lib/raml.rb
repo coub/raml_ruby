@@ -1,10 +1,15 @@
 require_relative 'raml/version'
+
 require_relative 'raml/module'
+require_relative 'raml/hash'
 
 require_relative 'raml/mixin/documentable'
+require_relative 'raml/mixin/global'
 require_relative 'raml/mixin/merge'
 require_relative 'raml/mixin/parent'
 require_relative 'raml/mixin/validation'
+
+require_relative 'raml/template'
 
 require_relative 'raml/parameter/abstract_parameter'
 require_relative 'raml/parameter/form_parameter'

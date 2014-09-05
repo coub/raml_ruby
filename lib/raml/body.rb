@@ -1,5 +1,6 @@
 module Raml
   class Body
+    include Global
     include Merge
     include Parent
     include Validation
@@ -9,9 +10,10 @@ module Raml
 
     attr_accessor :media_type, *BODY_PARAM_ATTRIBUTES
 
-    def initialize(media_type, body_data, root)
-      @children = []
+    def initialize(media_type, body_data, parent)
+      @children   = []
       @media_type = media_type
+      @parent     = parent
 
       body_data.each do |key, value|
         case key
@@ -23,7 +25,7 @@ module Raml
 
         when 'schema'
           validate_string :schema, value
-          if root.schemas.include? value
+          if schema_declarations.include? value
             @children << SchemaReference.new(value)
           else
             @children << Schema.new('_', value)

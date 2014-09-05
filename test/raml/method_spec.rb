@@ -25,7 +25,8 @@ describe Raml::Method do
             The list of popular media.
     ))
   }
-  let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com' }
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
 
   subject { Raml::Method.new(name, data, root) }
 
@@ -295,7 +296,8 @@ describe Raml::Method do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.should all( be_a Raml::Trait )
-            subject.traits.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('tokenName', 'numPages')
+            subject.traits[0].data.should eq ({'queryParameters' => {'tokenName' => {'description'=>'foo'}}})
+            subject.traits[1].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
@@ -309,7 +311,7 @@ describe Raml::Method do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.select {|t| t.is_a? Raml::TraitReference }.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.select {|t| t.is_a? Raml::Trait}.map(&:query_parameters).map(&:keys).flatten.should contain_exactly('numPages')
+            subject.traits.select {|t| t.is_a? Raml::Trait}[0].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
       end
@@ -338,7 +340,7 @@ describe Raml::Method do
 
   describe '#merge' do
     let(:method) { Raml::Method.new 'get'       , method_data, root }
-    let(:trait ) { Raml::Trait.new  'trait_name', trait_data , root }
+    let(:trait ) { Raml::Trait.new( 'trait_name', trait_data , root).instantiate({}) }
     context 'when the trait has a property set' do
       context 'when the method does not have that property set' do
         let(:method_data) { {} }
@@ -554,87 +556,120 @@ describe Raml::Method do
   end
 
   describe '#apply_traits' do
-    let(:method) { Raml::Method.new 'get', method_data, root }
-    before {  method.apply_traits resource_traits }
-    context 'when given no resource traits' do
-      let(:resource_traits) { [] }
-      context 'when method has a trait' do
-        let(:method_data) { { 'is' => [ { 'description' => 'trait description' } ] } }
-        it 'applies the method trait' do
-          method.description.should eq 'trait description'
+    let(:root_data) { {
+      'title'   => 'x', 
+      'baseUri' => 'http://foo.com',
+      '/users'  => {
+        '/comments' => {
+          'is'  => resource_trait_data,
+          'get' => method_data
+        }
+      }
+    } }
+    let(:method) { root.resources['/users'].resources['/comments'].methods['get'] }
+    before {  method.apply_traits }
+    describe 'order application' do
+      context 'when given no resource traits' do
+        let(:resource_trait_data) { [] }
+        context 'when method has a trait' do
+          let(:method_data) { { 'is' => [ { 'description' => 'trait description' } ] } }
+          it 'applies the method trait' do
+            method.description.should eq 'trait description'
+          end
+        end
+        context 'when the method has multiple traits' do
+          let(:method_data) { { 
+            'is' => [ 
+              { 
+                'description' => 'trait description',
+                'headers'     => { 'header1' => { 'description' => 'header1' } }
+              },
+              {
+                'description' => 'trait description 2',
+                'headers'     => { 'header2' => { 'description' => 'header2' } }
+              } 
+            ]
+          } }
+          it 'applies them in order of precedence, right to left' do
+            method.description.should eq 'trait description 2'
+            method.headers.keys.should contain_exactly('header1', 'header2')
+          end
         end
       end
-      context 'when the method has multiple traits' do
-        let(:method_data) { { 
-          'is' => [ 
-            { 
-              'description' => 'trait description',
-              'headers'     => { 'header1' => { 'description' => 'header1' } }
-            },
-            {
-              'description' => 'trait description 2',
-              'headers'     => { 'header2' => { 'description' => 'header2' } }
-            } 
-          ]
-        } }
-        it 'applies them in order of precedence, right to left' do
-          method.description.should eq 'trait description 2'
-          method.headers.keys.should contain_exactly('header1', 'header2')
+      context 'when given resource traits' do
+        let(:resource_trait_data) { [ { 'description' => 'resource trait description' } ] }
+        context 'when the method has no traits' do
+          let(:method_data) { {} }
+          it 'applies the resource trait' do
+            method.description.should eq 'resource trait description'
+          end
+        end
+        context 'when the method has traits' do
+          let(:resource_trait_data) {
+            [ 
+              { 
+                'description' => 'trait4 description',
+                'headers'     => { 
+                  'header3' => { 'description' => 'trait4' },
+                  'header4' => { 'description' => 'trait4' } 
+                }
+              },
+              {
+                'description' => 'trait3 description',
+                'headers'     => { 
+                  'header2' => { 'description' => 'trait3' },
+                  'header3' => { 'description' => 'trait3' }
+                }
+              } 
+            ]
+          }
+          let(:method_data) { { 
+            'description' => 'method description',
+            'is' => [ 
+              { 
+                'description' => 'trait2 description',
+                'headers'     => { 
+                  'header1' => { 'description' => 'trait2' },
+                  'header2' => { 'description' => 'trait2' }
+                }
+              },
+              {
+                'description' => 'trait1 description',
+                'headers'     => { 
+                  'header1' => { 'description' => 'trait1' }
+                }
+              } 
+            ]
+          } }
+          it 'applies method traits first in reverse order, then resource traits in reverse order' do
+            method.description.should eq 'method description'
+            method.headers.keys.should contain_exactly('header1','header2', 'header3', 'header4')
+            method.headers['header1'].description.should eq 'trait1'
+            method.headers['header2'].description.should eq 'trait2'
+            method.headers['header3'].description.should eq 'trait3'
+            method.headers['header4'].description.should eq 'trait4'
+          end
         end
       end
     end
-    context 'when given resource traits' do
-      let(:resource_traits) { [ Raml::Trait.new('foo', { 'description' => 'resource trait description' }, root) ] }
-      context 'when the method has no traits' do
-        let(:method_data) { {} }
-        it 'applies the resource trait' do
-          method.description.should eq 'resource trait description'
+    describe 'reserved parameters' do
+      let(:resource_trait_data) { [] }
+      context 'resourcePath' do
+        let(:method_data) { { 'is' => [ { 'description' => 'trait <<resourcePath>>' } ] } }
+        it 'instances traits with the reserved parameter' do
+          method.description.should eq 'trait /users/comments'
         end
       end
-      context 'when the method has traits' do
-        let(:resource_traits) {
-          [ 
-            { 
-              'description' => 'trait4 description',
-              'headers'     => { 
-                'header3' => { 'description' => 'trait4' },
-                'header4' => { 'description' => 'trait4' } 
-              }
-            },
-            {
-              'description' => 'trait3 description',
-              'headers'     => { 
-                'header2' => { 'description' => 'trait3' },
-                'header3' => { 'description' => 'trait3' }
-              }
-            } 
-          ].map { |t| Raml::Trait.new('_', t, root) }
-        }
-        let(:method_data) { { 
-          'description' => 'method description',
-          'is' => [ 
-            { 
-              'description' => 'trait2 description',
-              'headers'     => { 
-                'header1' => { 'description' => 'trait2' },
-                'header2' => { 'description' => 'trait2' }
-              }
-            },
-            {
-              'description' => 'trait1 description',
-              'headers'     => { 
-                'header1' => { 'description' => 'trait1' }
-              }
-            } 
-          ]
-        } }
-        it 'applies method traits first in reverse order, then resource traits in reverse order' do
-          method.description.should eq 'method description'
-          method.headers.keys.should contain_exactly('header1','header2', 'header3', 'header4')
-          method.headers['header1'].description.should eq 'trait1'
-          method.headers['header2'].description.should eq 'trait2'
-          method.headers['header3'].description.should eq 'trait3'
-          method.headers['header4'].description.should eq 'trait4'
+      context 'resourcePathName' do
+        let(:method_data) { { 'is' => [ { 'description' => 'trait <<resourcePathName>>' } ] } }
+        it 'instances traits with the reserved parameter' do
+          method.description.should eq 'trait comments'
+        end
+      end
+      context 'methodName' do
+        let(:method_data) { { 'is' => [ { 'description' => 'trait <<methodName>>' } ] } }
+        it 'instances traits with the reserved parameter' do
+          method.description.should eq 'trait get'
         end
       end
     end

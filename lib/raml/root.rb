@@ -83,17 +83,21 @@ module Raml
     children_by :traits             , :name, Trait
     children_by :resource_types     , :name, ResourceType
 
+    alias :trait_declarations         :traits
+    alias :resource_type_declarations :resource_types
+    alias :schema_declarations        :schemas
+
     def expand
       unless @expanded
-        inline_reference SchemaReference      , schemas        , @children
-        inline_reference TraitReference       , traits         , @children
-        inline_reference ResourceTypeReference, resource_types , @children
-
         resources.values.each(&:apply_resource_type)
         resources.values.each(&:apply_traits)
-
+        inline_reference SchemaReference, schemas, @children
         @expanded = true 
       end
+    end
+
+    def resource_path
+      ''
     end
 
     private
