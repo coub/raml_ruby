@@ -1,5 +1,5 @@
 module Raml
-  class AbstractMethod
+  class AbstractMethod < Node
     include Documentable
     include Global
     include Merge
@@ -21,11 +21,11 @@ module Raml
         case key
         when 'headers'
           validate_hash key, value, String, Hash
-          @children += value.map { |h_name, h_data| Header.new h_name, h_data }
+          @children += value.map { |h_name, h_data| Header.new h_name, h_data, self }
 
         when 'queryParameters'
           validate_hash key, value, String, Hash
-          @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data }
+          @children += value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data, self }
 
         when 'body'
           validate_hash key, value, String, Hash

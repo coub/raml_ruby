@@ -359,7 +359,7 @@ describe Raml::Resource do
     context 'when called with something other than a ResourceType' do
       let(:resource_data) { {} }
       it do
-        expect { resource.merge(Raml::ResourceTypeReference.new('bar')) }.to raise_error Raml::MergeError
+        expect { resource.merge(Raml::ResourceTypeReference.new('bar', root)) }.to raise_error Raml::MergeError
       end
     end
     context 'when called with a ResourceType::Instance' do

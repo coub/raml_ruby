@@ -16,14 +16,14 @@ module Raml
           if trait.keys.size == 1 and trait_declarations.include? trait.keys.first
             raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
               trait.values[0].is_a? Hash
-            TraitReference.new( *trait.first )
+            TraitReference.new( *trait.first, self )
           else
             Trait.new '_', trait, self
           end
         else
           raise UnknownTraitReference, "#{trait} referenced in method but not found in traits declaration." unless
             trait_declarations.include? trait
-          TraitReference.new trait
+          TraitReference.new trait, self
         end
       end
     end

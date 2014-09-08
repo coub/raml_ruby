@@ -18,14 +18,14 @@ module Raml
             if value.keys.size == 1 and resource_type_declarations.include? value.keys.first
               raise InvalidProperty, 'type property with map of resource type name but params are not a map' unless 
                 value.values[0].is_a? Hash
-              @children << ResourceTypeReference.new( *value.first )
+              @children << ResourceTypeReference.new( *value.first, self )
             else
               @children << ResourceType.new('_', value, self)
             end
           else
             raise UnknownResourceTypeReference, "#{value} referenced in resource but not found in resource types declaration." unless
               resource_type_declarations.include? value
-            @children << ResourceTypeReference.new(value)
+            @children << ResourceTypeReference.new(value, self)
           end
           true
 

@@ -1,7 +1,9 @@
 require_relative 'spec_helper'
 
 describe Raml::Schema do
-  subject { Raml::Schema.new 'MySchema', schema }
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
+  subject { Raml::Schema.new 'MySchema', schema, root }
   
   describe '#new' do
     context 'with a valid schema' do

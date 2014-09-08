@@ -14,6 +14,8 @@ require_relative 'raml/mixin/merge'
 require_relative 'raml/mixin/parent'
 require_relative 'raml/mixin/validation'
 
+require_relative 'raml/node'
+
 require_relative 'raml/node/parameter/abstract_parameter'
 require_relative 'raml/node/parameter/form_parameter'
 require_relative 'raml/node/parameter/query_parameter'

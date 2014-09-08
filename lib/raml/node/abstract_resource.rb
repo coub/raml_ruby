@@ -1,5 +1,5 @@
 module Raml
-  class AbstractResource
+  class AbstractResource < Node
     include Documentable
     include Global
     include Parent
@@ -17,11 +17,11 @@ module Raml
 
         when 'uriParameters'
           validate_hash key, value, String, Hash
-          @children += value.map { |uname, udata| Parameter::UriParameter.new uname, udata }
+          @children += value.map { |uname, udata| Parameter::UriParameter.new uname, udata, self }
 
         when 'baseUriParameters'
           validate_base_uri_parameters value
-          @children += value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata }
+          @children += value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata, self }
 
         when 'is'
           validate_array key, value, [String, Hash]
@@ -30,14 +30,14 @@ module Raml
               if trait.keys.size == 1 and trait_declarations.include? trait.keys.first
                 raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
                   trait.values[0].is_a? Hash
-                TraitReference.new( *trait.first )
+                TraitReference.new( *trait.first, self )
               else
                 Trait.new '_', trait, self
               end
             else
               raise UnknownTraitReference, "#{trait} referenced in resource but not found in traits declaration." unless
                 trait_declarations.include? trait
-              TraitReference.new trait
+              TraitReference.new trait, self
             end
           end
 

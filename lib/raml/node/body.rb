@@ -1,5 +1,5 @@
 module Raml
-  class Body
+  class Body < Node
     include Global
     include Merge
     include Parent
@@ -20,15 +20,15 @@ module Raml
         when 'formParameters'
           validate_hash key, value, String, Hash
           value.each do |name, form_parameter_data|
-            @children << Parameter::FormParameter.new(name, form_parameter_data)
+            @children << Parameter::FormParameter.new(name, form_parameter_data, self)
           end
 
         when 'schema'
           validate_string :schema, value
           if schema_declarations.include? value
-            @children << SchemaReference.new(value)
+            @children << SchemaReference.new(value, self)
           else
-            @children << Schema.new('_', value)
+            @children << Schema.new('_', value, self)
           end
 
         else

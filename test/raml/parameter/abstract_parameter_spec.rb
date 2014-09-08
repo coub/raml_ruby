@@ -2,8 +2,10 @@ require_relative '../spec_helper'
 
 describe Raml::Parameter::AbstractParameter do
   let(:abstract_param_class) { Raml::Parameter::AbstractParameter }
-  subject { abstract_param_class.new(name, parameter_data) }
-  
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
+  subject { abstract_param_class.new(name, parameter_data, root) }
+
   describe '#new' do
     let(:name) { 'page_number' }
     let(:parameter_data) {
@@ -293,13 +295,13 @@ describe Raml::Parameter::AbstractParameter do
   end
 
   describe '#merge' do
-    let(:base ) { Raml::Parameter::AbstractParameter.new 'name', base_data  }
-    let(:param) { Raml::Parameter::AbstractParameter.new 'name', param_data }
+    let(:base ) { Raml::Parameter::AbstractParameter.new 'name', base_data , root }
+    let(:param) { Raml::Parameter::AbstractParameter.new 'name', param_data, root }
     subject(:merged_param) { param.merge base }
 
     context 'when trying to merge parameters of different names' do
-      let(:base ) { Raml::Parameter::AbstractParameter.new 'name1', {} }
-      let(:param) { Raml::Parameter::AbstractParameter.new 'name2', {} }
+      let(:base ) { Raml::Parameter::AbstractParameter.new 'name1', {}, root }
+      let(:param) { Raml::Parameter::AbstractParameter.new 'name2', {}, root }
       it { expect { merged_param }.to raise_error Raml::MergeError }
     end
     context 'when a single type parameter is merged' do

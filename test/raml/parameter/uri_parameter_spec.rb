@@ -1,6 +1,8 @@
 require_relative '../spec_helper'
 
 describe Raml::Parameter::UriParameter do
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
   let(:name) { 'AccountSid' }
   let(:data) {
     YAML.load(%q(
@@ -10,11 +12,11 @@ describe Raml::Parameter::UriParameter do
     ))
   }
 
-  subject { Raml::Parameter::UriParameter.new(name, data) }
+  subject { Raml::Parameter::UriParameter.new(name, data, root) }
 
   describe '#new' do
     it "should instanciate Uri parameter" do
-      Raml::Parameter::UriParameter.new(name, data)
+      Raml::Parameter::UriParameter.new(name, data, root)
     end
     
     context 'when no required attribute is given' do

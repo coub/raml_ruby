@@ -1,6 +1,6 @@
 module Raml
   module Parameter
-    class AbstractParameter
+    class AbstractParameter < Node
       include Documentable
       include Merge
       include Parent
@@ -21,13 +21,13 @@ module Raml
 
       children_by :types, :type, AbstractParameter
 
-      def initialize(name, parameter_data)
+      def initialize(name, parameter_data, parent)
         @name     = name
         @children = []
 
         if parameter_data.is_a? Array
           parameter_data.each do |parameter|
-            @children << self.class.new(name, parameter)
+            @children << self.class.new(name, parameter, self)
           end
         elsif parameter_data.is_a? Hash
           parameter_data.each { |pname, pvalue| instance_variable_set("@#{Raml.underscore(pname)}", pvalue) }

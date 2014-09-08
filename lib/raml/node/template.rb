@@ -1,7 +1,7 @@
 require 'active_support/core_ext/string'
 
 module Raml
-  class Template
+  class Template < Node
     attr_reader :name, :data
 
     def initialize(name, data, parent)

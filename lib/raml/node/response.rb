@@ -1,5 +1,5 @@
 module Raml
-  class Response
+  class Response < Node
     include Documentable
     include Global
     include Merge
@@ -19,7 +19,7 @@ module Raml
         
         when 'headers'
           validate_hash key, value, String, Hash
-          @children += value.map { |hname, hdata| Header.new hname, hdata }
+          @children += value.map { |hname, hdata| Header.new hname, hdata, self }
 
         else
           begin

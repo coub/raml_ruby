@@ -2,7 +2,7 @@ require 'uri'
 require 'uri_template'
 
 module Raml
-  class Root
+  class Root < Node
     include Parent
     include Validation
 
@@ -10,6 +10,7 @@ module Raml
                   :protocols  , :media_type , :documentation
 
     def initialize(root_data)
+      @parent   = self
       @children = []
       @schemas  = {}
 
@@ -20,16 +21,16 @@ module Raml
 
         when 'baseUriParameters'
           validate_base_uri_parameters value
-          @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data }
+          @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data, self }
 
         when 'documentation'
           validate_documentation value
-          @children += value.map { |doc| Documentation.new doc["title"], doc["content"] }
+          @children += value.map { |doc| Documentation.new doc["title"], doc["content"], self }
 
         when 'schemas'
           validate_schemas value
           @children += value.reduce({}) { |memo, map | memo.merge! map }.
-                             map        { |name, data| Schema.new name, data }
+                             map        { |name, data| Schema.new name, data, self }
 
         when 'resourceTypes'
           validate_resource_types value
