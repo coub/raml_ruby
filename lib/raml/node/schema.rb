@@ -1,17 +1,7 @@
 require 'json-schema'
 
 module Raml
-  class Schema < Node
-    attr_accessor :name, :value
-
-    def initialize(name, schema, parent)
-      @name   = name
-      @value  = schema
-      @parent = parent
-
-      validate_json if json_schema?
-    end
-
+  class Schema < ValueNode
     def json_schema?
       /"\$schema":\s*"http:\/\/json-schema.org\/[^"]*"/ === @value
     end
@@ -21,6 +11,10 @@ module Raml
     end
 
     private
+
+    def validate_value
+      validate_json if json_schema?
+    end
 
     def validate_json
       parsed_schema = JSON.parse @value

@@ -1,15 +1,8 @@
 require 'active_support/core_ext/string'
 
 module Raml
-  class Template < Node
-    attr_reader :name, :data
-
-    def initialize(name, data, parent)
-      @name   = name
-      @data   = data
-      @parent = parent
-    end
-
+  class Template < ValueNode
+    
     def interpolate(params)
       name = @name.clone
       data = clone_data
@@ -22,7 +15,7 @@ module Raml
 
     def clone_data
       # ugly but effective
-      Marshal.load Marshal.dump @data
+      Marshal.load Marshal.dump @value
     end
 
     def interpolate_params(value, params)

@@ -1,13 +1,14 @@
 module Raml
   module Merge
-  	def merge_attributes(attributes, base)
-      attributes.each do |attr|
-        attr_var = "@#{attr}".to_sym
-        if instance_variable_get(attr_var).nil? and not (val = base.instance_variable_get(attr_var)).nil?
-          instance_variable_set attr_var, val
+    def merge(base)
+      scalar_properties.each do |prop|
+        prop_var  = "@#{prop}".to_sym
+        other_val = base.instance_variable_get prop_var
+        if instance_variable_get(prop_var).nil? and not other_val.nil?
+          instance_variable_set prop_var, other_val
         end
       end
-   	end
+    end
 
 		def merge_parameters(base, type, name=:name)
     	match, no_match = base.send(type).values.partition { |param| self.send(type).has_key? param.send(name) }

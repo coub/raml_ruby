@@ -1,7 +1,8 @@
 module Raml
   class ResourceType < Template
   	class Instance < AbstractResource
-  		attr_accessor :usage
+	    inherit_class_attributes
+  		scalar_property :usage
   	end
 
   	def instantiate(params)

@@ -1,19 +1,17 @@
 module Raml
   module Parameter
-    class AbstractParameter < Node
+    class AbstractParameter < PropertiesNode
+      inherit_class_attributes
+
       include Documentable
       include Merge
       include Parent
 
       VALID_TYPES = %w(string number integer date boolean file)
 
-      ABSTRACT_PARAM_ATTRIBUTES = [ 
-        :type       , :enum     , :pattern  , :min_length , 
-        :max_length , :minimum  , :maximum  , :example    , 
-        :repeat     , :required , :default
-      ]
-
-      attr_accessor(*ABSTRACT_PARAM_ATTRIBUTES)
+      scalar_property :type       , :enum     , :pattern  , :min_length , 
+                      :max_length , :minimum  , :maximum  , :example    , 
+                      :repeat     , :required , :default
 
       attr_reader_default :type    , 'string'
       attr_reader_default :repeat  , false
@@ -22,17 +20,14 @@ module Raml
       children_by :types, :type, AbstractParameter
 
       def initialize(name, parameter_data, parent)
-        @name     = name
-        @children = []
-
         if parameter_data.is_a? Array
+          @name       = name
+          @children ||= []
           parameter_data.each do |parameter|
             @children << self.class.new(name, parameter, self)
           end
         elsif parameter_data.is_a? Hash
-          parameter_data.each { |pname, pvalue| instance_variable_set("@#{Raml.underscore(pname)}", pvalue) }
-
-          validate
+          super
         end
       end
 
@@ -67,8 +62,6 @@ module Raml
       def merge(base)
         raise MergeError, "#{self.class} names don't match." if name != base.name
 
-        super
-
         case [ has_multiple_types?, base.has_multiple_types? ]
         when [ true , true  ]
           match, no_match = base.types.values.partition { |param| types.include? param.type }
@@ -101,36 +94,18 @@ module Raml
           end
 
         when [ false, false ]
-          merge_attributes ABSTRACT_PARAM_ATTRIBUTES, base
+          super
         end
 
         self
       end
 
-      def reset
-        super
-        ABSTRACT_PARAM_ATTRIBUTES.each { |attr| instance_variable_set "@#{attr}", nil }
-      end
-
       private
-
-      def validate
-        super
-
-        raise InvalidParameterType unless VALID_TYPES.include? type
-        
-        validate_enum
-        validate_pattern
-        validate_min_length
-        validate_max_length
-        validate_minimum
-        validate_maximum
-        validate_example
-        validate_repeat
-        validate_required
-        validate_default
-      end
       
+      def validate_type
+        raise InvalidParameterType unless VALID_TYPES.include? type
+      end
+
       def validate_enum
         if enum
           if type == 'string'
@@ -243,6 +218,10 @@ module Raml
               ( err_msg % [ 'boolean', 'boolean' ] ) unless [TrueClass, FalseClass].include? val.class
           end
         end
+      end
+
+      def reset
+        scalar_properties.each { |prop| instance_variable_set "@#{prop}", nil }
       end
     end
   end

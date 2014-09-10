@@ -1,47 +1,18 @@
 module Raml
-  class Body < Node
+  class Body < PropertiesNode
+    inherit_class_attributes
+    
     include Global
     include Merge
     include Parent
     include Validation
 
     MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
-    BODY_PARAM_ATTRIBUTES = [ :example ]
 
-    attr_accessor :media_type, *BODY_PARAM_ATTRIBUTES
+    scalar_property     :example 
+    non_scalar_property :form_parameters, :schema
 
-    def initialize(media_type, body_data, parent)
-      @children   = []
-      @media_type = media_type
-      @parent     = parent
-
-      body_data.each do |key, value|
-        case key
-        when 'formParameters'
-          validate_hash key, value, String, Hash
-          value.each do |name, form_parameter_data|
-            @children << Parameter::FormParameter.new(name, form_parameter_data, self)
-          end
-
-        when 'schema'
-          validate_string :schema, value
-          if schema_declarations.include? value
-            @children << SchemaReference.new(value, self)
-          else
-            @children << Schema.new('_', value, self)
-          end
-
-        else
-          begin
-            send "#{Raml.underscore(key)}=", value
-          rescue
-            raise UnknownProperty, "#{key} is an unknown property."
-          end
-        end
-      end
-      
-      validate
-    end
+    alias_method :media_type, :name
     
     def document
       lines = []
@@ -57,14 +28,14 @@ module Raml
     child_of :schema, [ Schema, SchemaReference ]
 
     def web_form?
-      [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? @media_type
+      [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? media_type
     end
     
     def merge(base)
       raise MergeError, "Media types don't match." if media_type != base.media_type
       
       super
-      merge_attributes BODY_PARAM_ATTRIBUTES, base
+
       merge_parameters base, :form_parameters
 
       if base.schema
@@ -77,9 +48,29 @@ module Raml
 
     private
     
-    def validate
+    def validate_name
       raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
-      
+    end
+
+    def parse_form_parameters(value)
+      validate_hash 'formParameters', value, String, Hash
+
+      value.map do |name, form_parameter_data|
+        Parameter::FormParameter.new name, form_parameter_data, self
+      end
+    end
+
+    def parse_schema(value)
+      validate_string :schema, value
+
+      if schema_declarations.include? value
+        SchemaReference.new value, self
+      else
+        Schema.new '_', value, self
+      end
+    end
+
+    def validate
       if web_form?
         raise InvalidProperty, 'schema property can\'t be defined for web forms.' if schema
         raise RequiredPropertyMissing, 'formParameters property must be specified for web forms.' if

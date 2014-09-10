@@ -256,8 +256,8 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.should all( be_a Raml::Trait )
-            subject.traits[0].data.should eq ({'queryParameters' => {'tokenName' => {'description'=>'foo'}}})
-            subject.traits[1].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
+            subject.traits[0].value.should eq ({'queryParameters' => {'tokenName' => {'description'=>'foo'}}})
+            subject.traits[1].value.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
@@ -271,7 +271,7 @@ describe Raml::Resource do
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
             subject.traits.select {|t| t.is_a? Raml::TraitReference }.map(&:name).should contain_exactly('secured', 'rateLimited')
-            subject.traits.select {|t| t.is_a? Raml::Trait }[0].data.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
+            subject.traits.select {|t| t.is_a? Raml::Trait }[0].value.should eq ({'queryParameters' => {'numPages'  => {'description'=>'bar'}}})
           end
         end
       end

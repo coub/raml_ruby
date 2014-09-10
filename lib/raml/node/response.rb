@@ -1,37 +1,14 @@
 module Raml
-  class Response < Node
+  class Response < PropertiesNode
+    inherit_class_attributes
+
     include Documentable
     include Global
     include Merge
     include Parent
     include Validation
 
-    def initialize(name, response_data, parent)
-      @children = []
-      @name     = name
-      @parent   = parent
-
-      response_data.each do |key, value|
-        case key
-        when 'body'
-          validate_hash key, value, String, Hash
-          @children += value.map { |bname, bdata| Body.new bname, bdata, self }
-        
-        when 'headers'
-          validate_hash key, value, String, Hash
-          @children += value.map { |hname, hdata| Header.new hname, hdata, self }
-
-        else
-          begin
-            send "#{Raml.underscore(key)}=", value
-          rescue
-            raise UnknownProperty, "#{key} is an unknown property."
-          end
-        end
-      end
-      
-      validate
-    end
+    non_scalar_property :body, :headers
 
     def document
       lines = []
@@ -67,6 +44,20 @@ module Raml
       merge_parameters base, :bodies          , :media_type
 
       self
+    end
+
+    private
+
+    def parse_body(value)
+      validate_hash 'body', value, String, Hash
+
+      value.map { |bname, bdata| Body.new bname, bdata, self }
+    end
+
+    def parse_headers(value)
+      validate_hash 'headers', value, String, Hash
+
+      value.map { |hname, hdata| Header.new hname, hdata, self }
     end
   end
 end

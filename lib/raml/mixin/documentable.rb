@@ -1,7 +1,10 @@
 module Raml
   module Documentable
-    DOCUMENTABLE_ATTRIBUTES = [ :display_name, :description ]
-    attr_accessor :name, *DOCUMENTABLE_ATTRIBUTES
+    def self.included(base)
+      base.instance_eval do
+        scalar_property :display_name, :description
+      end
+    end
 
     def document
       lines = [ "#{@display_name || @name}\n#{@description}" ]
@@ -9,24 +12,14 @@ module Raml
       lines.join "\n\n"
     end
 
-    def validate
-      [ :display_name, :description ].each do |prop|
-        raise InvalidProperty, "#{Raml.camel_case prop} property mus be a string." unless [ NilClass, String ].include? send(prop).class
-      end
+    private
+
+    def validate_display_name
+      raise InvalidProperty, "displayName property mus be a string." unless display_name.is_a? String 
     end
 
-    def merge(base)
-      begin
-        super
-      rescue NoMethodError
-      end
-
-      merge_attributes DOCUMENTABLE_ATTRIBUTES, base
-    end
-
-    def reset
-      super rescue nil
-      DOCUMENTABLE_ATTRIBUTES.each { |attr| instance_variable_set "@#{attr}", nil }
+    def validate_description
+      raise InvalidProperty, "description property mus be a string." unless description.is_a? String 
     end
   end
 end

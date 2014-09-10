@@ -2,55 +2,34 @@ require 'uri'
 require 'uri_template'
 
 module Raml
-  class Root < Node
+  class Root < PropertiesNode
+    inherit_class_attributes
+
     include Parent
     include Validation
 
-    attr_accessor :title      , :version    , :base_uri     ,
-                  :protocols  , :media_type , :documentation
+    scalar_property :title      , :version    , :base_uri     ,
+                    :protocols  , :media_type
+
+    non_scalar_property :base_uri_parameters, :documentation, :schemas, 
+                        :resource_types     , :traits
+
+    regexp_property( /\A\//, ->(key,value) { Resource.new key, value, self } )
+
+    children_of :documents, Documentation
+
+    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter    
+    children_by :resources          , :name, Resource
+    children_by :schemas            , :name, Schema
+    children_by :traits             , :name, Trait
+    children_by :resource_types     , :name, ResourceType
+
+    alias :trait_declarations         :traits
+    alias :resource_type_declarations :resource_types
+    alias :schema_declarations        :schemas
 
     def initialize(root_data)
-      @parent   = self
-      @children = []
-      @schemas  = {}
-
-      root_data.each do |key, value|
-        case key
-        when /\A\//
-          @children << Resource.new(key, value, self)
-
-        when 'baseUriParameters'
-          validate_base_uri_parameters value
-          @children += value.map { |name, data| Parameter::BaseUriParameter.new name, data, self }
-
-        when 'documentation'
-          validate_documentation value
-          @children += value.map { |doc| Documentation.new doc["title"], doc["content"], self }
-
-        when 'schemas'
-          validate_schemas value
-          @children += value.reduce({}) { |memo, map | memo.merge! map }.
-                             map        { |name, data| Schema.new name, data, self }
-
-        when 'resourceTypes'
-          validate_resource_types value
-          @children += value.reduce({}) { |memo, map | memo.merge! map }.
-                             map        { |name, data| ResourceType.new name, data, self }
-
-        when 'traits'
-          validate_traits value
-          @children += value.reduce({}) { |memo, map | memo.merge! map }.
-                             map        { |name, data| Trait.new name, data, self }
-        else
-          begin
-            send "#{Raml.underscore(key)}=", value
-          rescue
-            raise UnknownProperty, "#{key} is an unknown property."
-          end
-        end
-      end
-
-      validate
+      super nil, root_data, self
     end
 
     def document(verbose = false)
@@ -76,18 +55,6 @@ module Raml
       doc
     end
 
-    children_of :documents, Documentation
-
-    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter    
-    children_by :resources          , :name, Resource
-    children_by :schemas            , :name, Schema
-    children_by :traits             , :name, Trait
-    children_by :resource_types     , :name, ResourceType
-
-    alias :trait_declarations         :traits
-    alias :resource_type_declarations :resource_types
-    alias :schema_declarations        :schemas
-
     def expand
       unless @expanded
         resources.values.each(&:apply_resource_type)
@@ -104,26 +71,17 @@ module Raml
     private
 
     def validate
-      validate_title            
-      validate_base_uri
-      validate_protocols
-      validate_media_type
+      raise RequiredPropertyMissing, 'Missing root title property.'  if title.nil?
+      raise RequiredPropertyMissing, 'Missing root baseUri property' if base_uri.nil?
+      _validate_base_uri
     end
 
     def validate_title
-      if title.nil?
-        raise RequiredPropertyMissing, 'Missing root title property.'
-      else
-        validate_string :title, title
-      end
+      validate_string :title, title
     end
     
-    def validate_base_uri
-      if base_uri.nil?
-        raise RequiredPropertyMissing, 'Missing root baseUri property'
-      else
-        validate_string :base_uri, base_uri
-      end
+    def _validate_base_uri
+      validate_string :base_uri, base_uri
       
       # Check whether its a URL.
       uri = parse_uri base_uri
@@ -162,7 +120,7 @@ module Raml
       end
     end
     
-    def validate_schemas(schemas)
+    def parse_schemas(schemas)
       validate_array :schemas, schemas, Hash
       
       raise InvalidProperty, 'schemas property must be an array of maps with string keys'   unless 
@@ -173,23 +131,31 @@ module Raml
       
       raise InvalidProperty, 'schemas property contains duplicate schema names'             unless 
         schemas.map(&:keys).flatten.uniq!.nil?
+
+      schemas.reduce({}) { |memo, map | memo.merge! map }.
+              map        { |name, data| Schema.new name, data, self }
     end
     
-    def validate_base_uri_parameters(base_uri_parameters)
+    def parse_base_uri_parameters(base_uri_parameters)
       validate_hash :base_uri_parameters, base_uri_parameters, String, Hash
       
       raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
         base_uri_parameters.include? 'version'
+
+      base_uri_parameters.map { |name, data| Parameter::BaseUriParameter.new name, data, self }
     end
     
-    def validate_documentation(documentation)
+    def parse_documentation(documentation)
+      puts 'parse_documentation'
       validate_array :documentation, documentation
       
       raise InvalidProperty, 'documentation property must include at least one document or not be included' if 
         documentation.empty?
+
+      documentation.map { |doc| doc = doc.dup; Documentation.new doc.delete("title"), doc, self }
     end
     
-    def validate_resource_types(types)
+    def parse_resource_types(types)
       validate_array :resource_types, types, Hash
       
       raise InvalidProperty, 'resourceTypes property must be an array of maps with string keys'  unless 
@@ -200,9 +166,12 @@ module Raml
       
       raise InvalidProperty, 'resourceTypes property contains duplicate type names'              unless 
         types.map(&:keys).flatten.uniq!.nil?
+
+      types.reduce({}) { |memo, map | memo.merge! map }.
+            map        { |name, data| ResourceType.new name, data, self }
     end
 
-    def validate_traits(traits)
+    def parse_traits(traits)
       validate_array :traits, traits, Hash
       
       raise InvalidProperty, 'traits property must be an array of maps with string keys'  unless 
@@ -213,6 +182,9 @@ module Raml
       
       raise InvalidProperty, 'traits property contains duplicate trait names'             unless 
         traits.map(&:keys).flatten.uniq!.nil?
+
+      traits.reduce({}) { |memo, map | memo.merge! map }.
+             map        { |name, data| Trait.new name, data, self }
     end
 
     def parse_uri(uri)

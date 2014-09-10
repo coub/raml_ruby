@@ -6,10 +6,7 @@ describe Raml::Parameter::QueryParameter do
   let(:name) { 'page' }
   let(:data) {
     YAML.load(%q(
-      page:
-        type: integer
-      per_page:
-        type: integer
+      type: integer
     ))
   }
 

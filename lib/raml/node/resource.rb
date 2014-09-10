@@ -1,41 +1,11 @@
 module Raml
   class Resource < AbstractResource
+    inherit_class_attributes
+
     include Merge
 
-    def initialize(name, resource_data, parent)
-      @children ||= []
-      @parent     = parent
-
-      resource_data.delete_if do |key, value|
-        case key
-        when /\A\//
-          @children << Resource.new(key, value, self)
-          true
-
-        when 'type'
-          validate_property :type, value, [ Hash, String ]
-          if value.is_a? Hash
-            if value.keys.size == 1 and resource_type_declarations.include? value.keys.first
-              raise InvalidProperty, 'type property with map of resource type name but params are not a map' unless 
-                value.values[0].is_a? Hash
-              @children << ResourceTypeReference.new( *value.first, self )
-            else
-              @children << ResourceType.new('_', value, self)
-            end
-          else
-            raise UnknownResourceTypeReference, "#{value} referenced in resource but not found in resource types declaration." unless
-              resource_type_declarations.include? value
-            @children << ResourceTypeReference.new(value, self)
-          end
-          true
-
-        else
-          false
-        end
-      end
-      
-      super
-    end
+    non_scalar_property :type
+    regexp_property( /\A\//, ->(key,value) { Resource.new key, value, self } )
 
     children_by :resources, :name, Resource
 
@@ -66,6 +36,24 @@ module Raml
     end
 
     private
+
+    def parse_type(value)
+      validate_property :type, value, [ Hash, String ]
+
+      if value.is_a? Hash
+        if value.keys.size == 1 and resource_type_declarations.include? value.keys.first
+          raise InvalidProperty, 'type property with map of resource type name but params are not a map' unless 
+            value.values[0].is_a? Hash
+          ResourceTypeReference.new( *value.first, self )
+        else
+          ResourceType.new '_', value, self
+        end
+      else
+        raise UnknownResourceTypeReference, "#{value} referenced in resource but not found in resource types declaration." unless
+          resource_type_declarations.include? value
+        ResourceTypeReference.new value, self
+      end
+    end
 
     def instantiate_resource_type
       reserved_params = {

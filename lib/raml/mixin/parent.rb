@@ -6,16 +6,6 @@ module Raml
 
     attr_accessor :children
 
-    def merge(override)
-      super
-    rescue NoMethodError
-    end
-    
-    def reset
-      super
-    rescue NoMethodError
-    end
-
     module ClassMethods
       def child_of(name, type)
         type = [ type ] unless type.is_a? Array

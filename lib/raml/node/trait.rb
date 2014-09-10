@@ -1,7 +1,8 @@
 module Raml
   class Trait < Template
   	class Instance < AbstractMethod
-  		attr_accessor :usage
+  		inherit_class_attributes
+  		scalar_property :usage
   	end
 
   	def instantiate(params)
