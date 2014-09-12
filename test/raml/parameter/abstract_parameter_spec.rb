@@ -295,12 +295,12 @@ describe Raml::Parameter::AbstractParameter do
   end
 
   describe '#merge' do
-    let(:base ) { Raml::Parameter::AbstractParameter.new 'name', base_data , root }
+    let(:other ) { Raml::Parameter::AbstractParameter.new 'name', other_data , root }
     let(:param) { Raml::Parameter::AbstractParameter.new 'name', param_data, root }
-    subject(:merged_param) { param.merge base }
+    subject(:merged_param) { param.merge other }
 
     context 'when trying to merge parameters of different names' do
-      let(:base ) { Raml::Parameter::AbstractParameter.new 'name1', {}, root }
+      let(:other ) { Raml::Parameter::AbstractParameter.new 'name1', {}, root }
       let(:param) { Raml::Parameter::AbstractParameter.new 'name2', {}, root }
       it { expect { merged_param }.to raise_error Raml::MergeError }
     end
@@ -308,175 +308,175 @@ describe Raml::Parameter::AbstractParameter do
       context 'with a single type parameter' do
         context 'when the parameter being merged into already has that property set' do
           context 'displayName property' do
-            let(:base_data ) { {displayName: 'base displayName' } }
+            let(:other_data) { {displayName: 'other displayName' } }
             let(:param_data) { {displayName: 'param displayName'} }
-            it 'does not override it' do
-              merged_param.display_name.should eq 'param displayName'
+            it 'overrides it' do
+              merged_param.display_name.should eq 'other displayName'
             end
           end
           context 'description property' do
-            let(:base_data ) { {description: 'base description'     } }
+            let(:other_data) { {description: 'other description'     } }
             let(:param_data) { {description: 'param description'} }
-            it 'does not override it' do
-              merged_param.description.should eq 'param description'
+            it 'overrides it' do
+              merged_param.description.should eq 'other description'
             end
           end
           context 'type property' do
-            let(:base_data ) { {type: 'string' } }
+            let(:other_data) { {type: 'string' } }
             let(:param_data) { {type: 'number' } }
-            it 'does not override it' do
-              merged_param.type.should eq 'number'
+            it 'overrides it' do
+              merged_param.type.should eq 'string'
             end
           end
           context 'enum property' do
-            let(:base_data ) { {enum: [ 'base'  ] } }
+            let(:other_data) { {enum: [ 'other'  ] } }
             let(:param_data) { {enum: [ 'param' ] } }
-            it 'does not override it' do
-              merged_param.enum.should eq [ 'param' ]
+            it 'overrides it' do
+              merged_param.enum.should eq [ 'other' ]
             end
           end
           context 'pattern property' do
-            let(:base_data ) { {pattern: 'base'     } }
+            let(:other_data) { {pattern: 'other'     } }
             let(:param_data) { {pattern: 'param' } }
-            it 'does not override it' do
-              merged_param.pattern.should eq /param/
+            it 'overrides it' do
+              merged_param.pattern.should eq /other/
             end
           end
           context 'min_length property' do
-            let(:base_data ) { {min_length: 1 } }
+            let(:other_data) { {min_length: 1 } }
             let(:param_data) { {min_length: 2 } }
-            it 'does not override it' do
-              merged_param.min_length.should eq 2
+            it 'overrides it' do
+              merged_param.min_length.should eq 1
             end
           end
           context 'max_length property' do
-            let(:base_data ) { {max_length: 1 } }
+            let(:other_data) { {max_length: 1 } }
             let(:param_data) { {max_length: 2 } }
-            it 'does not override it' do
-              merged_param.max_length.should eq 2
+            it 'overrides it' do
+              merged_param.max_length.should eq 1
             end
           end
           context 'minimum property' do
-            let(:base_data ) { {type: 'number', minimum: 1 } }
+            let(:other_data) { {type: 'number', minimum: 1 } }
             let(:param_data) { {type: 'number', minimum: 2 } }
-            it 'does not override it' do
-              merged_param.minimum.should eq 2
+            it 'overrides it' do
+              merged_param.minimum.should eq 1
             end
           end
           context 'maximum property' do
-            let(:base_data ) { {type: 'number', maximum: 1 } }
+            let(:other_data) { {type: 'number', maximum: 1 } }
             let(:param_data) { {type: 'number', maximum: 2 } }
-            it 'does not override it' do
-              merged_param.maximum.should eq 2
+            it 'overrides it' do
+              merged_param.maximum.should eq 1
             end
           end
           context 'example property' do
-            let(:base_data ) { {example: 'base example'     } }
-            let(:param_data) { {example: 'override example'} }
-            it 'does not override it' do
-              merged_param.example.should eq 'override example'
+            let(:other_data) { {example: 'other example'     } }
+            let(:param_data) { {example: 'param example'} }
+            it 'overrides it' do
+              merged_param.example.should eq 'other example'
             end
           end
           context 'repeat property' do
-            let(:base_data ) { {repeat: true  } }
+            let(:other_data) { {repeat: true  } }
             let(:param_data) { {repeat: false } }
-            it 'does not override it' do
-              merged_param.repeat.should eq false
+            it 'overrides it' do
+              merged_param.repeat.should eq true
             end
           end
           context 'required property' do
-            let(:base_data ) { {required: true  } }
+            let(:other_data) { {required: true  } }
             let(:param_data) { {required: false } }
-            it 'does not override it' do
-              merged_param.required.should eq false
+            it 'overrides it' do
+              merged_param.required.should eq true
             end
           end
           context 'default property' do
-            let(:base_data ) { {default: 'base default'     } }
-            let(:param_data) { {default: 'override default' } }
-            it 'does not override it' do
-              merged_param.default.should eq 'override default'
+            let(:other_data) { {default: 'other default'     } }
+            let(:param_data) { {default: 'param default' } }
+            it 'overrides it' do
+              merged_param.default.should eq 'other default'
             end
           end
         end
         context 'when the parameter being merged into does not have that property set' do
           let(:param_data) { {} }
           context 'displayName property' do
-            let(:base_data ) { {displayName: 'base displayName'} }
+            let(:other_data) { {displayName: 'other displayName'} }
             it 'can override it' do
-              merged_param.display_name.should eq base.display_name
+              merged_param.display_name.should eq other.display_name
             end
           end
           context 'description property' do
-            let(:base_data ) { {description: 'base description'} }
+            let(:other_data) { {description: 'other description'} }
             it 'can override it' do
-              merged_param.description.should eq base.description
+              merged_param.description.should eq other.description
             end
           end
           context 'type property' do
-            let(:base_data ) { {type: 'string'} }
+            let(:other_data) { {type: 'string'} }
             it 'can override it' do
-              merged_param.type.should eq base.type
+              merged_param.type.should eq other.type
             end
           end
           context 'enum property' do
-            let(:base_data ) { {enum: [ 'base' ]} }
+            let(:other_data) { {enum: [ 'other' ]} }
             it 'can override it' do
-              merged_param.enum.should eq base.enum
+              merged_param.enum.should eq other.enum
             end
           end
           context 'pattern property' do
-            let(:base_data ) { {pattern: 'base'} }
+            let(:other_data) { {pattern: 'other'} }
             it 'can override it' do
-              merged_param.pattern.should eq base.pattern
+              merged_param.pattern.should eq other.pattern
             end
           end
           context 'min_length property' do
-            let(:base_data ) { {min_length: 1} }
+            let(:other_data) { {min_length: 1} }
             it 'can override it' do
-              merged_param.min_length.should eq base.min_length
+              merged_param.min_length.should eq other.min_length
             end
           end
           context 'max_length property' do
-            let(:base_data ) { {max_length: 1} }
+            let(:other_data) { {max_length: 1} }
             it 'can override it' do
-              merged_param.max_length.should eq base.max_length
+              merged_param.max_length.should eq other.max_length
             end
           end
           context 'minimum property' do
-            let(:base_data ) { {type: 'number', minimum: 1} }
+            let(:other_data) { {type: 'number', minimum: 1} }
             it 'can override it' do
-              merged_param.minimum.should eq base.minimum
+              merged_param.minimum.should eq other.minimum
             end
           end
           context 'maximum property' do
-            let(:base_data ) { {type: 'number', maximum: 1} }
+            let(:other_data) { {type: 'number', maximum: 1} }
             it 'can override it' do
-              merged_param.maximum.should eq base.maximum
+              merged_param.maximum.should eq other.maximum
             end
           end
           context 'example property' do
-            let(:base_data ) { {example: 'base example'} }
+            let(:other_data) { {example: 'other example'} }
             it 'can override it' do
-              merged_param.example.should eq base.example
+              merged_param.example.should eq other.example
             end
           end
           context 'repeat property' do
-            let(:base_data ) { {repeat: true} }
+            let(:other_data) { {repeat: true} }
             it 'can override it' do
-              merged_param.repeat.should eq base.repeat
+              merged_param.repeat.should eq other.repeat
             end
           end
           context 'required property' do
-            let(:base_data ) { {required: true} }
+            let(:other_data) { {required: true} }
             it 'can override it' do
-              merged_param.required.should eq base.required
+              merged_param.required.should eq other.required
             end
           end
           context 'default property' do
-            let(:base_data ) { {default: 'base default'} }
+            let(:other_data) { {default: 'other default'} }
             it 'can override it' do
-              merged_param.default.should eq base.default
+              merged_param.default.should eq other.default
             end
           end
         end
@@ -487,25 +487,25 @@ describe Raml::Parameter::AbstractParameter do
           { type: 'boolean', description: 'param2' },
         ] }
         context 'when none of the parameter types match the type of the merged parameter' do
-          let(:base_data) { {type: 'string', description: 'base'} }
+          let(:other_data) { {type: 'string', description: 'other'} }
           it 'adds the new type as an option' do
             merged_param.types.keys.should contain_exactly('string', 'number', 'boolean')
           end
         end
         context 'when one of the parameter types matches the type of the merged parameter' do
-          let(:base_data) { {type: 'number', description: 'base', minimum: 5} }
+          let(:other_data) { {type: 'number', description: 'other', minimum: 5} }
           it 'merges the matching types' do
             merged_param.types.keys.should contain_exactly('number', 'boolean')
-            merged_param.types['number'].description.should eq 'param1'
-            merged_param.types['number'].minimum.should eq base.minimum
+            merged_param.types['number'].description.should eq other.description
+            merged_param.types['number'].minimum.should eq other.minimum
           end
         end
       end
     end
     context 'when a multiple type parameter is merged' do
-      let(:base_data) { [
-        { type: 'number' , description: 'base1', minimum: 5 },
-        { type: 'boolean', description: 'base2' },
+      let(:other_data) { [
+        { type: 'number' , description: 'other1', minimum: 5 },
+        { type: 'boolean', description: 'other2' },
       ] }
       context 'with a single type parameter' do
         context 'when the parameter type does not match any type of the merged parameter' do
@@ -522,9 +522,9 @@ describe Raml::Parameter::AbstractParameter do
           it 'converts the parameter to multiple types' do
             merged_param.should be_has_multiple_types
           end
-          it 'merges the overriding type with the matching base type' do
+          it 'merges the overriding type with the matching other type' do
             merged_param.types.keys.should contain_exactly('number', 'boolean')
-            merged_param.types['number'].description.should eq 'param'
+            merged_param.types['number'].description.should eq 'other1'
             merged_param.types['number'].minimum.should eq 5
           end
         end
@@ -536,7 +536,7 @@ describe Raml::Parameter::AbstractParameter do
         ] }
         it 'merges types that match and adds those that dont' do
             merged_param.types.keys.should contain_exactly('string', 'number', 'boolean')
-            merged_param.types['number'].description.should eq param_data[0][:description]
+            merged_param.types['number'].description.should eq 'other1'
             merged_param.types['number'].minimum.should eq 5
         end
       end

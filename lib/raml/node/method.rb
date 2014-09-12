@@ -2,8 +2,6 @@ module Raml
   class Method < AbstractMethod
     inherit_class_attributes
     
-    include Merge
-
     NAMES = %w(options get head post put delete trace connect patch)
 
     non_scalar_property :is
@@ -11,13 +9,48 @@ module Raml
     children_of :traits, [ Trait, TraitReference ]
 
     def apply_traits
-      # we apply the traits from right to left and method traits before resource traits.
-      # this results in higher predecene to rightmost and method traits, as merging
-      # will only resylt in params propertie being set if they are not already set.
+      # We apply resource traits before method traits, and apply traits at each level in
+      # the other they are listed (first to last, left to righ).  Later traits scalar
+      # properties overwrite earlier ones.  We end by merging a copy of the method, so
+      # that scalar properties in the method hierarchy overwrite those in the traits.
+      # We must apply the traits against the method first, as they may contain optional
+      # properties that depend on the method hiearchy.
+      cloned_self = self.clone
+
       (@parent.traits + traits).
-        reverse.
         map  { |trait| instantiate_trait trait }.
         each { |trait| merge trait }
+
+      merge cloned_self
+    end
+
+    def merge(other)
+      super
+
+      merge_properties other, :headers
+      merge_properties other, :query_parameters
+      merge_properties other, :bodies
+      merge_properties other, :responses
+
+      # We may be applying a resource type, which will result in the merging of a method that may have
+      # traits, instead of a trait that can't have no traits.
+      if other.is_a? Method
+        # merge traits. insert the non-matching ones in the front, so they have the least priority.
+        match, no_match = other.traits.partition do |other_trait|
+          if other_trait.is_a? Trait
+            false
+          else # TraitReference
+            self.traits.any? do |self_trait|
+              self_trait.is_a?(TraitReference)                && 
+              self_trait.name       == other_trait.name       && 
+              self_trait.parameters == other_trait.parameters
+            end
+          end
+        end
+        @children.unshift(*no_match)
+      end
+
+      self
     end
 
     private

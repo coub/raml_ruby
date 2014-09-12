@@ -4,6 +4,7 @@ module Raml
 
     include Documentable
     include Global
+    include Optional
     include Parent
     include Validation
 
@@ -27,10 +28,6 @@ module Raml
       @parent.resource_path + self.name
     end
 
-    def apply_traits
-      methods.values.each(&:apply_traits)
-    end
-
     private
     
     def validate_parent
@@ -39,7 +36,7 @@ module Raml
 
     def parse_uri_parameters(value)
       validate_hash :uri_parameters, value, String, Hash
-      value.map { |uname, udata| Parameter::UriParameter.new uname, udata, self }
+      value.map { |uname, udata| Parameter::UriParameter.new optional?(:uri_parameters, uname), udata, self }
     end
 
     def parse_base_uri_parameters(value)
@@ -48,7 +45,7 @@ module Raml
       raise InvalidProperty, 'baseUriParameters property can\'t contain reserved "version" parameter' if
         value.include? 'version'
 
-      value.map { |bname, bdata| Parameter::BaseUriParameter.new bname, bdata, self }
+      value.map { |bname, bdata| Parameter::BaseUriParameter.new optional?(:base_uri_parameters, bname), bdata, self }
     end
 
     def parse_is(value)

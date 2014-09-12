@@ -491,7 +491,7 @@ describe Raml::Root do
               - collection:
                   description: The collection.
               - member:
-                  description: The collection.
+                  description: The member.
             /jobs:
               type: collection
               /status:
@@ -510,6 +510,110 @@ describe Raml::Root do
         subject.resources.size.should eq 2
         subject.resources.values.each { |resource| mock(resource).apply_resource_type {} }
         subject.expand
+      end
+    end
+
+    context 'when the syntax tree contains resource types and traits' do
+      let(:data) {
+        YAML.load(
+          %q(
+            #%RAML 0.8
+            title: Example API
+            version: v1
+            baseUri: https://app.zencoder.com/api
+            traits:
+              - trait1:
+                  queryParameters:
+                    param1:
+                      description: <<methodName>> trait1 param1
+                    param2:
+                      description: trait1 param2
+                trait2:
+                  queryParameters:
+                    param2:
+                      description: trait2 param2
+                    param3:
+                      description: trait2 param3 <<arg1 | !pluralize>>
+                trait3:
+                  queryParameters:
+                    param3:
+                      description: trait3 param3
+                    param4:
+                      description: trait3 param4
+                trait4:
+                  responses:
+                    200?:
+                      body:
+                        application/xml:
+                          schema: schema3
+                    403?:
+                      body:
+                        application/xml:
+                          schema: schema3
+                trait5:
+                  responses:
+                    403:
+                      body:
+                        plain/text?:
+                          schema: schema4
+            resourceTypes:
+              - resource_type1:
+                  description: resource_type1 description
+                  get?:
+                    body:
+                      application/json:
+                        schema: schema1
+                  post?:
+                    body:
+                      application/json:
+                        schema: schema2
+                resource_type2:
+                  description: resource_type2 description
+                  displayName: resource_type2 displayName
+                  get:
+                    is: [ trait1 ]
+                    description: resource_type2 get description
+            /resource1:
+              type: resource_type1
+              description: resource1 description
+              get:
+                description: resource1 get
+              /resource1_1:
+                type: resource_type2
+                description: resource1_1 description
+            /resource2:
+              type: resource_type2
+              is: [ trait3, trait2: { arg1: dog }, trait4, trait5 ]
+              get:
+                responses:
+                  403:
+                    body:
+                      application/json:
+                        schema: schema4
+          )
+        )
+      }
+
+      it 'applies them correctly' do
+        subject.expand
+        subject.resources['/resource1'].description.should eq 'resource1 description'
+        subject.resources['/resource1'].methods.keys.should include 'get'
+        subject.resources['/resource1'].methods['get'].bodies['application/json'].schema.value.should eq 'schema1'
+        subject.resources['/resource1'].methods.keys.should_not include 'post'
+        subject.resources['/resource1'].resources['/resource1_1'].description.should eq 'resource1_1 description'
+        subject.resources['/resource1'].resources['/resource1_1'].display_name.should eq 'resource_type2 displayName'
+        subject.resources['/resource1'].resources['/resource1_1'].methods['get'].description.should eq 'resource_type2 get description'
+        subject.resources['/resource2'].description.should eq 'resource_type2 description'
+        subject.resources['/resource2'].display_name.should eq 'resource_type2 displayName'
+        subject.resources['/resource2'].methods['get'].description.should eq 'resource_type2 get description'
+        subject.resources['/resource2'].methods['get'].query_parameters['param1'].description.should eq 'get trait1 param1'
+        subject.resources['/resource2'].methods['get'].query_parameters['param2'].description.should eq 'trait1 param2'
+        subject.resources['/resource2'].methods['get'].query_parameters['param3'].description.should eq 'trait2 param3 dogs'
+        subject.resources['/resource2'].methods['get'].query_parameters['param4'].description.should eq 'trait3 param4'
+        subject.resources['/resource2'].methods['get'].responses.keys.should_not include '200'
+        subject.resources['/resource2'].methods['get'].responses.keys.should_not include  200
+        subject.resources['/resource2'].methods['get'].responses[403].bodies['application/xml'].schema.value.should eq 'schema3'
+        subject.resources['/resource2'].methods['get'].responses[403].bodies.keys.should_not include 'plain/text'
       end
     end
   end

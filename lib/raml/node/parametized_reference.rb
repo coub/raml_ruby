@@ -3,9 +3,8 @@ module Raml
     attr_accessor :parameters
 
     def initialize(name, parameters={}, parent)
-    	@name 			= name
+    	super name, parent
     	@parameters = parameters
-    	@parent     = parent
     end
   end
 end

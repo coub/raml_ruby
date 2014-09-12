@@ -12,25 +12,45 @@ module Raml
     child_of :type, [ ResourceType, ResourceTypeReference ]
 
     def apply_resource_type
-      merge instantiate_resource_type if type
+      if type
+        # We clone the resource as it currently is; apply the resource type to the
+        # resource, so that optional properties are correctly evaluated; then we
+        # apply the cloned resource with the initial state, so that scalar properties
+        # in the resource override the ones in the resource type.
+        cloned_self = self.clone
+        merge instantiate_resource_type
+        merge cloned_self
+      end
       resources.values.each(&:apply_resource_type)
     end
 
     def apply_traits
-      super
+      methods.values.each(&:apply_traits)
       resources.values.each(&:apply_traits)
     end
 
-    def merge(base)
-      raise MergeError, 'Trying to merge ResourceTypeReference into Resource.' unless base.is_a? ResourceType::Instance
+    def merge(other)
+      raise MergeError, "Trying to merge #{other.class} into Resource." unless other.is_a? ResourceType::Instance or other.is_a? Resource
 
       super
 
-      merge_parameters base, :methods
-      merge_parameters base, :base_uri_parameters
-      merge_parameters base, :uri_parameters
-      # insert them in the front, so they have the least priority
-      @children.unshift(*base.traits)
+      merge_properties other, :methods
+      merge_properties other, :base_uri_parameters
+      merge_properties other, :uri_parameters
+
+      # merge traits. insert the non-matching ones in the front, so they have the least priority.
+      match, no_match = other.traits.partition do |other_trait|
+        if other_trait.is_a? Trait
+          false
+        else # TraitReference
+          self.traits.any? do |self_trait|
+            self_trait.is_a?(TraitReference)                && 
+            self_trait.name       == other_trait.name       && 
+            self_trait.parameters == other_trait.parameters
+          end
+        end
+      end
+      @children.unshift(*no_match)
 
       self
     end

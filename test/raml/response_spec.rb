@@ -163,15 +163,15 @@ describe Raml::Response do
             context 'displayName property' do
               let(:response_data) { {displayName: 'response displayName'} }
               let(:mixin_data ) { {displayName: 'mixin displayName' } }
-              it 'keeps the response property' do
-                response.merge(mixin).display_name.should eq 'response displayName'
+              it 'overrites the response property' do
+                response.merge(mixin).display_name.should eq 'mixin displayName'
               end
             end
             context 'description property' do
               let(:response_data) { {description: 'response description'} }
               let(:mixin_data ) { {description: 'mixin description' } }
-              it 'keeps the response property' do
-                response.merge(mixin).description.should eq 'response description'
+              it 'overrites the response property' do
+                response.merge(mixin).description.should eq 'mixin description'
               end
             end
             context 'headers properties' do
@@ -195,7 +195,7 @@ describe Raml::Response do
               context 'when the mixin headers overlap the the response headers' do
                 let(:mixin_data) { { 
                   'headers' => {
-                    'header2' => {'displayName' => 'Header 3'}, 
+                    'header2' => {'description' => 'bar3', 'displayName' => 'Header 3'}, 
                     'header3' => {'description' => 'foo2'}, 
                     'header4' => {'description' => 'bar2'}
                   }
@@ -203,6 +203,7 @@ describe Raml::Response do
                 it 'merges the matching headers and adds the non-matching headers to the response' do
                    response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
                    response.headers['header2'].display_name.should eq mixin.headers['header2'].display_name
+                   response.headers['header2'].description.should  eq mixin.headers['header2'].description
                 end
               end        
             end

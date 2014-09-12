@@ -206,16 +206,15 @@ describe Raml::Body do
           context 'example property' do
             let(:body_data ) { {'example' => 'body example'}  }
             let(:mixin_data) { {'example' => 'mixin example'} }
-            it 'keeps its property' do
-              body.merge(mixin).example.should eq 'body example'
+            it 'overrides the property' do
+              body.merge(mixin).example.should eq 'mixin example'
             end
           end
           context 'schema property' do
             let(:body_data ) { {'schema' => 'body schema' } }
             let(:mixin_data) { {'schema' => 'mixin schema'} }
-            it 'keeps its property' do
-              body.schema.should_not eq mixin.schema
-              body.schema.value.should eq 'body schema'
+            it 'overrides the property' do
+              body.merge(mixin).schema.value.should eq 'mixin schema'
             end
           end
           context 'formParameters properties' do
@@ -239,7 +238,7 @@ describe Raml::Body do
             context 'when the merged in body form parameters overlap with the form parametes of the body merged into' do
               let(:mixin_data) { { 
                 'formParameters' => {
-                  'param2' => {'displayName' => 'Param 3'}, 
+                  'param2' => {'description' => 'bar3', 'displayName' => 'Param 3'}, 
                   'param3' => {'description' => 'foo2'}, 
                   'param4' => {'description' => 'bar2'}
                 }
@@ -247,6 +246,7 @@ describe Raml::Body do
               it 'merges the matching orm parameters and adds the non-matching orm parameters to the body' do
                  body.merge(mixin).form_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
                  body.form_parameters['param2'].display_name.should eq mixin.form_parameters['param2'].display_name
+                 body.form_parameters['param2'].description.should  eq mixin.form_parameters['param2'].description
               end
             end        
           end

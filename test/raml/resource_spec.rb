@@ -301,9 +301,9 @@ describe Raml::Resource do
   describe '#apply_resource_type' do
     let(:resource_data) { {
       'type' => {
-        'get' => { 'description' => 'resource type description' }
+        'get' => { 'description' => 'resource type description', 'displayName' => 'resource type displayName' }
       },
-      'get'  => {},
+      'get'  => {'description' => 'method description'},
       'post' => {},
       '/foo' => {},
       '/bar' => {}
@@ -312,11 +312,17 @@ describe Raml::Resource do
     context 'when it has a resource type' do
       it 'merges the resource type to the resource' do
         resource.type.should be_a Raml::ResourceType
-        mock.proxy(resource).instantiate_resource_type { |instantiated_type| 
+        mock.proxy(resource).instantiate_resource_type { |instantiated_type|
           mock(resource).merge(instantiated_type)
+          mock(resource).merge(is_a(Raml::Resource))
           instantiated_type
         }
         resource.apply_resource_type
+      end
+      it 'applies the resource type correctly' do
+        resource.apply_resource_type
+        resource.methods['get'].description.should  eq 'method description'
+        resource.methods['get'].display_name.should eq 'resource type displayName'
       end
     end
     context 'when it has nested resources' do
@@ -331,8 +337,8 @@ describe Raml::Resource do
   describe '#apply_traits' do
     let(:resource_data) { {
       'is' => [
-        { 'description' => 'trait2 description' },
-        { 'description' => 'trait1 description' } 
+        { 'description' => 'trait1 description' },
+        { 'description' => 'trait2 description' } 
       ],
       'get'  => {},
       'post' => {},
@@ -396,7 +402,7 @@ describe Raml::Resource do
         resource.merge resource_type
         resource.traits.map { |trait_ref| trait_ref.name }.should eq [ 'paged', 'secured' ]
         resource.base_uri_parameters.keys.should contain_exactly('apiDomain')
-        resource.base_uri_parameters['apiDomain'].enum.should eq ['api']
+        resource.base_uri_parameters['apiDomain'].enum.should eq ['static']
         resource.uri_parameters.keys.should contain_exactly('userId', 'language')
         resource.methods.keys.should contain_exactly('get', 'post')
         resource.methods['get'].query_parameters.keys.should contain_exactly('id', 'query')

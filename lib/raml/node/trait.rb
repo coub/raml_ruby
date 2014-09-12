@@ -4,7 +4,7 @@ module Raml
   		inherit_class_attributes
 
   		include Optional
-  		
+
   		scalar_property :usage
   	end
 

@@ -146,7 +146,6 @@ module Raml
     end
     
     def parse_documentation(documentation)
-      puts 'parse_documentation'
       validate_array :documentation, documentation
       
       raise InvalidProperty, 'documentation property must include at least one document or not be included' if 

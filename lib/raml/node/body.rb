@@ -4,6 +4,7 @@ module Raml
     
     include Global
     include Merge
+    include Optional
     include Parent
     include Validation
 
@@ -31,16 +32,16 @@ module Raml
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? media_type
     end
     
-    def merge(base)
-      raise MergeError, "Media types don't match." if media_type != base.media_type
+    def merge(other)
+      raise MergeError, "Media types don't match." if media_type != other.media_type
       
       super
 
-      merge_parameters base, :form_parameters
+      merge_properties other, :form_parameters
 
-      if base.schema
+      if other.schema
         @children.delete_if { |c| [ Schema, SchemaReference ].include? c.class } if schema
-        @children << base.schema
+        @children << other.schema
       end
 
       self
@@ -56,7 +57,7 @@ module Raml
       validate_hash 'formParameters', value, String, Hash
 
       value.map do |name, form_parameter_data|
-        Parameter::FormParameter.new name, form_parameter_data, self
+        Parameter::FormParameter.new optional?(:form_parameters, name), form_parameter_data, self
       end
     end
 

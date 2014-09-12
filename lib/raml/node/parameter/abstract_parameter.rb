@@ -59,12 +59,12 @@ module Raml
         not children.empty?
       end
       
-      def merge(base)
-        raise MergeError, "#{self.class} names don't match." if name != base.name
+      def merge(other)
+        raise MergeError, "#{self.class} names don't match." if name != other.name
 
-        case [ has_multiple_types?, base.has_multiple_types? ]
+        case [ has_multiple_types?, other.has_multiple_types? ]
         when [ true , true  ]
-          match, no_match = base.types.values.partition { |param| types.include? param.type }
+          match, no_match = other.types.values.partition { |param| types.include? param.type }
 
           # Merge parameters with the same type.
           match = Hash[ match.map { |param| [ param.type, param ] } ]
@@ -74,22 +74,22 @@ module Raml
           @children.concat no_match
 
         when [ true , false ]
-          if types[base.type]
-            types[base.type].merge base
+          if types[other.type]
+            types[other.type].merge other
           else
-            @children << base
+            @children << other
           end
 
         when [ false, true  ]
-          if base.types[self.type]
-            self.merge base.types[self.type]
+          if other.types[self.type]
+            self.merge other.types[self.type]
             @children << self.clone
-            @children.concat base.types.values.reject { |type| self.type == type.type }
+            @children.concat other.types.values.reject { |type| self.type == type.type }
             reset
 
           else
             @children << self.clone
-            @children.concat base.types.values
+            @children.concat other.types.values
             reset
           end
 

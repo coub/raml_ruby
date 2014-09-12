@@ -3,15 +3,21 @@ require 'active_support/core_ext/class/attribute'
 
 module Raml
   class Node
+    attr_reader   :name
+    attr_accessor :parent
+
+    def initialize(name, parent)
+      @name   = name
+      @parent = parent
+    end
   end
 
   class ValueNode < Node
-    attr_accessor :name, :value, :parent
+    attr_accessor :value
 
     def initialize(name, value, parent)
-      @name   = name
+      super name, parent
       @value  = value
-      @parent = parent
 
       validate_value if respond_to? :validate_value, true
     end
@@ -51,11 +57,8 @@ module Raml
     def non_scalar_properties; self.class.non_scalar_properties; end
     def _regexp_property     ; self.class._regexp_property     ; end 
 
-    attr_reader :name, :parent
-
     def initialize(name, properties, parent)
-      @name       = name
-      @parent     = parent
+      super name, parent
       @children ||= []
       parse_and_validate_props properties
     end
@@ -94,6 +97,16 @@ module Raml
 
     def maybe_exec(method, *args)
       send(method,*args) if respond_to? method, true
+    end
+
+    def initialize_clone(other)
+      super
+      @children = @children.clone
+      @children.map! do |child|
+        child = child.clone
+        child.parent = self
+        child
+      end
     end
   end
 end

@@ -5,6 +5,7 @@ module Raml
     include Documentable
     include Global
     include Merge
+    include Optional
     include Parent
     include Validation
 
@@ -36,12 +37,13 @@ module Raml
     children_by :bodies , :media_type, Body
     children_by :headers, :name      , Header
 
-    def merge(base)
-      raise MergeError, "Response status codes don't match." if name != base.name
+    def merge(other)
+      raise MergeError, "Response status codes don't match." if name != other.name
 
       super
-      merge_parameters base, :headers
-      merge_parameters base, :bodies          , :media_type
+
+      merge_properties other, :headers
+      merge_properties other, :bodies
 
       self
     end
@@ -51,13 +53,13 @@ module Raml
     def parse_body(value)
       validate_hash 'body', value, String, Hash
 
-      value.map { |bname, bdata| Body.new bname, bdata, self }
+      value.map { |bname, bdata| Body.new optional?(:bodies, bname), bdata, self }
     end
 
     def parse_headers(value)
       validate_hash 'headers', value, String, Hash
 
-      value.map { |hname, hdata| Header.new hname, hdata, self }
+      value.map { |hname, hdata| Header.new optional?(:headers, hname), hdata, self }
     end
   end
 end

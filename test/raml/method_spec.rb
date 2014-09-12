@@ -246,9 +246,9 @@ describe Raml::Method do
         before { data['responses'] = 1 }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /responses/ }
       end
-      context 'when the responses property is not a map with non-integer keys' do
+      context 'when the responses property is not a map with string integer keys' do
         before { data['responses'] = { '200' => {}} }
-        it { expect { subject }.to raise_error Raml::InvalidProperty, /responses/ }
+        it { expect { subject }.not_to raise_error }
       end
       context 'when the responses property is not a map with non-string keys' do
         before { data['responses'] = { 200 => 'x'} }
@@ -412,15 +412,15 @@ describe Raml::Method do
         context 'description property' do
           let(:method_data) { {description: 'method description'} }
           let(:trait_data ) { {description: 'trait description' } }
-          it 'keeps the method property' do
-            method.merge(trait).description.should eq 'method description'
+          it 'overwrites the method property' do
+            method.merge(trait).description.should eq 'trait description'
           end
         end
         context 'protocols property' do
           let(:method_data) { {protocols: ['HTTP' ]} }
           let(:trait_data ) { {protocols: ['HTTPS']} }
-          it 'keeps the method property' do
-            method.merge(trait).protocols.should eq ['HTTP']
+          it 'overwrites the method property' do
+            method.merge(trait).protocols.should eq ['HTTPS']
           end
         end
         context 'headers properties' do
