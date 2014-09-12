@@ -57,8 +57,18 @@ module Raml
     def non_scalar_properties; self.class.non_scalar_properties; end
     def _regexp_property     ; self.class._regexp_property     ; end 
 
+    attr_accessor :optional
+    
     def initialize(name, properties, parent)
+      if name.is_a? String and name.end_with? '?'
+        name = name.dup.chomp! '?'
+        @optional = true
+      else
+        @optional = false
+      end
+
       super name, parent
+
       @children ||= []
       parse_and_validate_props properties
     end

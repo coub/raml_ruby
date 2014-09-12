@@ -5,7 +5,6 @@ module Raml
     include Documentable
     include Global
     include Merge
-    include Optional
     include Parent
     include Validation
 
@@ -72,22 +71,22 @@ module Raml
 
     def parse_headers(value)
       validate_hash 'headers', value, String, Hash
-      value.map { |h_name, h_data| Header.new optional?(:headers, h_name), h_data, self }
+      value.map { |h_name, h_data| Header.new h_name, h_data, self }
     end
 
     def parse_query_parameters(value)
       validate_hash 'queryParameters', value, String, Hash
-      value.map { |p_name, p_data| Parameter::QueryParameter.new optional?(:query_parameters, p_name), p_data, self }
+      value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data, self }
     end
 
     def parse_body(value)
       validate_hash 'body', value, String, Hash
-      value.map { |b_name, b_data| Body.new optional?(:bodies, b_name), b_data, self }
+      value.map { |b_name, b_data| Body.new b_name, b_data, self }
     end
 
     def parse_responses(value)
       validate_hash 'responses', value, [Integer, String], Hash
-      value.map { |r_name, r_data| Response.new optional?(:responses, r_name).to_i, r_data, self }
+      value.map { |r_name, r_data| Response.new r_name, r_data, self }
     end
   end
 end

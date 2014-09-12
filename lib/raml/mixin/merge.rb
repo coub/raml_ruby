@@ -14,11 +14,9 @@ module Raml
     	match.each { |param| self.send(type)[param.name].merge param }
 
       # if its an optional property, and there is no match in self, don't merge it.
-      no_match.reject! { |node| 
-        other.optionals.include?(node.name) ||  other.optionals.include?("_#{type}_#{node.name}") 
-      } if other.respond_to? :optionals
-      no_match.map!    { |node| node.clone                         }
-      no_match.each    { |node| node.parent = self                 }
+      no_match.reject! { |node| node.optional      }
+      no_match.map!    { |node| node.clone         }
+      no_match.each    { |node| node.parent = self }
     	@children += no_match
     end
   end

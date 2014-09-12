@@ -3,8 +3,6 @@ module Raml
   	class Instance < AbstractMethod
   		inherit_class_attributes
 
-  		include Optional
-
   		scalar_property :usage
   	end
 

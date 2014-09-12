@@ -4,7 +4,6 @@ module Raml
     
     include Global
     include Merge
-    include Optional
     include Parent
     include Validation
 
@@ -57,7 +56,7 @@ module Raml
       validate_hash 'formParameters', value, String, Hash
 
       value.map do |name, form_parameter_data|
-        Parameter::FormParameter.new optional?(:form_parameters, name), form_parameter_data, self
+        Parameter::FormParameter.new name, form_parameter_data, self
       end
     end
 

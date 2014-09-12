@@ -11,7 +11,6 @@ require_relative 'raml/parser/include'
 require_relative 'raml/mixin/documentable'
 require_relative 'raml/mixin/global'
 require_relative 'raml/mixin/merge'
-require_relative 'raml/mixin/optional'
 require_relative 'raml/mixin/parent'
 require_relative 'raml/mixin/validation'
 
