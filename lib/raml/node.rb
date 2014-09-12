@@ -61,6 +61,7 @@ module Raml
     
     def initialize(name, properties, parent)
       if name.is_a? String and name.end_with? '?'
+        allow_optional? parent
         name = name.dup.chomp! '?'
         @optional = true
       else
@@ -74,6 +75,14 @@ module Raml
     end
 
     private
+
+    def allow_optional?(parent)
+      until parent == parent.parent or parent.is_a? Root
+        return if parent.is_a? Trait::Instance or parent.is_a? ResourceType::Instance
+        parent = parent.parent
+      end
+      raise InvalidProperty, 'Optional properties are only allowed within a trait or resource type specification.'
+    end
 
     def parse_and_validate_props(properties)
       maybe_exec :validate_name

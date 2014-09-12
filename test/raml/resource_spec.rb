@@ -290,6 +290,33 @@ describe Raml::Resource do
         end
       end
     end
+
+    context 'when the syntax tree contains optional properties' do
+      let(:data) {
+        YAML.load(%q(
+          uriParameters:
+            id:
+              type: integer
+              required: true
+              example: 277102
+          /processing_status:
+            get:
+              displayName: Processing status
+              description: Получить статус загрузки
+              responses:
+                200?:
+                  body:
+                    application/json:
+                      example: |
+                        {
+                          "percent": 0,
+                          "type": "download",
+                          "status":"initial"
+                        }
+        ))
+      }
+      it { expect { subject }.to raise_error Raml::InvalidProperty, /Optional properties/ }
+    end
   end
 
   describe "#document" do

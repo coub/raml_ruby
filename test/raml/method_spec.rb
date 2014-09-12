@@ -330,6 +330,26 @@ describe Raml::Method do
         end
       end
     end
+
+    context 'when the syntax tree contains optional properties' do
+      let(:data) {
+        YAML.load(%q(
+          description: Get a list of users
+          queryParameters:
+            page?:
+              description: Specify the page that you want to retrieve
+              type: integer
+              required: true
+              example: 1
+          protocols: [ HTTP, HTTPS ]
+          responses:
+            200:
+              description: |
+                The list of popular media.
+        ))
+      }
+      it { expect {subject }.to raise_error Raml::InvalidProperty, /Optional properties/ }
+    end
   end
 
   describe "#document" do
