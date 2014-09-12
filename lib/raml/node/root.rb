@@ -24,6 +24,7 @@ module Raml
     children_by :traits             , :name, Trait
     children_by :resource_types     , :name, ResourceType
 
+    alias :default_media_type         :media_type
     alias :trait_declarations         :traits
     alias :resource_type_declarations :resource_types
     alias :schema_declarations        :schemas

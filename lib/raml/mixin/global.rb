@@ -1,5 +1,9 @@
 module Raml
   module Global
+    def default_media_type
+      @parent.default_media_type
+    end
+
   	def trait_declarations
   		@parent.trait_declarations
   	end

@@ -80,8 +80,18 @@ module Raml
     end
 
     def parse_body(value)
-      validate_hash 'body', value, String, Hash
-      value.map { |b_name, b_data| Body.new b_name, b_data, self }
+      if value.is_a? Hash and value.keys.all? {|k| k.is_a? String and k =~ /.+\/.+/ }
+        # If all keys looks like media types, its not a default media type body.
+        validate_hash 'body', value, String, Hash
+        value.map { |b_name, b_data| Body.new b_name, b_data, self }
+        
+      else
+        # Its a default media type body.
+        validate_hash 'body', value, String
+        media_type = default_media_type
+        raise InvalidMediaType, 'Body with no media type, but default media type has not been declared.' unless media_type
+        Body.new media_type, value, self
+      end
     end
 
     def parse_responses(value)
