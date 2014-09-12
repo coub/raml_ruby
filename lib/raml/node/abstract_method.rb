@@ -7,11 +7,16 @@ module Raml
     include Merge
     include Parent
     include Validation
+    include Bodies
+    include Headers
 
     scalar_property     :protocols
-    non_scalar_property :headers, :query_parameters, :body, :responses
+    non_scalar_property :query_parameters, :responses
 
     attr_reader_default :protocols, []
+
+    children_by :query_parameters , :name       , Parameter::QueryParameter
+    children_by :responses        , :name       , Response
     
     def document
       lines = []
@@ -51,11 +56,6 @@ module Raml
       lines.join "  \n"
     end
 
-    children_by :headers          , :name       , Header
-    children_by :query_parameters , :name       , Parameter::QueryParameter
-    children_by :bodies           , :media_type , Body
-    children_by :responses        , :name       , Response
-
     private
         
     def validate_protocols
@@ -69,29 +69,9 @@ module Raml
       end
     end
 
-    def parse_headers(value)
-      validate_hash 'headers', value, String, Hash
-      value.map { |h_name, h_data| Header.new h_name, h_data, self }
-    end
-
     def parse_query_parameters(value)
       validate_hash 'queryParameters', value, String, Hash
       value.map { |p_name, p_data| Parameter::QueryParameter.new p_name, p_data, self }
-    end
-
-    def parse_body(value)
-      if value.is_a? Hash and value.keys.all? {|k| k.is_a? String and k =~ /.+\/.+/ }
-        # If all keys looks like media types, its not a default media type body.
-        validate_hash 'body', value, String, Hash
-        value.map { |b_name, b_data| Body.new b_name, b_data, self }
-        
-      else
-        # Its a default media type body.
-        validate_hash 'body', value, String
-        media_type = default_media_type
-        raise InvalidMediaType, 'Body with no media type, but default media type has not been declared.' unless media_type
-        Body.new media_type, value, self
-      end
     end
 
     def parse_responses(value)
