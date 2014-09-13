@@ -19,8 +19,10 @@ module Raml
     def validate_json
       parsed_schema = JSON.parse @value
       version = parsed_schema['$schema']
-      # json-schema gem doesn't handly this lastest version string
+      # json-schema gem doesn't handle this lastest version string
       version = nil if version == 'http://json-schema.org/schema#'
+      # fix up schema versions URLs that don't end in "#""
+      version = "#{version}#" if version =~ /\Ahttps?:\/\/json-schema\.org\/draft-\d\d\/schema\z/
 
       meta_schema = JSON::Validator.metaschema_for JSON::Validator.version_string_for version
       JSON::Validator.validate! meta_schema, parsed_schema
