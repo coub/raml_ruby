@@ -32,7 +32,7 @@ module Raml
         
     def expand_includes_transform(cwd)
       proc do |arg1, arg2|
-        val      = arg2 ? arg2 : arg1
+        val      = arg2.nil? ? arg1 : arg2
         child_wd = cwd
         
         if val.is_a? Raml::Parser::Include
