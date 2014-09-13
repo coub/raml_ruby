@@ -11,8 +11,8 @@ module Raml
     scalar_property :title      , :version    , :base_uri     ,
                     :protocols  , :media_type
 
-    non_scalar_property :base_uri_parameters, :documentation, :schemas, 
-                        :resource_types     , :traits
+    non_scalar_property :base_uri_parameters, :documentation , :schemas,  :secured_by, 
+                        :security_schemes   , :resource_types, :traits
 
     regexp_property( /\A\//, ->(key,value) { Resource.new key, value, self } )
 
@@ -155,6 +155,14 @@ module Raml
       documentation.map { |doc| doc = doc.dup; Documentation.new doc.delete("title"), doc, self }
     end
     
+    def parse_secured_by(data)
+      # XXX ignored for now
+    end
+
+    def parse_security_schemes(data)
+      # XXX ignored for now
+    end
+
     def parse_resource_types(types)
       validate_array :resource_types, types, Hash
       
