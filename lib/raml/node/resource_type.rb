@@ -7,7 +7,9 @@ module Raml
   	end
 
   	def instantiate(params)
-  		Instance.new( *interpolate(params), @parent )
+  		instance = Instance.new( *interpolate(params), @parent )
+  		instance.apply_resource_type
+  		instance
   	end
   end
 end

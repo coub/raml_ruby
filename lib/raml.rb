@@ -45,6 +45,7 @@ require_relative 'raml/node/method'
 require_relative 'raml/node/abstract_resource'
 require_relative 'raml/node/resource_type'
 require_relative 'raml/node/resource'
+require_relative 'raml/node/abstract_resource_circular'
 
 require_relative 'raml/node/documentation'
 
