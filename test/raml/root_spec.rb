@@ -616,5 +616,29 @@ describe Raml::Root do
         subject.resources['/resource2'].methods['get'].responses[403].bodies.keys.should_not include 'plain/text'
       end
     end
+
+    context 'when parsing large specs' do
+      subject { Raml::Parser.new( File.open("test/apis/#{api_file}").read ).parse }
+      context 'when parsing the Twitter API' do
+        let(:api_file) { 'twitter-rest-api.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+      context 'when parsing the Stripe API' do
+        let(:api_file) { 'stripe-api.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+      context 'when parsing the Twilio API' do
+        let(:api_file) { 'twilio-rest-api.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+      context 'when parsing the Box API' do
+        let(:api_file) { 'box-api.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+      context 'when parsing the Instagram API' do
+        let(:api_file) { 'instagram-api.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+    end
   end
 end
