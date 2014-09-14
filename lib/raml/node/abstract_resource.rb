@@ -8,8 +8,8 @@ module Raml
     include Parent
     include Validation
 
-    non_scalar_property :uri_parameters, :base_uri_parameters, :is, :type, *Raml::Method::NAMES, 
-      *Raml::Method::NAMES.map { |m| "#{m}?" }
+    non_scalar_property :uri_parameters, :base_uri_parameters, :is, :type, :secured_by,
+      *Raml::Method::NAMES, *Raml::Method::NAMES.map { |m| "#{m}?" }
 
     children_by :methods            , :name, Raml::Method
     children_by :base_uri_parameters, :name, Parameter::BaseUriParameter
@@ -54,7 +54,7 @@ module Raml
 
       self
     end
-    
+
     def document
       doc = ''
       doc << "**#{display_name || name}**\n"
@@ -133,6 +133,11 @@ module Raml
           resource_type_declarations.include? value
         ResourceTypeReference.new value, self
       end
+    end
+
+    def parse_secured_by(data)
+      # XXX ignored for now
+      []
     end
 
     def instantiate_resource_type
