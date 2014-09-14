@@ -109,7 +109,7 @@ module Raml
       def validate_enum
         if enum
           if type == 'string'
-            raise InvalidParameterAttribute, 'enum attribute must be an array of strings.' unless
+            raise InvalidParameterAttribute, "enum attribute must be an array of strings: #{enum} (#{enum.class})" unless
               enum.is_a?(Array) && enum.all? { |val| val.is_a? String }
           else
             raise InapplicableParameterAttribute, 'enum attribute is only applicable to string parameters.'
@@ -188,7 +188,7 @@ module Raml
       
       def validate_required
         unless [true, false].include?(required)
-          raise InvalidParameterAttribute, 'required attribute must be true or false.'
+          raise InvalidParameterAttribute, "required attribute must be true or false: #{required} (#{required.class})"
         end
       end
       
@@ -199,7 +199,7 @@ module Raml
       def validate_value(which)
         val = send which
         if val
-          err_msg = "#{which} attribute for a %s parameter must be a %s"
+          err_msg = "#{which} attribute for a %s parameter must be a %s: #{val} (#{val.class})"
           case type
           when 'string'
             raise InvalidParameterAttribute, 

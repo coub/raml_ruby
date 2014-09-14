@@ -107,7 +107,7 @@ module Raml
           @children += parsed
 
         else
-          raise UnknownProperty, "#{prop_name} is an unknown property."
+          raise UnknownProperty, "#{prop_name} is an unknown property with value of #{prop_value}."
         end
       end
 
