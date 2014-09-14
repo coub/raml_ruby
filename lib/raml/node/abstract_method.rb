@@ -11,7 +11,7 @@ module Raml
     include Headers
 
     scalar_property     :protocols
-    non_scalar_property :query_parameters, :responses
+    non_scalar_property :query_parameters, :responses, :secured_by
 
     attr_reader_default :protocols, []
 
@@ -78,5 +78,11 @@ module Raml
       validate_hash 'responses', value, [Integer, String], Hash
       value.map { |r_name, r_data| Response.new r_name, r_data, self }
     end
+
+    def parse_secured_by(data)
+      # XXX ignored for now
+      []
+    end
+
   end
 end
