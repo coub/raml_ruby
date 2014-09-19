@@ -37,7 +37,7 @@ describe Raml::Resource do
     end
     
     context 'when displayName is given' do
-      let(:data) { { 'displayName' => 'My Name'} }
+      let(:data) { { 'displayName' => 'My Name', 'description' => 'foo' } }
       it { expect { subject }.to_not raise_error }
       it 'should store the value' do
         subject.display_name.should eq data['displayName']
