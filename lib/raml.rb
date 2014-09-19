@@ -52,11 +52,11 @@ require_relative 'raml/node/documentation'
 require_relative 'raml/node/root'
 
 module Raml
-  def self.load(raml)
+  def self.parse(raml)
     Raml::Parser.parse raml
   end
 
-  def self.load_file(filepath)
+  def self.parse_file(filepath)
     file = File.new filepath
     raise UnsupportedRamlVersion unless file.readline =~ /\A#%RAML 0.8\s*\z/
     
@@ -67,7 +67,7 @@ module Raml
   end
 
   def self.document(filepath, out_file=nil)
-    root = load_file filepath
+    root = parse_file filepath
     root.expand
 
     if out_file
