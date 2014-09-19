@@ -36,13 +36,6 @@ describe Raml::Resource do
       subject
     end
     
-    context 'when displayName is not given' do
-      let(:data) { {} }
-      it { expect { subject }.to_not raise_error }
-      it 'uses the resource relative URI in the documentation' do
-        subject.document.should include name
-      end
-    end
     context 'when displayName is given' do
       let(:data) { { 'displayName' => 'My Name'} }
       it { expect { subject }.to_not raise_error }
@@ -319,12 +312,6 @@ describe Raml::Resource do
     end
   end
 
-  describe "#document" do
-    it "prints out documentation" do
-      subject.document
-    end
-  end
-
   describe '#apply_resource_type' do
     let(:resource_data) { {
       'type' => {
@@ -438,6 +425,16 @@ describe Raml::Resource do
         resource.merge resource_type
          expect { resource.usage }.to raise_error NoMethodError
       end
+    end
+  end
+
+  describe '#document' do
+    it 'returns a String' do
+      subject.document.should be_a String
+    end
+    it 'should render the template' do
+      mock(Slim::Template).new(/templates\/resource.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+      subject.document
     end
   end
 end

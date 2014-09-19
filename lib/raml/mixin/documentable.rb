@@ -1,3 +1,5 @@
+require 'kramdown'
+
 module Raml
   module Documentable
     def self.included(base)
@@ -6,10 +8,8 @@ module Raml
       end
     end
 
-    def document
-      lines = [ "#{@display_name || @name}\n#{@description}" ]
-      lines += @children.map { |child| child.document } if @children
-      lines.join "\n\n"
+    def html_description
+      Kramdown::Document.new(description, input: :GFM).to_html
     end
 
     private

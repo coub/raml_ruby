@@ -10,32 +10,11 @@ module Raml
     include Bodies
     include Headers
 
+    self.doc_template = relative_path 'response.slim'
+
     def initialize(name, properties, parent)
       super
       @name = name.to_i
-    end
-
-    def document
-      lines = []
-
-      lines << "**%s**" % (@display_name || @name)
-      lines << @description.to_s
-
-      if bodies.any?
-        lines << "**Body:**"
-        bodies.values.each do |body|
-          lines << body.document
-        end
-      end
-
-      if headers.any?
-        lines << "**Headers:**"
-        headers.values.each do |header|
-          lines << header.document
-        end
-      end
-
-      lines.join "\n\n"
     end
 
     def merge(other)

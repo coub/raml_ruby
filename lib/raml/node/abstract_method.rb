@@ -18,44 +18,6 @@ module Raml
     children_by :query_parameters , :name       , Parameter::QueryParameter
     children_by :responses        , :name       , Response
     
-    def document
-      lines = []
-      lines << "####{}**#{@display_name || @name}**"
-      lines << "#{@description}"
-
-      lines << "Supported HTTP protocols: %s" % protocols.join(', ')
-
-      if headers.any?
-        lines << "**Headers:**"
-        headers.values.each do |header|
-          lines << header.document
-        end
-      end
-
-      if query_parameters.any?
-        lines << "**Query Parameters:**"
-        query_parameters.values.each do |query_parameter|
-          lines << query_parameter.document
-        end
-      end
-
-      if bodies.any?
-        lines << "**Body:**"
-        bodies.values.each do |body|
-          lines << body.document
-        end
-      end
-
-      if responses.any?
-        lines << "**Responses:**"
-        responses.values.each do |response|
-          lines << response.document
-        end
-      end
-
-      lines.join "  \n"
-    end
-
     private
         
     def validate_protocols

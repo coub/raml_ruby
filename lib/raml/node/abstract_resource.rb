@@ -55,14 +55,6 @@ module Raml
       self
     end
 
-    def document
-      doc = ''
-      doc << "**#{display_name || name}**\n"
-      doc << "#{description}\n" if description
-      doc << children.map(&:document).compact.join('\n')
-      doc
-    end
-
     def resource_path
       @parent.resource_path + self.name
     end

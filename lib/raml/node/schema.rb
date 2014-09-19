@@ -1,4 +1,5 @@
 require 'json-schema'
+require 'rouge'
 
 module Raml
   class Schema < ValueNode
@@ -10,6 +11,10 @@ module Raml
       /<xs:schema [^>]*xmlns:xs="http:\/\/www\.w3\.org\/2001\/XMLSchema"[^>]*>/ === @value
     end
 
+    def document
+      Raml.highlight @value, parent.media_type
+    end
+    
     private
 
     def validate_value

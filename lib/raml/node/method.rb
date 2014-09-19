@@ -8,6 +8,8 @@ module Raml
 
     children_of :traits, [ Trait, TraitReference ]
 
+    self.doc_template = relative_path 'method.slim'
+
     def apply_traits
       # We apply resource traits before method traits, and apply traits at each level in
       # the other they are listed (first to last, left to righ).  Later traits scalar

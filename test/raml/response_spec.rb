@@ -4,6 +4,7 @@ describe Raml::Response do
   let (:name) { 200 }
   let (:response_data) {
     YAML.load(%q(
+      displayName: Success
       description: Successful response
       body:
         text/xml:
@@ -105,142 +106,146 @@ describe Raml::Response do
     end    
   end
 
-  describe "#document" do
-    it "prints out documentation" do
-      subject.document
+  describe '#merge' do
+    context 'when response and mixin have different status codes' do
+      let(:response) { Raml::Response.new 200, {}, root }
+      let(:mixin   ) { Raml::Response.new 403, {}, root }
+      it { expect { response.merge mixin }.to raise_error Raml::MergeError }
     end
-  end
 
-    describe '#merge' do
-      context 'when response and mixin have different status codes' do
-        let(:response) { Raml::Response.new 200, {}, root }
-        let(:mixin   ) { Raml::Response.new 403, {}, root }
-        it { expect { response.merge mixin }.to raise_error Raml::MergeError }
-      end
-  
-      context 'when response and mixin have different the same codes' do
-        let(:response) { Raml::Response.new 200, response_data, root }
-        let(:mixin   ) { Raml::Response.new 200, mixin_data   , root }
-        context 'when the mixin has a property set' do
-          context 'when the response does not have that property set' do
-            let(:response_data) { {} }
-            context 'displayName property' do
-              let(:mixin_data) { {displayName: 'mixin displayName'} }
-              it 'sets the property in the response' do
-                response.merge(mixin).display_name.should eq mixin.display_name
-              end
-            end
-            context 'description property' do
-              let(:mixin_data) { {description: 'mixin description'} }
-              it 'sets the property in the response' do
-                response.merge(mixin).description.should eq mixin.description
-              end
-            end
-            context 'headers properties' do
-              let(:mixin_data) { { 
-                'headers' => {
-                  'header1' => {'description' => 'foo'}, 
-                  'header2' => {'description' => 'bar'}
-                }
-              } }
-              it 'adds the headers to the response' do
-                 response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2')
-              end
-            end
-            context 'body property' do
-              let(:mixin_data) { { 
-                'body' => {
-                  'text/mime1' => {'schema' => 'foo'}, 
-                  'text/mime2' => {'schema' => 'bar'}
-                }
-              } }
-              it 'adds the body media types to the response' do
-                 response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2')
-              end
+    context 'when response and mixin have different the same codes' do
+      let(:response) { Raml::Response.new 200, response_data, root }
+      let(:mixin   ) { Raml::Response.new 200, mixin_data   , root }
+      context 'when the mixin has a property set' do
+        context 'when the response does not have that property set' do
+          let(:response_data) { {} }
+          context 'displayName property' do
+            let(:mixin_data) { {displayName: 'mixin displayName'} }
+            it 'sets the property in the response' do
+              response.merge(mixin).display_name.should eq mixin.display_name
             end
           end
-          context 'when the response has that property set' do
-            context 'displayName property' do
-              let(:response_data) { {displayName: 'response displayName'} }
-              let(:mixin_data ) { {displayName: 'mixin displayName' } }
-              it 'overrites the response property' do
-                response.merge(mixin).display_name.should eq 'mixin displayName'
-              end
+          context 'description property' do
+            let(:mixin_data) { {description: 'mixin description'} }
+            it 'sets the property in the response' do
+              response.merge(mixin).description.should eq mixin.description
             end
-            context 'description property' do
-              let(:response_data) { {description: 'response description'} }
-              let(:mixin_data ) { {description: 'mixin description' } }
-              it 'overrites the response property' do
-                response.merge(mixin).description.should eq 'mixin description'
-              end
+          end
+          context 'headers properties' do
+            let(:mixin_data) { { 
+              'headers' => {
+                'header1' => {'description' => 'foo'}, 
+                'header2' => {'description' => 'bar'}
+              }
+            } }
+            it 'adds the headers to the response' do
+               response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2')
             end
-            context 'headers properties' do
-              let(:response_data) { { 
-                'headers' => {
-                  'header1' => {'description' => 'foo'}, 
-                  'header2' => {'description' => 'bar'}
-                }
-              } }
-              context 'when the mixin headers are different from the response headers' do
-                let(:mixin_data) { { 
-                  'headers' => {
-                    'header3' => {'description' => 'foo2'}, 
-                    'header4' => {'description' => 'bar2'}
-                  }
-                } }
-                it 'adds the headers to the response' do
-                   response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
-                end
-              end
-              context 'when the mixin headers overlap the the response headers' do
-                let(:mixin_data) { { 
-                  'headers' => {
-                    'header2' => {'description' => 'bar3', 'displayName' => 'Header 3'}, 
-                    'header3' => {'description' => 'foo2'}, 
-                    'header4' => {'description' => 'bar2'}
-                  }
-                } }
-                it 'merges the matching headers and adds the non-matching headers to the response' do
-                   response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
-                   response.headers['header2'].display_name.should eq mixin.headers['header2'].display_name
-                   response.headers['header2'].description.should  eq mixin.headers['header2'].description
-                end
-              end        
-            end
-            context 'body property' do
-              let(:response_data) { { 
-                'body' => {
-                  'text/mime1' => {'schema' => 'foo'}, 
-                  'text/mime2' => {'schema' => 'bar'}
-                }
-              } }
-              context 'when the mixin query parameters are different from the response headers' do
-                let(:mixin_data) { { 
-                  'body' => {
-                    'text/mime3' => {'schema' => 'foo2'}, 
-                    'text/mime4' => {'schema' => 'bar2'}
-                  }
-                } }
-                it 'adds the body media types to the response' do
-                   response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
-                end
-              end
-              context 'when the mixin query parameters overlap the the response query parameters' do
-                let(:mixin_data) { { 
-                  'body' => {
-                    'text/mime2' => {'example' => 'Example 2'}, 
-                    'text/mime3' => {'schema'  => 'foo2'}, 
-                    'text/mime4' => {'schema'  => 'bar2'}
-                  }
-                } }
-                it 'merges the matching media types and adds the non-matching media types to the response' do
-                   response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
-                   response.bodies['text/mime2'].example.should eq mixin.bodies['text/mime2'].example
-                end
-              end  
+          end
+          context 'body property' do
+            let(:mixin_data) { { 
+              'body' => {
+                'text/mime1' => {'schema' => 'foo'}, 
+                'text/mime2' => {'schema' => 'bar'}
+              }
+            } }
+            it 'adds the body media types to the response' do
+               response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2')
             end
           end
         end
+        context 'when the response has that property set' do
+          context 'displayName property' do
+            let(:response_data) { {displayName: 'response displayName'} }
+            let(:mixin_data ) { {displayName: 'mixin displayName' } }
+            it 'overrites the response property' do
+              response.merge(mixin).display_name.should eq 'mixin displayName'
+            end
+          end
+          context 'description property' do
+            let(:response_data) { {description: 'response description'} }
+            let(:mixin_data ) { {description: 'mixin description' } }
+            it 'overrites the response property' do
+              response.merge(mixin).description.should eq 'mixin description'
+            end
+          end
+          context 'headers properties' do
+            let(:response_data) { { 
+              'headers' => {
+                'header1' => {'description' => 'foo'}, 
+                'header2' => {'description' => 'bar'}
+              }
+            } }
+            context 'when the mixin headers are different from the response headers' do
+              let(:mixin_data) { { 
+                'headers' => {
+                  'header3' => {'description' => 'foo2'}, 
+                  'header4' => {'description' => 'bar2'}
+                }
+              } }
+              it 'adds the headers to the response' do
+                 response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
+              end
+            end
+            context 'when the mixin headers overlap the the response headers' do
+              let(:mixin_data) { { 
+                'headers' => {
+                  'header2' => {'description' => 'bar3', 'displayName' => 'Header 3'}, 
+                  'header3' => {'description' => 'foo2'}, 
+                  'header4' => {'description' => 'bar2'}
+                }
+              } }
+              it 'merges the matching headers and adds the non-matching headers to the response' do
+                 response.merge(mixin).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
+                 response.headers['header2'].display_name.should eq mixin.headers['header2'].display_name
+                 response.headers['header2'].description.should  eq mixin.headers['header2'].description
+              end
+            end        
+          end
+          context 'body property' do
+            let(:response_data) { { 
+              'body' => {
+                'text/mime1' => {'schema' => 'foo'}, 
+                'text/mime2' => {'schema' => 'bar'}
+              }
+            } }
+            context 'when the mixin query parameters are different from the response headers' do
+              let(:mixin_data) { { 
+                'body' => {
+                  'text/mime3' => {'schema' => 'foo2'}, 
+                  'text/mime4' => {'schema' => 'bar2'}
+                }
+              } }
+              it 'adds the body media types to the response' do
+                 response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
+              end
+            end
+            context 'when the mixin query parameters overlap the the response query parameters' do
+              let(:mixin_data) { { 
+                'body' => {
+                  'text/mime2' => {'example' => 'Example 2'}, 
+                  'text/mime3' => {'schema'  => 'foo2'}, 
+                  'text/mime4' => {'schema'  => 'bar2'}
+                }
+              } }
+              it 'merges the matching media types and adds the non-matching media types to the response' do
+                 response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
+                 response.bodies['text/mime2'].example.should eq mixin.bodies['text/mime2'].example
+              end
+            end  
+          end
+        end
       end
+    end
+  end
+
+  describe '#document' do
+    it 'returns a String' do
+      subject.document.should be_a String
+    end
+    it 'should render the template' do
+      mock(Slim::Template).new(/templates\/response.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+      subject.document
+    end
   end
 end

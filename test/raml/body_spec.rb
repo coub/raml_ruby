@@ -122,18 +122,6 @@ describe Raml::Body do
     end
   end
   
-  describe "#document" do
-    let (:body_data) {
-      YAML.load(%q(
-        schema: !include job.xsd
-      ))
-    }
-
-    it "prints out documentation" do
-      subject.document
-    end
-  end
-  
   describe '#form_parameters' do
     context 'when body is not a web form' do
       it 'returns no form parameters' do
@@ -251,6 +239,29 @@ describe Raml::Body do
             end        
           end
         end
+      end
+    end
+  end
+
+  describe '#document' do
+    context 'when the body is not a form body' do
+      it 'returns a String' do
+        subject.document.should be_a String
+      end
+      it 'should render the template' do
+        mock(Slim::Template).new(/templates\/body.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+        subject.document
+      end
+    end
+    context 'when the body is a form body' do
+      let(:media_type) { 'application/x-www-form-urlencoded' }
+      let(:body_data) { form_body_data }
+      it 'returns a String' do
+        subject.document.should be_a String
+      end
+      it 'should render the template' do
+        mock(Slim::Template).new(/templates\/body.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+        subject.document
       end
     end
   end

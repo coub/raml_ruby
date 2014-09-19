@@ -7,6 +7,7 @@ describe Raml::Root do
         #%RAML 0.8
         title: ZEncoder API
         baseUri: https://app.zencoder.com/api
+        version: v2.0
         documentation:
          - title: Home
            content: Doc content
@@ -639,6 +640,20 @@ describe Raml::Root do
         let(:api_file) { 'instagram-api.raml' }
         it { expect { subject.expand }.to_not raise_error }
       end
+      context 'when parsing the Github API' do
+        let(:api_file) { 'github-api-v3.raml' }
+        it { expect { subject.expand }.to_not raise_error }
+      end
+    end
+  end
+
+  describe '#document' do
+    it 'returns a String' do
+      subject.document.should be_a String
+    end
+    it 'should render the template' do
+      mock(Slim::Template).new(/templates\/root.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+      subject.document
     end
   end
 end

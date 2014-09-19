@@ -1,8 +1,26 @@
 require 'active_support'
 require 'active_support/core_ext/class/attribute'
+require 'slim'
 
 module Raml
   class Node
+    class_attribute :doc_template, :doc_template_compiled
+
+    class << self
+      def relative_path(file)
+        File.join(
+          *File.dirname(__FILE__).
+            split(File::SEPARATOR).
+            reverse.
+            drop_while { |p| p != 'lib' }.
+            drop(1).
+            reverse,
+          'templates',
+          file
+        )
+      end
+    end
+
     attr_reader   :name
     attr_accessor :parent
 
@@ -10,6 +28,37 @@ module Raml
       @name   = name
       @parent = parent
     end
+
+    def document
+      if doc_template
+        self.doc_template_compiled ||= Slim::Template.new(doc_template, format: :html5, pretty: true)
+        doc_template_compiled.render self
+      else
+        nil
+      end
+    end
+
+    private
+
+    def collapse(level, title, display_name=nil, &block)
+      @@cid ||= 0
+      @@cid  += 1
+
+      @@context_class ||= Struct.new(:cid, :title, :level, :display_name, :content) do
+        def highlight_url_params(url)
+          url.gsub(/({[^}]+})/, '<span class="url_param">\1</span>')
+        end 
+      end
+
+      context = @@context_class.new @@cid, title, level, display_name, yield
+
+      @@collapse ||= Slim::Template.new(self.class.relative_path('collapse.slim'), format: :html5, pretty: true)
+      @@collapse.render context
+    end
+
+    def highlight_url_params(url)
+      url.gsub(/({[^}]+})/, '<span class="url_param">\1</span>')
+    end 
   end
 
   class ValueNode < Node

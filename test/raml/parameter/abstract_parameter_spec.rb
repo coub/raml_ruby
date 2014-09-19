@@ -542,4 +542,23 @@ describe Raml::Parameter::AbstractParameter do
       end
     end
   end
+
+  describe '#document' do
+    let(:name) { 'page_number' }
+    let(:parameter_data) {
+      {
+        type:     'integer',
+        required: true,
+        example:  253995,
+        minimum:  33
+      }
+    }
+    it 'returns a String' do
+      subject.document.should be_a String
+    end
+    it 'should render the template' do
+      mock(Slim::Template).new(/templates\/abstract_parameter.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+      subject.document
+    end
+  end
 end

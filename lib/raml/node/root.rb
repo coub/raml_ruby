@@ -1,3 +1,4 @@
+require 'sass'
 require 'uri'
 require 'uri_template'
 
@@ -29,31 +30,10 @@ module Raml
     alias :resource_type_declarations :resource_types
     alias :schema_declarations        :schemas
 
+    self.doc_template = relative_path 'root.slim'
+
     def initialize(root_data)
       super nil, root_data, self
-    end
-
-    def document(verbose = false)
-      doc = ''
-
-      doc << "# #{title}\n"           if title
-      doc << "Version: #{version}\n"  if version
-
-      documents.each do |child|
-        doc << child.document
-      end
-      
-      base_uri_parameters.each do |child|
-        doc << child.document
-      end
-      
-      resources.each do |child|
-        doc << child.document
-      end
-
-      puts doc if verbose
-      
-      doc
     end
 
     def expand
@@ -67,6 +47,12 @@ module Raml
 
     def resource_path
       ''
+    end
+
+    def save_documentation(filename)
+      File.open(filename, 'w') do |file|
+        file.write document
+      end
     end
 
     private
@@ -215,6 +201,12 @@ module Raml
           inline_reference reference_type, map, node.children if node.respond_to? :children
           node
         end
+      end
+    end
+
+    def style_sheet
+      File.open(self.class.relative_path('style.sass'), 'r') do |file|
+        Sass::Engine.new(file.read, syntax: :scss).render
       end
     end
   end

@@ -14,14 +14,7 @@ module Raml
 
     alias_method :media_type, :name
     
-    def document
-      lines = []
-      lines << "**%s**:" % @media_type
-      lines << "schema path: %s" % @schema if @schema
-      lines << "Example:  \n\n%s" % Raml.code_indenter(@example) if @example
-
-      lines.join "  \n"
-    end
+    self.doc_template = relative_path 'body.slim'
     
     children_by :form_parameters, :name, Parameter::FormParameter
     

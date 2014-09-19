@@ -100,4 +100,13 @@ module Raml
   def self.nbsp_indenter(text, indent_depth = 4)
     text.split("\n").map{|line| '&nbsp;' * indent_depth + line}.join("\n")
   end
+
+  def self.highlight(source, mimetype=nil)
+    opts = { source: source }
+    opts[:mimetype] = mimetype if mimetype
+    
+    formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
+    lexer = Rouge::Lexer.guess(opts).new
+    formatter.format lexer.lex source
+  end
 end

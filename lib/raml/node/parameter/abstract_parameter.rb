@@ -19,6 +19,8 @@ module Raml
 
       children_by :types, :type, AbstractParameter
 
+      self.doc_template = relative_path 'abstract_parameter.slim'
+
       def initialize(name, parameter_data, parent)
         if parameter_data.is_a? Array
           @name       = name
@@ -29,30 +31,6 @@ module Raml
         elsif parameter_data.is_a? Hash
           super
         end
-      end
-
-      def document
-        lines = []
-
-        if @children.any?
-          lines = @children.map(&:document)
-        else
-          lines << "*#{@display_name || @name}:*"
-          lines << "&nbsp;&nbsp;#{@description}" if @description
-          lines << "&nbsp;&nbsp;type: #{@type}" if @type
-          lines << "&nbsp;&nbsp;required: #{@required}" if @required
-          lines << "&nbsp;&nbsp;enum: #{@enum}" if @enum
-          lines << "&nbsp;&nbsp;pattern: #{@pattern}" if @pattern
-          lines << "&nbsp;&nbsp;min_length: #{@min_length}" if @min_length
-          lines << "&nbsp;&nbsp;max_length: #{@max_length}" if @max_length
-          lines << "&nbsp;&nbsp;minimum: #{@minimum}" if @minimum
-          lines << "&nbsp;&nbsp;maximum: #{@maximum}" if @maximum
-          lines << "&nbsp;&nbsp;example: `#{@example}`" if @example
-          lines << "&nbsp;&nbsp;repeat: #{@repeat}" if @repeat
-          lines << "\n"
-        end
-
-        lines.join "  \n"
       end
 
       def has_multiple_types?

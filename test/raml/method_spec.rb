@@ -352,12 +352,6 @@ describe Raml::Method do
     end
   end
 
-  describe "#document" do
-    it "prints out documentation" do
-      subject.document
-    end
-  end
-
   describe '#merge' do
     let(:method) { Raml::Method.new 'get'       , method_data, root }
     let(:trait ) { Raml::Trait.new( 'trait_name', trait_data , root).instantiate({}) }
@@ -692,6 +686,16 @@ describe Raml::Method do
           method.description.should eq 'trait get'
         end
       end
+    end
+  end
+
+  describe '#document' do
+    it 'returns a String' do
+      subject.document.should be_a String
+    end
+    it 'should render the template' do
+      mock(Slim::Template).new(/templates\/method.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
+      subject.document
     end
   end
 end
