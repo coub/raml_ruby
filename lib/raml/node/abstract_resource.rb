@@ -12,8 +12,8 @@ module Raml
       *Raml::Method::NAMES, *Raml::Method::NAMES.map { |m| "#{m}?" }
 
     children_by :methods            , :name, Raml::Method
-    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter
-    children_by :uri_parameters     , :name, Parameter::UriParameter
+    children_by :base_uri_parameters, :name, Parameter::BaseUriParameter, true
+    children_by :uri_parameters     , :name, Parameter::UriParameter    , true
 
     children_of :traits, [ Raml::Trait, Raml::TraitReference ]
 

@@ -27,14 +27,20 @@ module Raml
         end
       end
 
-      def children_by(name, key, type)
+      def children_by(name, key, type, merge_parents=false)
         self.instance_eval do
           define_method name do
-            Hash[
+            result = Hash[
               @children.
                 select { |child| child.is_a? type }.
                 map    { |child| [ child.send(key.to_sym), child ] }
             ]
+
+            if merge_parents and parent and parent.respond_to? name
+              result = parent.send(name).merge result
+            end
+
+            result
           end
         end
       end
