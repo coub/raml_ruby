@@ -94,7 +94,7 @@
 
 ### Default Media Type
 - [x] Optional.
-- [ ] The media types returned by API responses, and expected from API requests that accept a body, MAY be defaulted by specifying the mediaType property.
+- [x] The media types returned by API responses, and expected from API requests that accept a body, MAY be defaulted by specifying the mediaType property.
 
 ### Schemas
 - [x] Optional.
@@ -113,7 +113,7 @@
 - [x] The documentation property MUST be an array of documents.
 - [x] Each document MUST contain title and content attributes, both of which are REQUIRED.
 - [x] If the documentation property is specified, it MUST include at least one document.
-- [ ] Documentation-generators MUST process the content field as if it was defined using Markdown.
+- [x] Documentation-generators MUST process the content field as if it was defined using Markdown.
 - [x] The documentation property MAY be included inline, as described above, or by using the RAML !include user-defined data type to reference external content.
 
 ### Resources and Nested Resources
@@ -134,7 +134,7 @@
 
 #### Base URI parameters
 - [x] The baseUriParameters property MAY be used to override any or all parameters defined at the root level baseUriParameters property, as well as base URI parameters not specified at the root level.
-- [ ] In a resource structure of resources and nested resources with their methods, the most specific baseUriParameter fully overrides any baseUriParameter definition made before. In the following example the resource /user/{userId}/image overrides the definition made in /users.
+- [x] In a resource structure of resources and nested resources with their methods, the most specific baseUriParameter fully overrides any baseUriParameter definition made before. In the following example the resource /user/{userId}/image overrides the definition made in /users.
 - [x] The special baseUriParameter version is reserved.
 - [ ] Processing applications MUST replace occurrences of {version} in any baseUri property values with the value of the root-level version property.
 - [x] The {version} parameter, if used in a baseUri, is required.
@@ -144,7 +144,7 @@
 
 ##### Description
 - [x] Each declared method MAY contain a description attribute that briefly describes what the method does to the resource.
-- [ ] The value of the description property MAY be formatted using Markdown [MARKDOWN].
+- [x] The value of the description property MAY be formatted using Markdown [MARKDOWN].
 
 ##### Headers
 - [x] The headers property is a map in which the key is the name of the header, and the value is itself a map specifying the header attributes, according to the Named Parameters section.
@@ -170,14 +170,15 @@
 - [x] The formParameters property is a map in which the key is the name of the web form parameter, and the value is itself a map the specifies the web form parameter's attributes, according to the Named Parameters section.
 
 ###### Schema
-- [ ] The structure of a request or response body MAY be further specified by the schema property under the appropriate media type.
+- [x] The structure of a request or response body MAY be further specified by the schema property under the appropriate media type.
 - [x] The schema key CANNOT be specified if a body's media type is application/x-www-form-urlencoded or multipart/form-data.
-- [ ] All parsers of RAML MUST be able to interpret JSON Schema [JSON_SCHEMA] and XML Schema [XML_SCHEMA].
+- [x] All parsers of RAML MUST be able to interpret JSON Schema [JSON_SCHEMA]
+- [ ] All parsers of RAML MUST be able to interpret XML Schema [XML_SCHEMA].
 - [x] Schema MAY be declared inline or in an external file.
-- [ ] Alternatively, the value of the schema field MAY be the name of a schema specified in the root-level schemas property.
+- [x] Alternatively, the value of the schema field MAY be the name of a schema specified in the root-level schemas property.
 
 ###### Example
-- [ ] Documentation generators MUST use body properties' example attributes to generate example invocations.
+- [x] Documentation generators MUST use body properties' example attributes to generate example invocations.
 
 ##### Responses
 - [x] Resource methods MAY have one or more responses.
