@@ -78,35 +78,4 @@ module Raml
       root.document
     end
   end
-
-  # Transforms camel cased identificators to underscored.
-  def self.underscore(camel_cased_word)
-    camel_cased_word.to_s.gsub(/::/, '/').
-      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-      gsub(/([a-z\d])([A-Z])/,'\1_\2').
-      tr("-", "_").
-      downcase
-  end
-
-  def self.camel_case(underscored_word)
-    w = underscored_word.to_s.split('_')
-    (w[0...1] + w[1..-1].map(&:capitalize)).join
-  end
-
-  def self.code_indenter(code)
-    code.split("\n").map{|line| ' ' * 4 + line}.join("\n")
-  end
-
-  def self.nbsp_indenter(text, indent_depth = 4)
-    text.split("\n").map{|line| '&nbsp;' * indent_depth + line}.join("\n")
-  end
-
-  def self.highlight(source, mimetype=nil)
-    opts = { source: source }
-    opts[:mimetype] = mimetype if mimetype
-
-    formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
-    lexer = Rouge::Lexer.guess(opts).new
-    formatter.format lexer.lex source
-  end
 end

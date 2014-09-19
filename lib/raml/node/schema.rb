@@ -1,5 +1,4 @@
 require 'json-schema'
-require 'rouge'
 
 module Raml
   class Schema < ValueNode
@@ -12,7 +11,7 @@ module Raml
     end
 
     def document
-      Raml.highlight @value, parent.media_type
+      highlight @value, parent.media_type
     end
     
     private

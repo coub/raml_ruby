@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext/class/attribute'
+require 'rouge'
 require 'slim'
 
 module Raml
@@ -40,6 +41,20 @@ module Raml
 
     private
 
+    # Transforms camel cased identificators to underscored.
+    def underscore(camel_cased_word)
+      camel_cased_word.to_s.gsub(/::/, '/').
+        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+        gsub(/([a-z\d])([A-Z])/,'\1_\2').
+        tr("-", "_").
+        downcase
+    end
+
+    def camel_case(underscored_word)
+      w = underscored_word.to_s.split('_')
+      (w[0...1] + w[1..-1].map(&:capitalize)).join
+    end
+
     def collapse(level, title, display_name=nil, &block)
       @@cid ||= 0
       @@cid  += 1
@@ -59,6 +74,15 @@ module Raml
     def highlight_url_params(url)
       url.gsub(/({[^}]+})/, '<span class="url_param">\1</span>')
     end 
+
+    def highlight(source, mimetype=nil)
+      opts = { source: source }
+      opts[:mimetype] = mimetype if mimetype
+
+      formatter = Rouge::Formatters::HTML.new css_class: 'highlight'
+      lexer = Rouge::Lexer.guess(opts).new
+      formatter.format lexer.lex source
+    end
   end
 
   class ValueNode < Node
@@ -139,7 +163,7 @@ module Raml
 
       properties.each do |prop_name, prop_value|
         prop_name       = prop_name.to_s
-        under_prop_name = Raml.underscore prop_name
+        under_prop_name = underscore prop_name
 
         if scalar_properties.include? under_prop_name
           send "#{under_prop_name}=", prop_value
