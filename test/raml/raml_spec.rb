@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe Raml do
   describe '#load_file' do
-    let(:rest_of_doc) { 'title: Some API' }
+    let(:rest_of_doc) { "title: Some API\nbaseUri: https://app.zencoder.com/api" }
     before do 
       stub(File).new('file.raml').stub! do |stub|
         stub.readline { comment     } 

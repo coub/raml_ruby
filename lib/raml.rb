@@ -53,29 +53,29 @@ require_relative 'raml/node/root'
 
 module Raml
   def self.load(raml)
-    Raml::Parser.new(raml)
+    Raml::Parser.parse raml
   end
 
-  def self.load_file(filename)
-    file = File.new(filename)
+  def self.load_file(filepath)
+    file = File.new filepath
     raise UnsupportedRamlVersion unless file.readline =~ /\A#%RAML 0.8\s*\z/
     
-    path = File.dirname filename
+    path = File.dirname filepath
     path = nil if path == ''
     
-    Raml::Parser.new(file.read, path)
+    Raml::Parser.parse file.read, path
   end
 
-  def self.document(filepath, out_file = nil)
-    parser = load_file(filepath)
-    documentation = parser.parse.document
+  def self.document(filepath, out_file=nil)
+    root = load_file filepath
+    root.expand
 
     if out_file
-      File.open(out_file, 'w') do |f|
-        f.write documentation
+      File.open(out_file, 'w') do |file|
+        file.write root.document
       end
     else
-      documentation
+      root.document
     end
   end
 
@@ -104,7 +104,7 @@ module Raml
   def self.highlight(source, mimetype=nil)
     opts = { source: source }
     opts[:mimetype] = mimetype if mimetype
-    
+
     formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
     lexer = Rouge::Lexer.guess(opts).new
     formatter.format lexer.lex source

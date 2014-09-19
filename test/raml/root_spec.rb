@@ -619,7 +619,7 @@ describe Raml::Root do
     end
 
     context 'when parsing large specs' do
-      subject { Raml::Parser.new( File.open("test/apis/#{api_file}").read ).parse }
+      subject { Raml::Parser.parse( File.open("test/apis/#{api_file}").read ) }
       context 'when parsing the Twitter API' do
         let(:api_file) { 'twitter-rest-api.raml' }
         it { expect { subject.expand }.to_not raise_error }

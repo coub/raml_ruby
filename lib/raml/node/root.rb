@@ -49,12 +49,6 @@ module Raml
       ''
     end
 
-    def save_documentation(filename)
-      File.open(filename, 'w') do |file|
-        file.write document
-      end
-    end
-
     private
 
     def validate
