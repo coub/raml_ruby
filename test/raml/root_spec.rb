@@ -640,10 +640,6 @@ describe Raml::Root do
         let(:api_file) { 'instagram-api.raml' }
         it { expect { subject.expand }.to_not raise_error }
       end
-      context 'when parsing the Github API' do
-        let(:api_file) { 'github-api-v3.raml' }
-        it { expect { subject.expand }.to_not raise_error }
-      end
     end
   end
 
