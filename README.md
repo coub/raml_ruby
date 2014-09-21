@@ -1,5 +1,7 @@
 # RAML ruby
 
+|Status|
+
 Implementation of a RAML parser in Ruby. It uses the stdlib YAML parser
 (Psych). It can also generate HTML documentation.
 
@@ -61,3 +63,7 @@ More a more detailed analysis of the spec requirements and which ones are finish
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+.. |Status| image:: https://travis-ci.org/eliaslevy/raml_ruby.svg?branch=master :target: https://travis-ci.org/eliaslevy/raml_ruby
+
+
