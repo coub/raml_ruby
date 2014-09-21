@@ -7,7 +7,23 @@ module Raml
     include Parent
     include Validation
 
+    # @private
     MEDIA_TYPE_RE = %r{[a-z\d][-\w.+!#$&^]{0,63}/[a-z\d][-\w.+!#$&^]{0,63}(;.*)?}oi
+
+    # @!attribute [rw] example
+    #   @return [String, nil] an example of a valid body.
+
+    # @!attribute [r] form_parameters
+    #   @return [Hash<String, Raml::Parameter::FormParameter>] the form parameters, keyed
+    #     by the parameter name. Only valid for "application/x-www-form-urlencoded" and
+    #     "multipart/form-data" media types.
+
+    # @!attribute [r] schema
+    #   @return [Raml::Schema, nil] the body's schema.  Only valid if the media type
+    #     is not one of "application/x-www-form-urlencoded" or "multipart/form-data".
+
+    # @!attribute [r] media\_type
+    #   @return [String] media type of the of body.  An alias for #name.
 
     scalar_property     :example 
     non_scalar_property :form_parameters, :schema
@@ -20,10 +36,14 @@ module Raml
     
     child_of :schema, [ Schema, SchemaReference ]
 
+    # Returns whether the body is a web form.  Returns true for "application/x-www-form-urlencoded" and
+    # "multipart/form-data" media types.
+    # @return [Boolean] true if the body is a web form, false otherwise.
     def web_form?
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? media_type
     end
     
+    # @private
     def merge(other)
       raise MergeError, "Media types don't match." if media_type != other.media_type
       

@@ -1,3 +1,4 @@
+# @private
 class Raml::Parser
   class Include
     attr_reader :path

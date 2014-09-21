@@ -3,6 +3,7 @@ require 'active_support/core_ext/string'
 module Raml
   class Template < ValueNode
     
+    # @private
     def interpolate(params)
       name = @name.clone
       data = clone_data

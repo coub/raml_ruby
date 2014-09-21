@@ -17,6 +17,7 @@ module Raml
       @name = name.to_i
     end
 
+    # @private
     def merge(other)
       raise MergeError, "Response status codes don't match." if name != other.name
 

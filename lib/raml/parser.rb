@@ -1,6 +1,7 @@
 require 'yaml'
 
 module Raml
+  # @private
   class Parser
     class << self
       def parse(data, file_dir=Dir.getwd)

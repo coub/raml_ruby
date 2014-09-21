@@ -1,4 +1,5 @@
 module Raml
+  # @private
   module Global
     def default_media_type
       @parent.default_media_type

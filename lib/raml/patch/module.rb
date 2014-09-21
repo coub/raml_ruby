@@ -1,3 +1,4 @@
+# @private
 class Module
   private
   def attr_reader_default(attribute, default)

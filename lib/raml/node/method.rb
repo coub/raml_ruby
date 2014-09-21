@@ -4,12 +4,16 @@ module Raml
     
     NAMES = %w(options get head post put delete trace connect patch)
 
+    # @!attribute [r] traits
+    #   @return [Array<Raml::Trait, Raml::TraitReference>] the traits and trait references.
+
     non_scalar_property :is
 
     children_of :traits, [ Trait, TraitReference ]
 
     self.doc_template = relative_path 'method.slim'
 
+    # @private
     def apply_traits
       # We apply resource traits before method traits, and apply traits at each level in
       # the other they are listed (first to last, left to righ).  Later traits scalar
@@ -26,6 +30,7 @@ module Raml
       merge cloned_self
     end
 
+    # @private
     def merge(other)
       super
 

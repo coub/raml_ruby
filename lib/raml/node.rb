@@ -8,6 +8,7 @@ module Raml
     class_attribute :doc_template, :doc_template_compiled
 
     class << self
+      # @private
       def relative_path(file)
         File.join(
           *File.dirname(__FILE__).
@@ -22,7 +23,12 @@ module Raml
       end
     end
 
+    # @!attribute [r] name
+    #   @return [String,Integer] the node name (e.g. resource path, header name, etc). Usually a 
+    #     String.  Can be an Integer for methods.
     attr_reader   :name
+    # @!attribute [rw] parent
+    #   @return [Raml::Node] the node's parent. 
     attr_accessor :parent
 
     def initialize(name, parent)
@@ -30,6 +36,8 @@ module Raml
       @parent = parent
     end
 
+    # Returns HTML documenting the node and child nodes.
+    # @return [String] HTML documentation.
     def document
       if doc_template
         self.doc_template_compiled ||= Slim::Template.new(doc_template, format: :html5, pretty: true)
@@ -41,7 +49,6 @@ module Raml
 
     private
 
-    # Transforms camel cased identificators to underscored.
     def underscore(camel_cased_word)
       camel_cased_word.to_s.gsub(/::/, '/').
         gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
@@ -103,6 +110,7 @@ module Raml
     self._regexp_property      = nil
 
     class << self
+      private
       def inherit_class_attributes
         self.scalar_properties     = self.scalar_properties.dup
         self.non_scalar_properties = self.non_scalar_properties.dup
@@ -126,10 +134,17 @@ module Raml
       end
     end
 
+    # @private
     def scalar_properties    ; self.class.scalar_properties    ; end
+    # @private
     def non_scalar_properties; self.class.non_scalar_properties; end
+    # @private
     def _regexp_property     ; self.class._regexp_property     ; end 
 
+    # @!attribute [rw] optional
+    #   @return [Boolean] whether the property is optional. Only valid
+    #     for decendant nodes a {Trait::Instance} or {ResourceType::Instance}.
+    #     Indicated by a trailing "?" on the property name in the RAML source.
     attr_accessor :optional
     
     def initialize(name, properties, parent)

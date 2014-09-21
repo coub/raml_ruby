@@ -1,4 +1,5 @@
 module Raml
+  # @private
   module Merge
     def merge(other)
       other.scalar_properties.each do |prop|

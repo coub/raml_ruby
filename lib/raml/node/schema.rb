@@ -2,14 +2,18 @@ require 'json-schema'
 
 module Raml
   class Schema < ValueNode
+    # @return [Boolean] true if the schema appears to be an JSON Schema, false otherwise.
     def json_schema?
       /"\$schema":\s*"http:\/\/json-schema.org\/[^"]*"/ === @value
     end
 
+    # @return [Boolean] true if the schema appears to be an XML Schema, false otherwise.
     def xml_schema?
       /<xs:schema [^>]*xmlns:xs="http:\/\/www\.w3\.org\/2001\/XMLSchema"[^>]*>/ === @value
     end
 
+    # Returns HTML documenting the node and child nodes.
+    # @return [String] HTML documentation.
     def document
       highlight @value, parent.media_type
     end

@@ -8,6 +8,20 @@ module Raml
     include Parent
     include Validation
 
+    # @!attribute [r] base_uri_parameters
+    #   @return [Hash<String, Raml::Parameter::BaseUriParameter>] the base URI parameters, keyed
+    #     by the parameter name. 
+
+    # @!attribute [r] uri_parameters
+    #   @return [Hash<String, Raml::Parameter::UriParameter>] the URI parameters, keyed
+    #     by the parameter name. 
+
+    # @!attribute [r] methods
+    #   @return [Hash<String, Raml::Method>] the methods, keyed by the method name.
+
+    # @!attribute [r] traits
+    #   @return [Array<Raml::Trait, Raml::TraitReference>] the traits and trait references.
+
     non_scalar_property :uri_parameters, :base_uri_parameters, :is, :type, :secured_by,
       *Raml::Method::NAMES, *Raml::Method::NAMES.map { |m| "#{m}?" }
 
@@ -17,6 +31,7 @@ module Raml
 
     children_of :traits, [ Raml::Trait, Raml::TraitReference ]
 
+    # @private
     def apply_resource_type
       if type
         # We clone the resource as it currently is; apply the resource type to the
@@ -29,6 +44,7 @@ module Raml
       end
     end
 
+    # @private
     def merge(other)
       raise MergeError, "Trying to merge #{other.class} into Resource." unless other.is_a? ResourceType::Instance or other.is_a? Resource
 
@@ -55,6 +71,8 @@ module Raml
       self
     end
 
+    # Returns the resource's full path.
+    # @return [String] the resource's full path.
     def resource_path
       @parent.resource_path + self.name
     end

@@ -3,11 +3,47 @@ require 'uri'
 require 'uri_template'
 
 module Raml
+  # RAML root node.  Its parent is itself.
   class Root < PropertiesNode
     inherit_class_attributes
 
     include Parent
     include Validation
+
+    # @!attribute [rw] title
+    #   @return [String] API title.
+
+    # @!attribute [rw] version
+    #   @return [String,nil] API version.
+
+    # @!attribute [rw] base_uri
+    #   @return [String] the API base URI.
+
+    # @!attribute [rw] protocols
+    #   @return [Array<String>, nil] the supported protocols. Nil or an array of up to two string
+    #     elements from the set "HTTP" and "HTTPS".
+
+    # @!attribute [rw] media_type
+    #   @return [String] the default request and response body media type.
+
+    # @!attribute [r] documents
+    #   @return [Array<Raml::Documentation>] the top level documentation.
+
+    # @!attribute [r] base_uri_parameters
+    #   @return [Hash<String, Raml::Parameter::BaseUriParameter>] the base URI parameters, keyed
+    #     by the parameter name. 
+
+    # @!attribute [r] schemas
+    #   @return [Hash<String, Raml::Schema>] the schema definitions, keyed by the schema name.
+
+    # @!attribute [r] resources
+    #   @return [Hash<String, Raml::Resource>] the nested resources, keyed by the resource relative path.
+
+    # @!attribute [r] traits
+    #   @return [Hash<String, Raml::Trait>] the trait definitions, keyed by the trait name.
+
+    # @!attribute [r] resource_types
+    #   @return [Hash<String, Raml::ResourceType>] the resource type definitions, keyed by the resource type name.
 
     scalar_property :title      , :version    , :base_uri     ,
                     :protocols  , :media_type
@@ -36,6 +72,8 @@ module Raml
       super nil, root_data, self
     end
 
+    # Applies resource types and traits, and inlines schemas.  It should be called
+    # before documentation is generated.
     def expand
       unless @expanded
         resources.values.each(&:apply_resource_type)
@@ -45,6 +83,7 @@ module Raml
       end
     end
 
+    # @private
     def resource_path
       ''
     end

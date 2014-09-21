@@ -1,4 +1,5 @@
 module Raml
+  # @private
 	module Validation
     def validate_property(name, value, classes)
       classes = [ classes ] unless classes.is_a? Array

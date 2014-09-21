@@ -1,13 +1,18 @@
 module Raml
   module Bodies
+    # @!attribute [r] bodies
+    #   @return [Hash<String, Raml::Body>] the bodies, keyed by their media type.
+
+    # XXX - need this line here to trigger Yard to generate docs for the above attribute.
+
+    private
+
     def self.included(base)
       base.instance_eval do
 		    non_scalar_property :body
 		    children_by :bodies, :media_type , Body
       end
     end
-
-    private
     
     def parse_body(value)
       if value.is_a? Hash and value.keys.all? {|k| k.is_a? String and k =~ /.+\/.+/ }

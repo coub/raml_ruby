@@ -9,6 +9,45 @@ module Raml
 
       VALID_TYPES = %w(string number integer date boolean file)
 
+      # @!attribute [rw] type
+      #   @return [String] the value type. One of: "string", "number", "integer", "date",
+      #     "boolean", or "file".
+
+      # @!attribute [rw] enum
+      #   @return [Array<String>,nil] the possible values. Only valid for parameters of type "string".
+
+      # @!attribute [rw] pattern
+      #   @return [Regexp,nil] a regular expression the value must match. Only valid for
+      #     parameters of type "string".
+
+      # @!attribute [rw] min_length
+      #   @return [Integer,nil] the minimum value length. Only valid for parameters of type "string".
+
+      # @!attribute [rw] max_length
+      #   @return [Integer,nil] the maximum value length. Only valid for parameters of type "string".
+
+      # @!attribute [rw] minimum
+      #   @return [Numeric,nil] the minimum value length. Only valid for parameters of type "number" or "integer".
+
+      # @!attribute [rw] maximum
+      #   @return [Numeric,nil] the maximum value length. Only valid for parameters of type "number" or "integer".
+
+      # @!attribute [rw] example
+      #   @return [String,Numeric,Boolean,nil] an example of the value.
+
+      # @!attribute [rw] default
+      #   @return [String,Numeric,Boolean,nil] the default value.
+
+      # @!attribute [rw] required
+      #   @return [Boolean] whether the parameter is required.
+
+      # @!attribute [rw] repeat
+      #   @return [Boolean] whether the parameter can be repeated.
+
+      # @!attribute [r] types
+      #   @return [Hash<String, Raml::Parameter::AbstractParameter>] if the parameter supports multiple types,
+      #     the type alternatives, keyed by the type.
+
       scalar_property :type       , :enum     , :pattern  , :min_length , 
                       :max_length , :minimum  , :maximum  , :example    , 
                       :repeat     , :required , :default
@@ -21,6 +60,10 @@ module Raml
 
       self.doc_template = relative_path 'abstract_parameter.slim'
 
+      # @param name [String] the parameter name.
+      # @param parameter_data [Hash, Array<Hash>] the parameter data. If the parameter supports multiple types,
+      #  it should be an array of hashes, one hash each for each type.
+      # @param parent [Raml::Node] the parameter's parent node.
       def initialize(name, parameter_data, parent)
         if parameter_data.is_a? Array
           @name       = name
@@ -33,10 +76,12 @@ module Raml
         end
       end
 
+      # @return [Boolean] true if the parameter supports multiple type alternatives, false otherwise.
       def has_multiple_types?
         not children.empty?
       end
       
+      # @private
       def merge(other)
         raise MergeError, "#{self.class} names don't match." if name != other.name
 

@@ -10,6 +10,17 @@ module Raml
     include Bodies
     include Headers
 
+    # @!attribute [rw] protocols
+    #   @return [Array<String>, nil] the supported protocols. Nil or an array of up to two string
+    #     elements from the set "HTTP" and "HTTPS".
+
+    # @!attribute [r] query_parameters
+    #   @return [Hash<String, Raml::Parameter::QueryParameter>] the method query parameters, keyed
+    #     by the parameter name. 
+
+    # @!attribute [r] responses
+    #   @return [Hash<Integer, Raml::Response>] the method responses, keyed by the HTTP status code.
+
     scalar_property     :protocols
     non_scalar_property :query_parameters, :responses, :secured_by
 

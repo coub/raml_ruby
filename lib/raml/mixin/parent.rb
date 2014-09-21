@@ -1,11 +1,16 @@
 module Raml
   module Parent
+    # @!attribute [rw] children
+    #   @return [Array<Raml::Node>] children nodes.
+    attr_accessor :children
+
+    private
+
     def self.included(base)
       base.extend ClassMethods
     end
 
-    attr_accessor :children
-
+    # @private
     module ClassMethods
       def child_of(name, type)
         type = [ type ] unless type.is_a? Array
