@@ -1,50 +1,19 @@
 require 'active_support'
 require 'active_support/core_ext/class/attribute'
-require 'rouge'
-require 'slim'
 
 module Raml
   class Node
-    class_attribute :doc_template, :doc_template_compiled
-
-    class << self
-      # @private
-      def relative_path(file)
-        File.join(
-          *File.dirname(__FILE__).
-            split(File::SEPARATOR).
-            reverse.
-            drop_while { |p| p != 'lib' }.
-            drop(1).
-            reverse,
-          'templates',
-          file
-        )
-      end
-    end
-
     # @!attribute [r] name
-    #   @return [String,Integer] the node name (e.g. resource path, header name, etc). Usually a 
+    #   @return [String,Integer] the node name (e.g. resource path, header name, etc). Usually a
     #     String.  Can be an Integer for methods.
     attr_reader   :name
     # @!attribute [rw] parent
-    #   @return [Raml::Node] the node's parent. 
+    #   @return [Raml::Node] the node's parent.
     attr_accessor :parent
 
     def initialize(name, parent)
       @name   = name
       @parent = parent
-    end
-
-    # Returns HTML documenting the node and child nodes.
-    # @return [String] HTML documentation.
-    def document
-      if doc_template
-        self.doc_template_compiled ||= Slim::Template.new(doc_template, format: :html5, pretty: true)
-        doc_template_compiled.render self
-      else
-        nil
-      end
     end
 
     private
@@ -60,35 +29,6 @@ module Raml
     def camel_case(underscored_word)
       w = underscored_word.to_s.split('_')
       (w[0...1] + w[1..-1].map(&:capitalize)).join
-    end
-
-    def collapse(level, title, display_name=nil, &block)
-      @@cid ||= 0
-      @@cid  += 1
-
-      @@context_class ||= Struct.new(:cid, :title, :level, :display_name, :content) do
-        def highlight_url_params(url)
-          url.gsub(/({[^}]+})/, '<span class="url_param">\1</span>')
-        end 
-      end
-
-      context = @@context_class.new @@cid, title, level, display_name, yield
-
-      @@collapse ||= Slim::Template.new(self.class.relative_path('collapse.slim'), format: :html5, pretty: true)
-      @@collapse.render context
-    end
-
-    def highlight_url_params(url)
-      url.gsub(/({[^}]+})/, '<span class="url_param">\1</span>')
-    end 
-
-    def highlight(source, mimetype=nil)
-      opts = { source: source }
-      opts[:mimetype] = mimetype if mimetype
-
-      formatter = Rouge::Formatters::HTML.new css_class: 'highlight'
-      lexer = Rouge::Lexer.guess(opts).new
-      formatter.format lexer.lex source
     end
   end
 
@@ -139,14 +79,14 @@ module Raml
     # @private
     def non_scalar_properties; self.class.non_scalar_properties; end
     # @private
-    def _regexp_property     ; self.class._regexp_property     ; end 
+    def _regexp_property     ; self.class._regexp_property     ; end
 
     # @!attribute [rw] optional
     #   @return [Boolean] whether the property is optional. Only valid
     #     for decendant nodes a {Trait::Instance} or {ResourceType::Instance}.
     #     Indicated by a trailing "?" on the property name in the RAML source.
     attr_accessor :optional
-    
+
     def initialize(name, properties, parent)
       if name.is_a? String and name.end_with? '?'
         allow_optional? parent

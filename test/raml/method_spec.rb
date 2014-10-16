@@ -34,7 +34,7 @@ describe Raml::Method do
     it "should instanciate Method" do
       subject
     end
-    
+
     context 'when the method is a method defined in RFC2616 or RFC5789' do
       %w(options get head post put delete trace connect patch).each do |method|
         context "when the method is #{method}" do
@@ -51,7 +51,7 @@ describe Raml::Method do
         end
       end
     end
-    
+
     context 'when description property is not given' do
       let(:data) { {} }
       it { expect { subject }.to_not raise_error }
@@ -67,12 +67,9 @@ describe Raml::Method do
         it 'should store the value' do
           subject.description.should eq data['description']
         end
-        it 'uses the description in the documentation' do
-          subject.document.should include data['description']
-        end
       end
     end
-    
+
     context 'when the headers parameter is given' do
       context 'when the headers property is well formed' do
         let (:data) {
@@ -103,7 +100,7 @@ describe Raml::Method do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /headers/ }
       end
     end
-    
+
     context 'when the protocols property is missing' do
       let(:data) { { } }
       it { expect{ subject }.to_not raise_error }
@@ -141,7 +138,7 @@ describe Raml::Method do
         end
       end
     end
-    
+
     context 'when a queryParameters property is given' do
       context 'when the queryParameters property is well formed' do
         let(:data) {
@@ -164,7 +161,7 @@ describe Raml::Method do
             )
           )
         }
-        
+
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Parameter::UriParameter instances' do
           expect( subject.query_parameters.values ).to all( be_a Raml::Parameter::QueryParameter )
@@ -199,7 +196,7 @@ describe Raml::Method do
             )
           )
         }
-        
+
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Body instances' do
           expect( subject.bodies.values ).to all( be_a Raml::Body )
@@ -219,7 +216,7 @@ describe Raml::Method do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
       end
     end
-    
+
     context 'when a responses property is given' do
       context 'when the responses property is well formed' do
         let(:data) {
@@ -235,7 +232,7 @@ describe Raml::Method do
             )
           )
         }
-        
+
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Response instances' do
           expect( subject.responses.values ).to all( be_a Raml::Response )
@@ -257,7 +254,7 @@ describe Raml::Method do
     end
 
     context 'when an is property is given' do
-     let(:root) { 
+     let(:root) {
         Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com',  'traits' => [
           { 'secured'     => {} },
           { 'paged'       => {} },
@@ -274,11 +271,11 @@ describe Raml::Method do
           end
         end
         context 'when the property is an array of trait references with parameters' do
-          let(:data) { { 
-            'is' => [ 
-              {'secured' => {'tokenName' => 'access_token'}}, 
-              {'paged'   => {'maxPages'  => 10            }} 
-            ] 
+          let(:data) { {
+            'is' => [
+              {'secured' => {'tokenName' => 'access_token'}},
+              {'paged'   => {'maxPages'  => 10            }}
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the trait references' do
@@ -287,11 +284,11 @@ describe Raml::Method do
           end
         end
         context 'when the property is an array of trait definitions' do
-          let(:data) { { 
-            'is' => [ 
-              {'queryParameters' => {'tokenName' => {'description'=>'foo'}}}, 
+          let(:data) { {
+            'is' => [
+              {'queryParameters' => {'tokenName' => {'description'=>'foo'}}},
               {'queryParameters' => {'numPages'  => {'description'=>'bar'}}}
-            ] 
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
@@ -301,12 +298,12 @@ describe Raml::Method do
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
-          let(:data) { { 
-            'is' => [ 
-              {'secured' => {'tokenName' => 'access_token'}}, 
+          let(:data) { {
+            'is' => [
+              {'secured' => {'tokenName' => 'access_token'}},
               {'queryParameters' => {'numPages'  => {'description'=>'bar'}}},
               'rateLimited'
-            ] 
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
@@ -371,9 +368,9 @@ describe Raml::Method do
           end
         end
         context 'headers properties' do
-          let(:trait_data) { { 
+          let(:trait_data) { {
             'headers' => {
-              'header1' => {'description' => 'foo'}, 
+              'header1' => {'description' => 'foo'},
               'header2' => {'description' => 'bar'}
             }
           } }
@@ -382,9 +379,9 @@ describe Raml::Method do
           end
         end
         context 'queryParameters properties' do
-          let(:trait_data) { { 
+          let(:trait_data) { {
             'queryParameters' => {
-              'param1' => {'description' => 'foo'}, 
+              'param1' => {'description' => 'foo'},
               'param2' => {'description' => 'bar'}
             }
           } }
@@ -393,9 +390,9 @@ describe Raml::Method do
           end
         end
         context 'body property' do
-          let(:trait_data) { { 
+          let(:trait_data) { {
             'body' => {
-              'text/mime1' => {'schema' => 'foo'}, 
+              'text/mime1' => {'schema' => 'foo'},
               'text/mime2' => {'schema' => 'bar'}
             }
           } }
@@ -404,9 +401,9 @@ describe Raml::Method do
           end
         end
         context 'responses property' do
-          let(:trait_data) { { 
+          let(:trait_data) { {
             'responses' => {
-              200 => {'description' => 'foo'}, 
+              200 => {'description' => 'foo'},
               404 => {'description' => 'bar'}
             }
           } }
@@ -438,16 +435,16 @@ describe Raml::Method do
           end
         end
         context 'headers properties' do
-          let(:method_data) { { 
+          let(:method_data) { {
             'headers' => {
-              'header1' => {'description' => 'foo'}, 
+              'header1' => {'description' => 'foo'},
               'header2' => {'description' => 'bar'}
             }
           } }
           context 'when the trait headers are different from the method headers' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'headers' => {
-                'header3' => {'description' => 'foo2'}, 
+                'header3' => {'description' => 'foo2'},
                 'header4' => {'description' => 'bar2'}
               }
             } }
@@ -456,10 +453,10 @@ describe Raml::Method do
             end
           end
           context 'when the trait headers overlap the the method headers' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'headers' => {
-                'header2' => {'displayName' => 'Header 3'}, 
-                'header3' => {'description' => 'foo2'}, 
+                'header2' => {'displayName' => 'Header 3'},
+                'header3' => {'description' => 'foo2'},
                 'header4' => {'description' => 'bar2'}
               }
             } }
@@ -467,19 +464,19 @@ describe Raml::Method do
                method.merge(trait).headers.keys.should contain_exactly('header1', 'header2', 'header3', 'header4')
                method.headers['header2'].display_name.should eq trait.headers['header2'].display_name
             end
-          end        
+          end
         end
         context 'queryParameters properties' do
-          let(:method_data) { { 
+          let(:method_data) { {
             'queryParameters' => {
-              'param1' => {'description' => 'foo'}, 
+              'param1' => {'description' => 'foo'},
               'param2' => {'description' => 'bar'}
             }
           } }
           context 'when the trait query parameters are different from the method headers' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'queryParameters' => {
-                'param3' => {'description' => 'foo2'}, 
+                'param3' => {'description' => 'foo2'},
                 'param4' => {'description' => 'bar2'}
               }
             } }
@@ -488,10 +485,10 @@ describe Raml::Method do
             end
           end
           context 'when the trait query parameters overlap the the method query parameters' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'queryParameters' => {
-                'param2' => {'displayName' => 'Param 3'}, 
-                'param3' => {'description' => 'foo2'}, 
+                'param2' => {'displayName' => 'Param 3'},
+                'param3' => {'description' => 'foo2'},
                 'param4' => {'description' => 'bar2'}
               }
             } }
@@ -499,19 +496,19 @@ describe Raml::Method do
                method.merge(trait).query_parameters.keys.should contain_exactly('param1', 'param2', 'param3', 'param4')
                method.query_parameters['param2'].display_name.should eq trait.query_parameters['param2'].display_name
             end
-          end         
+          end
         end
         context 'body property' do
-          let(:method_data) { { 
+          let(:method_data) { {
             'body' => {
-              'text/mime1' => {'schema' => 'foo'}, 
+              'text/mime1' => {'schema' => 'foo'},
               'text/mime2' => {'schema' => 'bar'}
             }
           } }
           context 'when the trait query parameters are different from the method headers' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'body' => {
-                'text/mime3' => {'schema' => 'foo2'}, 
+                'text/mime3' => {'schema' => 'foo2'},
                 'text/mime4' => {'schema' => 'bar2'}
               }
             } }
@@ -520,10 +517,10 @@ describe Raml::Method do
             end
           end
           context 'when the trait query parameters overlap the the method query parameters' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'body' => {
-                'text/mime2' => {'example' => 'Example 2'}, 
-                'text/mime3' => {'schema'  => 'foo2'}, 
+                'text/mime2' => {'example' => 'Example 2'},
+                'text/mime3' => {'schema'  => 'foo2'},
                 'text/mime4' => {'schema'  => 'bar2'}
               }
             } }
@@ -531,19 +528,19 @@ describe Raml::Method do
                method.merge(trait).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
                method.bodies['text/mime2'].example.should eq trait.bodies['text/mime2'].example
             end
-          end  
+          end
         end
         context 'responses property' do
-          let(:method_data) { { 
+          let(:method_data) { {
             'responses' => {
-              200 => {'description' => 'foo', 'body' => { 'text/mime1' => {'schema' => 'schema1'} } }, 
+              200 => {'description' => 'foo', 'body' => { 'text/mime1' => {'schema' => 'schema1'} } },
               404 => {'description' => 'bar'}
             }
           } }
           context 'when the trait response status codes are different from the method responses status codes' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'responses' => {
-                201 => {'description' => 'foo2'}, 
+                201 => {'description' => 'foo2'},
                 403 => {'description' => 'bar2'}
               }
             } }
@@ -552,10 +549,10 @@ describe Raml::Method do
             end
           end
           context 'when the trait query parameters overlap the the method query parameters' do
-            let(:trait_data) { { 
+            let(:trait_data) { {
               'responses' => {
-                200 => {'description' => 'foo', 'body' => { 'text/mime2' => {'schema' => 'schema2'} } }, 
-                201 => {'description' => 'foo2'}, 
+                200 => {'description' => 'foo', 'body' => { 'text/mime2' => {'schema' => 'schema2'} } },
+                201 => {'description' => 'foo2'},
                 403 => {'description' => 'bar2'}
               }
             } }
@@ -563,7 +560,7 @@ describe Raml::Method do
                method.merge(trait).responses.keys.should contain_exactly(200, 404, 201, 403)
                method.responses[200].bodies.keys.should contain_exactly('text/mime1', 'text/mime2')
             end
-          end  
+          end
         end
       end
     end
@@ -571,7 +568,7 @@ describe Raml::Method do
 
   describe '#apply_traits' do
     let(:root_data) { {
-      'title'   => 'x', 
+      'title'   => 'x',
       'baseUri' => 'http://foo.com',
       '/users'  => {
         '/comments' => {
@@ -592,16 +589,16 @@ describe Raml::Method do
           end
         end
         context 'when the method has multiple traits' do
-          let(:method_data) { { 
-            'is' => [ 
-              { 
+          let(:method_data) { {
+            'is' => [
+              {
                 'description' => 'trait description',
                 'headers'     => { 'header1' => { 'description' => 'header1' } }
               },
               {
                 'description' => 'trait description 2',
                 'headers'     => { 'header2' => { 'description' => 'header2' } }
-              } 
+              }
             ]
           } }
           it 'applies them in order of precedence, right to left' do
@@ -620,39 +617,39 @@ describe Raml::Method do
         end
         context 'when the method has traits' do
           let(:resource_trait_data) {
-            [ 
-              { 
+            [
+              {
                 'description' => 'trait4 description',
-                'headers'     => { 
+                'headers'     => {
                   'header3' => { 'description' => 'trait4' },
-                  'header4' => { 'description' => 'trait4' } 
+                  'header4' => { 'description' => 'trait4' }
                 }
               },
               {
                 'description' => 'trait3 description',
-                'headers'     => { 
+                'headers'     => {
                   'header2' => { 'description' => 'trait3' },
                   'header3' => { 'description' => 'trait3' }
                 }
-              } 
+              }
             ]
           }
-          let(:method_data) { { 
+          let(:method_data) { {
             'description' => 'method description',
-            'is' => [ 
-              { 
+            'is' => [
+              {
                 'description' => 'trait2 description',
-                'headers'     => { 
+                'headers'     => {
                   'header1' => { 'description' => 'trait2' },
                   'header2' => { 'description' => 'trait2' }
                 }
               },
               {
                 'description' => 'trait1 description',
-                'headers'     => { 
+                'headers'     => {
                   'header1' => { 'description' => 'trait1' }
                 }
-              } 
+              }
             ]
           } }
           it 'applies method traits first in reverse order, then resource traits in reverse order' do
@@ -686,16 +683,6 @@ describe Raml::Method do
           method.description.should eq 'trait get'
         end
       end
-    end
-  end
-
-  describe '#document' do
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/method.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
     end
   end
 end

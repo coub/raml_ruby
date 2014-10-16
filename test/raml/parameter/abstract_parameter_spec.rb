@@ -90,7 +90,7 @@ describe Raml::Parameter::AbstractParameter do
           let(:parameter_data) { { type: 'string', enum: enum } }
           it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
         end
-      end    
+      end
       context 'and an pattern attribute is given' do
         let(:parameter_data) { { type: 'string', pattern: pattern } }
         context 'and the value is string representing a valid regexp' do
@@ -132,7 +132,7 @@ describe Raml::Parameter::AbstractParameter do
           let(:pattern) { '[' }
           it { expect { subject }.to raise_error Raml::InvalidParameterAttribute }
         end
-      end    
+      end
     end
     context 'when the parameter type is not string' do
       context 'and a minLength attribute is given' do
@@ -190,7 +190,7 @@ describe Raml::Parameter::AbstractParameter do
         it { expect { subject }.to raise_error Raml::InapplicableParameterAttribute }
       end
     end
-    
+
     [
       [ 'string' , 'string' , '123',  123  ],
       [ 'number' , 'number' ,  12.3, '123' ],
@@ -215,7 +215,7 @@ describe Raml::Parameter::AbstractParameter do
         end
       end
     end
-    
+
     %w{repeat required}.each do |attribute|
       context "when the #{attribute} attribute is not true or false" do
         let(:parameter_data) { { attribute => 111 } }
@@ -237,7 +237,7 @@ describe Raml::Parameter::AbstractParameter do
         end
       end
     end
-    
+
     context 'when example property is given' do
       context 'when the example property is a string' do
         let(:parameter_data) { { 'example' =>  'My Attribute' } }
@@ -245,12 +245,9 @@ describe Raml::Parameter::AbstractParameter do
         it 'should store the value' do
           subject.example.should eq parameter_data['example']
         end
-        it 'uses the description in the documentation' do
-          subject.document.should include parameter_data['example']
-        end
       end
     end
-    
+
     context 'when the parameter has multiple types' do
       let(:parameter_data) {
         YAML.load %q(
@@ -267,13 +264,9 @@ describe Raml::Parameter::AbstractParameter do
         subject.children.should all( be_a Raml::Parameter::AbstractParameter )
         subject.children.map(&:type).should contain_exactly 'string', 'file'
       end
-
-      it "prints out documentation" do
-        subject.document
-      end
     end
   end
-  
+
   describe '#has_multiple_types?' do
     let(:name) { 'file' }
     context 'when the parameter has a single type' do
@@ -289,9 +282,9 @@ describe Raml::Parameter::AbstractParameter do
             description: File to upload. The file must be the last field in the form.
         )
       }
-      
+
       it { subject.has_multiple_types?.should be true }
-    end    
+    end
   end
 
   describe '#merge' do
@@ -543,22 +536,4 @@ describe Raml::Parameter::AbstractParameter do
     end
   end
 
-  describe '#document' do
-    let(:name) { 'page_number' }
-    let(:parameter_data) {
-      {
-        type:     'integer',
-        required: true,
-        example:  253995,
-        minimum:  33
-      }
-    }
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/abstract_parameter.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
-    end
-  end
 end

@@ -35,18 +35,15 @@ describe Raml::Resource do
     it "should instanciate Resource" do
       subject
     end
-    
+
     context 'when displayName is given' do
       let(:data) { { 'displayName' => 'My Name', 'description' => 'foo' } }
       it { expect { subject }.to_not raise_error }
       it 'should store the value' do
         subject.display_name.should eq data['displayName']
       end
-      it 'uses the displayName in the documentation' do
-        subject.document.should include data['displayName']
-      end
     end
-    
+
     context 'when description is not given' do
       let(:data) { {} }
       it { expect { subject }.to_not raise_error }
@@ -62,12 +59,9 @@ describe Raml::Resource do
         it 'should store the value' do
           subject.description.should eq data['description']
         end
-        it 'uses the description in the documentation' do
-          subject.document.should include data['description']
-        end
       end
     end
-    
+
     context 'when the uriParameters parameter is given with valid parameters' do
       context 'when the uriParameters property is well formed' do
         it { expect { subject }.to_not raise_error }
@@ -88,7 +82,7 @@ describe Raml::Resource do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /uriParameters/ }
       end
     end
-    
+
     context 'when nested resources are defined' do
       let(:name) { '/{userId}' }
       let(:data) {
@@ -115,7 +109,7 @@ describe Raml::Resource do
         expect( subject.resources.keys   ).to contain_exactly('/followers','/following', '/keys')
       end
     end
-    
+
     context 'when a baseUriParameters property is given' do
       context 'when the baseUriParameters property is well formed' do
         let(:name) { '/files' }
@@ -129,7 +123,7 @@ describe Raml::Resource do
             )
           )
         }
-        
+
         it { expect { subject }.to_not raise_error }
         it 'stores all as Raml::Parameter::UriParameter instances' do
           expect( subject.base_uri_parameters.values ).to all( be_a Raml::Parameter::BaseUriParameter )
@@ -155,7 +149,7 @@ describe Raml::Resource do
     end
 
     context 'when an type property is given' do
-     let(:root) { 
+     let(:root) {
         Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com',  'resourceTypes' => [
           { 'collection'        => {} },
           { 'member'            => {} },
@@ -208,9 +202,9 @@ describe Raml::Resource do
         end
       end
     end
-    
+
     context 'when an is property is given' do
-     let(:root) { 
+     let(:root) {
         Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com',  'traits' => [
           { 'secured'     => {} },
           { 'paged'       => {} },
@@ -227,11 +221,11 @@ describe Raml::Resource do
           end
         end
         context 'when the property is an array of trait references with parameters' do
-          let(:data) { { 
-            'is' => [ 
-              {'secured' => {'tokenName' => 'access_token'}}, 
-              {'paged'   => {'maxPages'  => 10            }} 
-            ] 
+          let(:data) { {
+            'is' => [
+              {'secured' => {'tokenName' => 'access_token'}},
+              {'paged'   => {'maxPages'  => 10            }}
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the trait references' do
@@ -240,11 +234,11 @@ describe Raml::Resource do
           end
         end
         context 'when the property is an array of trait definitions' do
-          let(:data) { { 
-            'is' => [ 
-              {'queryParameters' => {'tokenName' => {'description'=>'foo'}}}, 
+          let(:data) { {
+            'is' => [
+              {'queryParameters' => {'tokenName' => {'description'=>'foo'}}},
               {'queryParameters' => {'numPages'  => {'description'=>'bar'}}}
-            ] 
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
@@ -254,12 +248,12 @@ describe Raml::Resource do
           end
         end
         context 'when the property is an array of mixed trait refrences, trait refrences with parameters, and trait definitions' do
-          let(:data) { { 
-            'is' => [ 
-              {'secured' => {'tokenName' => 'access_token'}}, 
+          let(:data) { {
+            'is' => [
+              {'secured' => {'tokenName' => 'access_token'}},
               {'queryParameters' => {'numPages'  => {'description'=>'bar'}}},
               'rateLimited'
-            ] 
+            ]
           } }
           it { expect { subject }.to_not raise_error }
           it 'should store the traits' do
@@ -352,7 +346,7 @@ describe Raml::Resource do
     let(:resource_data) { {
       'is' => [
         { 'description' => 'trait1 description' },
-        { 'description' => 'trait2 description' } 
+        { 'description' => 'trait2 description' }
       ],
       'get'  => {},
       'post' => {},
@@ -384,7 +378,7 @@ describe Raml::Resource do
     end
     context 'when called with a ResourceType::Instance' do
       let(:root_data) { {
-        'title'   => 'x', 
+        'title'   => 'x',
         'baseUri' => 'http://foo.com',
         'traits'  => [ {
           'secured' => { 'usage' => 'requires authentication' },
@@ -425,16 +419,6 @@ describe Raml::Resource do
         resource.merge resource_type
          expect { resource.usage }.to raise_error NoMethodError
       end
-    end
-  end
-
-  describe '#document' do
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/resource.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
     end
   end
 end

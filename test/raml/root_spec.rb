@@ -16,7 +16,7 @@ describe Raml::Root do
   }
 
   subject { Raml::Root.new data }
-  
+
   describe '#new' do
     it "should init root" do
       expect { subject }.to_not raise_error
@@ -30,7 +30,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 1, 'baseUri' => 'x' } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /title/ }
     end
-    
+
     context 'when the baseUri property is missing' do
       let(:data) { { 'title' => 'x' } }
       it { expect{ subject }.to raise_error Raml::RequiredPropertyMissing, /baseUri/ }
@@ -72,7 +72,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'https://api.stormpath.com/}version}' } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /baseUri/ }
     end
-    
+
     context 'when the protocols property is missing' do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com' } }
       it { expect{ subject }.to_not raise_error }
@@ -108,7 +108,7 @@ describe Raml::Root do
         subject.protocols.should eq [ 'HTTP', 'HTTPS' ]
       end
     end
-    
+
     [
        'application/json',
        'application/x-yaml',
@@ -128,7 +128,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'media_type' => 'foo' } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /mediaType/ }
     end
-    
+
     context 'when the schemas property is an array of maps with string keys and values' do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'}] } }
       it { expect{ subject }.to_not raise_error }
@@ -175,7 +175,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'foo'=>'bar'},{'foo'=>'boo'}] } }
       it { expect{ subject }.to raise_error Raml::InvalidProperty, /schemas/ }
     end
-  
+
     context 'when the baseUriParameter property is well formed' do
       let(:data) {
         YAML.load(
@@ -231,7 +231,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'baseUriParameters' => { 'version' => {}} } }
       it { expect { subject }.to raise_error Raml::InvalidProperty, /baseUriParameters/ }
     end
-  
+
     context 'when the documentation parameter is given and valid' do
       let(:data) {
         YAML.load(
@@ -275,7 +275,7 @@ describe Raml::Root do
       let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'documentation' => [{'title' => 'x', 'content' => ''}] } }
       it { expect { subject }.to raise_error Raml::InvalidProperty, /document/ }
     end
-    
+
     context 'when top-level resources are defined' do
       let(:data) {
         YAML.load(
@@ -640,16 +640,6 @@ describe Raml::Root do
         let(:api_file) { 'instagram-api.raml' }
         it { expect { subject.expand }.to_not raise_error }
       end
-    end
-  end
-
-  describe '#document' do
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/root.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
     end
   end
 end

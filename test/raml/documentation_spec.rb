@@ -36,14 +36,4 @@ You can retrieve a representation of a resource by GETting its url. The easiest 
 EOS
 	}
   subject { Raml::Documentation.new(title, {'content' => content }, root) }
-
-  describe '#document' do
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/documentation.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
-    end
-  end
  end

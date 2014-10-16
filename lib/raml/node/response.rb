@@ -10,8 +10,6 @@ module Raml
     include Bodies
     include Headers
 
-    self.doc_template = relative_path 'response.slim'
-
     def initialize(name, properties, parent)
       super
       @name = name.to_i

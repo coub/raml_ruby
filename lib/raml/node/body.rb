@@ -1,7 +1,7 @@
 module Raml
   class Body < PropertiesNode
     inherit_class_attributes
-    
+
     include Global
     include Merge
     include Parent
@@ -25,15 +25,13 @@ module Raml
     # @!attribute [r] media\_type
     #   @return [String] media type of the of body.  An alias for #name.
 
-    scalar_property     :example 
+    scalar_property     :example
     non_scalar_property :form_parameters, :schema
 
     alias_method :media_type, :name
-    
-    self.doc_template = relative_path 'body.slim'
-    
+
     children_by :form_parameters, :name, Parameter::FormParameter
-    
+
     child_of :schema, [ Schema, SchemaReference ]
 
     # Returns whether the body is a web form.  Returns true for "application/x-www-form-urlencoded" and
@@ -42,11 +40,11 @@ module Raml
     def web_form?
       [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include? media_type
     end
-    
+
     # @private
     def merge(other)
       raise MergeError, "Media types don't match." if media_type != other.media_type
-      
+
       super
 
       merge_properties other, :form_parameters
@@ -60,7 +58,7 @@ module Raml
     end
 
     private
-    
+
     def validate_name
       raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
     end

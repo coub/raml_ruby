@@ -9,8 +9,6 @@ module Raml
 
     children_by :resources, :name, Resource
 
-    self.doc_template = relative_path 'resource.slim'
-
     # @private
     def apply_resource_type
       super
