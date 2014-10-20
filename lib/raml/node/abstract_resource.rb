@@ -77,6 +77,15 @@ module Raml
       @parent.resource_path + self.name
     end
 
+
+    # Returns the last non regex resource name
+    # @return [String] the last non request resource name
+    def resource_path_name
+      resource_path.split('/').reverse.detect do |pathPart|
+        !pathPart.match(/[{}]/)
+      end || ""
+    end
+
     private
     
     def validate_parent
@@ -153,7 +162,7 @@ module Raml
     def instantiate_resource_type
       reserved_params = {
         'resourcePath'     => resource_path,
-        'resourcePathName' => resource_path.split('/')[-1]
+        'resourcePathName' => resource_path_name
       }
       if ResourceTypeReference === type
         resource_type_declarations[type.name].instantiate type.parameters.merge reserved_params
