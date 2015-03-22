@@ -1,6 +1,8 @@
 require_relative '../spec_helper'
 
 describe Raml::Parameter::FormParameter do
+  let(:root_data) { {'title' => 'x', 'baseUri' => 'http://foo.com'} }
+  let(:root) { Raml::Root.new root_data }
   let(:name) { 'AWSAccessKeyId' }
   let (:data) {
     YAML.load(%q(
@@ -10,6 +12,6 @@ describe Raml::Parameter::FormParameter do
   }
 
   it "should instanciate Form parameter" do
-    Raml::Parameter::FormParameter.new(name, data)
+    Raml::Parameter::FormParameter.new(name, data, root)
   end
 end

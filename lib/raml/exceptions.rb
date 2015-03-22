@@ -1,14 +1,27 @@
 module Raml
-  # Abstract parameter
-  class InvalidParameterType < StandardError; end
-  class NamedParameterNotApplicable < StandardError; end
-  class AttributeMustBeTrueOrFalse < StandardError; end
+  class RamlError < StandardError; end
+  
+  class UnsupportedRamlVersion          < RamlError; end
+  class CantIncludeFile                 < RamlError; end
+  
+  class RequiredPropertyMissing         < RamlError; end
+  class InvalidProperty                 < RamlError; end
+  class UnknownProperty                 < RamlError; end
+  
+  class InvalidParent                   < RamlError; end
+  class InvalidSchema                   < RamlError; end
 
-  # Root
-  class RootTitleMissing < StandardError; end
-  class RootBaseUriMissing < StandardError; end
+  class InvalidMethod                   < RamlError; end
 
-  # Protocols
-  class ProtocolMustBeArrayOfStrings < StandardError; end
-  class ProtocolMustBeHTTPorHTTPS < StandardError; end
+  class InvalidParameterType            < RamlError; end
+  class InapplicableParameterAttribute  < RamlError; end
+  class InvalidParameterAttribute       < RamlError; end
+  
+  class InvalidMediaType                < RamlError; end
+
+  class UnknownTraitReference           < RamlError; end
+  class UnknownResourceTypeReference    < RamlError; end
+  class MergeError                      < RamlError; end
+  class UnknownTypeOrTraitParameter     < RamlError; end
+  class UnknownTypeOrTraitParamFunction < RamlError; end
 end

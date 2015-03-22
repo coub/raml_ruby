@@ -1,44 +1,104 @@
 require_relative 'raml/version'
 
-require_relative 'raml/common'
+require_relative 'raml/patch/module'
+require_relative 'raml/patch/hash'
 
-require_relative 'raml/parameter/abstract_parameter'
-
-require_relative 'raml/protocol'
-require_relative 'raml/method'
-require_relative 'raml/parser'
-require_relative 'raml/resource'
-require_relative 'raml/root'
-require_relative 'raml/response'
-require_relative 'raml/body'
-require_relative 'raml/header'
-require_relative 'raml/documentation'
 require_relative 'raml/exceptions'
 
-require_relative 'raml/parameter/form_parameter'
-require_relative 'raml/parameter/query_parameter'
-require_relative 'raml/parameter/uri_parameter'
+require_relative 'raml/parser'
+require_relative 'raml/parser/include'
+
+require_relative 'raml/mixin/bodies'
+require_relative 'raml/mixin/documentable'
+require_relative 'raml/mixin/global'
+require_relative 'raml/mixin/headers'
+require_relative 'raml/mixin/merge'
+require_relative 'raml/mixin/parent'
+require_relative 'raml/mixin/validation'
+
+require_relative 'raml/node'
+require_relative 'raml/node/reference'
+require_relative 'raml/node/parametized_reference'
+
+require_relative 'raml/node/parameter/abstract_parameter'
+require_relative 'raml/node/parameter/form_parameter'
+require_relative 'raml/node/parameter/query_parameter'
+require_relative 'raml/node/parameter/uri_parameter'
+require_relative 'raml/node/parameter/base_uri_parameter'
+
+require_relative 'raml/node/schema'
+require_relative 'raml/node/schema_reference'
+
+require_relative 'raml/node/header'
+require_relative 'raml/node/body'
+require_relative 'raml/node/response'
+
+require_relative 'raml/node/trait_reference'
+require_relative 'raml/node/resource_type_reference'
+
+require_relative 'raml/node/template'
+
+require_relative 'raml/node/abstract_method'
+require_relative 'raml/node/trait'
+require_relative 'raml/node/method'
+
+require_relative 'raml/node/abstract_resource'
+require_relative 'raml/node/resource_type'
+require_relative 'raml/node/resource'
+require_relative 'raml/node/abstract_resource_circular'
+
+require_relative 'raml/node/documentation'
+
+require_relative 'raml/node/root'
 
 module Raml
-  def self.load(raml)
-    Raml::Parser.new(raml)
+  # Parses RAML from a string.
+  #
+  # @param raml [String] the string containing RAML.
+  # @return [Raml::Root] the RAML root node.
+  # @raise [RamlError] if the RAML is invalid.
+  def self.parse(raml)
+    Raml::Parser.parse raml
   end
 
-  def self.load_file(filename)
-    file = File.new(filename)
-    Raml::Parser.new(file.read)
+  # Parses RAML from a file.
+  #
+  # @param filepath [String] the file path of the file containing RAML.
+  # @return [Raml::Root] the RAML root node.
+  # @raise [Errno::ENOENT] if the file can't be found.
+  # @raise [Errno::EACCES] if the file can't be read.
+  # @raise [RamlError] if the RAML is invalid.
+  def self.parse_file(filepath)
+    file = File.new filepath
+    raise UnsupportedRamlVersion unless file.readline =~ /\A#%RAML 0.8\s*\z/
+    
+    path = File.dirname filepath
+    path = nil if path == ''
+    
+    Raml::Parser.parse file.read, path
   end
 
-  def self.document(filepath, out_file = nil)
-    parser = load_file(filepath)
-    documentation = parser.parse.document
+  # Parses RAML from a file and generates API documentation in HTML.  If no
+  # output filename argument is given, the HTML is returned as a string. If
+  # an output filename argument is given, the HTML is stored to a file at
+  # that location.
+  #
+  # @param filepath [String] the file path of the file containing RAML.
+  # @param out_file [String] the file path of the file to write the documentation to. Defaults to nil.
+  # @return [String] the HTML documentation, if out_file is nil.
+  # @raise [Errno::ENOENT] if the file can't be found.
+  # @raise [Errno::EACCES] if the files can't be read or written.
+  # @raise [RamlError] if the RAML is invalid.
+  def self.document(filepath, out_file=nil)
+    root = parse_file filepath
+    root.expand
 
     if out_file
-      file = File.open(out_file, 'w') do |f|
-        f.write(documentation)
+      File.open(out_file, 'w') do |file|
+        file.write root.document
       end
     else
-      documentation
+      root.document
     end
   end
 end

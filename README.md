@@ -1,7 +1,9 @@
 # RAML ruby
 
-Implementation of a RAML parser in Ruby (uses Psych YAML parser). It
-can also generate documentation, although this part might be extracted in the future.
+[![Build Status](https://travis-ci.org/eliaslevy/raml_ruby.svg?branch=master)](https://travis-ci.org/eliaslevy/raml_ruby)
+
+Implementation of a RAML parser in Ruby. It uses the stdlib YAML parser
+(Psych). It can also generate HTML documentation.
 
 
 <!---
@@ -20,58 +22,39 @@ Or install it yourself as:
     $ gem install raml-ruby
 -->
 
-## Warning
-
-This project is at very early stage, some parts might be missing or not working. Todo list is located below, if you want to contribute you can find me on [RAML forums](http://forums.raml.org/t/ruby-rails-tooling/49) or just follow contribution guidelines.
-
 ## Usage
 
 Clone this repository:
 
-```
-git clone git@github.com:coub/raml_ruby.git
-```
+    git clone git@github.com:coub/raml_ruby.git
 
 Require:
 
-```
-require 'lib/raml'
-```
+    require 'lib/raml'
 
 or
 
-```
-pry -r ./lib/raml.rb
-```
+    pry -r ./lib/raml.rb
 
 To parse the file:
 
-```
-Raml.load_file("path/to/your/file.raml").parse
-```
+    Raml.pase_file("path/to/your/file.raml")
 
-To generate Markdown documentation:
+To generate HTML documentation:
 
-```
-# write to file
-Raml.document("/path/to/your/file.raml", "path/to/output/file.md")
+    # write to file
+    Raml.document("/path/to/your/file.raml", "path/to/output/file.html")
 
-# or just on screen
-Raml.document("/path/to/your/file.raml")
-```
+    # or just on screen
+    Raml.document("/path/to/your/file.raml")
 
-###To Do:
-**Parser**
+## To Do
 
-- Find the way to handle `!include` tag properly
-- Resource types
-- Resource traits
+- Align mergin strategy of conflicting properties of resource types and traits with official Javascript and Java parsers.
 - Security schemes
 - Publish to Rubygems
 
-**Documentation**
-
-- Cleaner layouts
+More a more detailed analysis of the spec requirements and which ones are finishes see the [RAML requirements document](raml_spec_reqs.md).
 
 ## Contributing
 
@@ -80,3 +63,6 @@ Raml.document("/path/to/your/file.raml")
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+
