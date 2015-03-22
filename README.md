@@ -38,7 +38,7 @@ or
 
 To parse the file:
 
-    Raml.pase_file("path/to/your/file.raml")
+    Raml.parse_file("path/to/your/file.raml")
 
 To generate HTML documentation:
 
