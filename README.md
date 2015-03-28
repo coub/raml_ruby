@@ -64,5 +64,8 @@ More a more detailed analysis of the spec requirements and which ones are finish
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+## License
+
+See [LICENSE](https://github.com/coub/raml_ruby/blob/master/LICENSE.txt).
 
 
