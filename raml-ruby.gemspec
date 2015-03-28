@@ -6,11 +6,11 @@ require 'raml/version'
 Gem::Specification.new do |spec|
   spec.name          = "raml-ruby"
   spec.version       = Raml::VERSION
-  spec.authors       = ["kgorin"]
+  spec.authors       = ["Kirill Gorin"]
   spec.email         = ["me@kgor.in"]
-  spec.description   = %q{RAML parser.}
-  spec.summary       = %q{RAML parser.}
-  spec.homepage      = ""
+  spec.description   = %q{Implementation of RAML parser in Ruby.}
+  spec.summary       = %q{raml_ruby is implementation of RAML parser in Ruby.}
+  spec.homepage      = "https://github.com/coub/raml_ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport', '~> 4.1'
   spec.add_dependency 'json-schema'  , '~> 2.2'
   spec.add_dependency 'kramdown'     , '~> 1.4'
-  spec.add_dependency 'rouge'        , '~> 1.7'  
+  spec.add_dependency 'rouge'        , '~> 1.7'
   spec.add_dependency 'sass'         , '~> 3.4'
   spec.add_dependency 'slim'         , '~> 2.0'
   spec.add_dependency 'uri_template' , '~> 0.7'
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', "~> 1.3"
   spec.add_development_dependency 'rake'   , '~> 10.0'
   spec.add_development_dependency 'rspec'  , '~> 3.0'
-  spec.add_development_dependency 'rr'     , '~> 1.1' 
+  spec.add_development_dependency 'rr'     , '~> 1.1'
   spec.add_development_dependency "pry"    , '~> 0.10'
   spec.add_development_dependency "yard"   , '~> 0.8'
 end
