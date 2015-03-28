@@ -32,7 +32,7 @@ module Raml
       # fix up schema versions URLs that don't end in "#""
       version = "#{version}#" if version =~ /\Ahttps?:\/\/json-schema\.org\/draft-\d\d\/schema\z/
 
-      meta_schema = JSON::Validator.metaschema_for JSON::Validator.version_string_for version
+      meta_schema = JSON::Validator.validator_for_name(version).metaschema
       JSON::Validator.validate! meta_schema, parsed_schema
     rescue JSON::ParserError, JSON::Schema::SchemaError, JSON::Schema::ValidationError => e
       raise InvalidSchema, "Could not parse JSON Schema: #{e}"      

@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'activesupport', '~> 4.1'
-  spec.add_dependency 'json-schema'  , '~> 2.2'
+  spec.add_dependency 'json-schema'  , '~> 2.4.1'
   spec.add_dependency 'kramdown'     , '~> 1.4'
   spec.add_dependency 'rouge'        , '~> 1.7'
   spec.add_dependency 'sass'         , '~> 3.4'
