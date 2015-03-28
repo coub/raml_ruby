@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'raml/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "raml-ruby"
+  spec.name          = "raml_ruby"
   spec.version       = Raml::VERSION
   spec.authors       = ["Kirill Gorin"]
   spec.email         = ["me@kgor.in"]

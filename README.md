@@ -11,7 +11,7 @@ Implementation of a RAML parser in Ruby. It uses the stdlib YAML parser
 
 Add this line to your application's Gemfile:
 
-    gem 'raml-ruby'
+    gem 'raml_ruby'
 
 And then execute:
 
@@ -19,7 +19,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install raml-ruby
+    $ gem install raml_ruby
 -->
 
 ## Usage
