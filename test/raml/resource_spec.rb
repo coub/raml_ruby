@@ -320,9 +320,10 @@ describe Raml::Resource do
       'get'  => {'description' => 'method description'},
       'post' => {},
       '/foo' => {},
-      '/bar' => {}
+      '/bar/{id}' => {}
     } }
     let(:resource) { Raml::Resource.new('/foo', resource_data, root)  }
+    let(:resource_with_parameter) { Raml::Resource.new('/bar/{id}', resource_data, root)  }
     context 'when it has a resource type' do
       it 'merges the resource type to the resource' do
         resource.type.should be_a Raml::ResourceType
@@ -337,6 +338,12 @@ describe Raml::Resource do
         resource.apply_resource_type
         resource.methods['get'].description.should  eq 'method description'
         resource.methods['get'].display_name.should eq 'resource type displayName'
+        resource.resource_path.should eq '/foo'
+        resource.resource_path_name.should eq 'foo'
+      end
+      it 'sets the resource path name stripping out uri parameters' do
+        resource_with_parameter.apply_resource_type
+        resource_with_parameter.resource_path_name.should eq 'bar'
       end
     end
     context 'when it has nested resources' do
