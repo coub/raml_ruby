@@ -20,10 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '~> 4.1'
   spec.add_dependency 'json-schema'  , '~> 2.4.1'
-  spec.add_dependency 'kramdown'     , '~> 1.4'
-  spec.add_dependency 'rouge'        , '~> 1.7'
-  spec.add_dependency 'sass'         , '~> 3.4'
-  spec.add_dependency 'slim'         , '~> 2.0'
   spec.add_dependency 'uri_template' , '~> 0.7'
 
   spec.add_development_dependency 'bundler', "~> 1.3"

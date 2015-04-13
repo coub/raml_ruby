@@ -40,14 +40,6 @@ To parse the file:
 
     Raml.parse_file("path/to/your/file.raml")
 
-To generate HTML documentation:
-
-    # write to file
-    Raml.document("/path/to/your/file.raml", "path/to/output/file.html")
-
-    # or just on screen
-    Raml.document("/path/to/your/file.raml")
-
 ## To Do
 
 - Align mergin strategy of conflicting properties of resource types and traits with official Javascript and Java parsers.

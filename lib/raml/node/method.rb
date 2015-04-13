@@ -1,7 +1,7 @@
 module Raml
   class Method < AbstractMethod
     inherit_class_attributes
-    
+
     NAMES = %w(options get head post put delete trace connect patch)
 
     # @!attribute [r] traits
@@ -10,8 +10,6 @@ module Raml
     non_scalar_property :is
 
     children_of :traits, [ Trait, TraitReference ]
-
-    self.doc_template = relative_path 'method.slim'
 
     # @private
     def apply_traits
@@ -48,8 +46,8 @@ module Raml
             false
           else # TraitReference
             self.traits.any? do |self_trait|
-              self_trait.is_a?(TraitReference)                && 
-              self_trait.name       == other_trait.name       && 
+              self_trait.is_a?(TraitReference)                &&
+              self_trait.name       == other_trait.name       &&
               self_trait.parameters == other_trait.parameters
             end
           end
@@ -76,7 +74,7 @@ module Raml
       value.map do |trait|
         if trait.is_a? Hash
           if trait.keys.size == 1 and trait_declarations.include? trait.keys.first
-            raise InvalidProperty, 'is property with map of trait name but params are not a map' unless 
+            raise InvalidProperty, 'is property with map of trait name but params are not a map' unless
               trait.values[0].is_a? Hash
             TraitReference.new( *trait.first, self )
           else

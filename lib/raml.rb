@@ -71,34 +71,10 @@ module Raml
   def self.parse_file(filepath)
     file = File.new filepath
     raise UnsupportedRamlVersion unless file.readline =~ /\A#%RAML 0.8\s*\z/
-    
+
     path = File.dirname filepath
     path = nil if path == ''
-    
+
     Raml::Parser.parse file.read, path
-  end
-
-  # Parses RAML from a file and generates API documentation in HTML.  If no
-  # output filename argument is given, the HTML is returned as a string. If
-  # an output filename argument is given, the HTML is stored to a file at
-  # that location.
-  #
-  # @param filepath [String] the file path of the file containing RAML.
-  # @param out_file [String] the file path of the file to write the documentation to. Defaults to nil.
-  # @return [String] the HTML documentation, if out_file is nil.
-  # @raise [Errno::ENOENT] if the file can't be found.
-  # @raise [Errno::EACCES] if the files can't be read or written.
-  # @raise [RamlError] if the RAML is invalid.
-  def self.document(filepath, out_file=nil)
-    root = parse_file filepath
-    root.expand
-
-    if out_file
-      File.open(out_file, 'w') do |file|
-        file.write root.document
-      end
-    else
-      root.document
-    end
   end
 end

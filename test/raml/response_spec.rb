@@ -61,7 +61,7 @@ describe Raml::Response do
         it { expect { subject }.to raise_error Raml::InvalidProperty, /body/ }
       end
     end
-    
+
     context 'when description property is not given' do
       before { response_data.delete 'description' }
       it { expect { subject }.to_not raise_error }
@@ -77,12 +77,9 @@ describe Raml::Response do
         it 'should store the value' do
           subject.description.should eq response_data['description']
         end
-        it 'uses the description in the documentation' do
-          subject.document.should include response_data['description']
-        end
       end
     end
-    
+
     context 'when the headers parameter is given' do
       context 'when the headers property is well formed' do
         it { expect { subject }.to_not raise_error }
@@ -103,7 +100,7 @@ describe Raml::Response do
         before { response_data['headers'] = { '1' => 'x'} }
         it { expect { subject }.to raise_error Raml::InvalidProperty, /headers/ }
       end
-    end    
+    end
   end
 
   describe '#merge' do
@@ -132,9 +129,9 @@ describe Raml::Response do
             end
           end
           context 'headers properties' do
-            let(:mixin_data) { { 
+            let(:mixin_data) { {
               'headers' => {
-                'header1' => {'description' => 'foo'}, 
+                'header1' => {'description' => 'foo'},
                 'header2' => {'description' => 'bar'}
               }
             } }
@@ -143,9 +140,9 @@ describe Raml::Response do
             end
           end
           context 'body property' do
-            let(:mixin_data) { { 
+            let(:mixin_data) { {
               'body' => {
-                'text/mime1' => {'schema' => 'foo'}, 
+                'text/mime1' => {'schema' => 'foo'},
                 'text/mime2' => {'schema' => 'bar'}
               }
             } }
@@ -170,16 +167,16 @@ describe Raml::Response do
             end
           end
           context 'headers properties' do
-            let(:response_data) { { 
+            let(:response_data) { {
               'headers' => {
-                'header1' => {'description' => 'foo'}, 
+                'header1' => {'description' => 'foo'},
                 'header2' => {'description' => 'bar'}
               }
             } }
             context 'when the mixin headers are different from the response headers' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'headers' => {
-                  'header3' => {'description' => 'foo2'}, 
+                  'header3' => {'description' => 'foo2'},
                   'header4' => {'description' => 'bar2'}
                 }
               } }
@@ -188,10 +185,10 @@ describe Raml::Response do
               end
             end
             context 'when the mixin headers overlap the the response headers' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'headers' => {
-                  'header2' => {'description' => 'bar3', 'displayName' => 'Header 3'}, 
-                  'header3' => {'description' => 'foo2'}, 
+                  'header2' => {'description' => 'bar3', 'displayName' => 'Header 3'},
+                  'header3' => {'description' => 'foo2'},
                   'header4' => {'description' => 'bar2'}
                 }
               } }
@@ -200,19 +197,19 @@ describe Raml::Response do
                  response.headers['header2'].display_name.should eq mixin.headers['header2'].display_name
                  response.headers['header2'].description.should  eq mixin.headers['header2'].description
               end
-            end        
+            end
           end
           context 'body property' do
-            let(:response_data) { { 
+            let(:response_data) { {
               'body' => {
-                'text/mime1' => {'schema' => 'foo'}, 
+                'text/mime1' => {'schema' => 'foo'},
                 'text/mime2' => {'schema' => 'bar'}
               }
             } }
             context 'when the mixin query parameters are different from the response headers' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'body' => {
-                  'text/mime3' => {'schema' => 'foo2'}, 
+                  'text/mime3' => {'schema' => 'foo2'},
                   'text/mime4' => {'schema' => 'bar2'}
                 }
               } }
@@ -221,10 +218,10 @@ describe Raml::Response do
               end
             end
             context 'when the mixin query parameters overlap the the response query parameters' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'body' => {
-                  'text/mime2' => {'example' => 'Example 2'}, 
-                  'text/mime3' => {'schema'  => 'foo2'}, 
+                  'text/mime2' => {'example' => 'Example 2'},
+                  'text/mime3' => {'schema'  => 'foo2'},
                   'text/mime4' => {'schema'  => 'bar2'}
                 }
               } }
@@ -232,20 +229,10 @@ describe Raml::Response do
                  response.merge(mixin).bodies.keys.should contain_exactly('text/mime1', 'text/mime2', 'text/mime3', 'text/mime4')
                  response.bodies['text/mime2'].example.should eq mixin.bodies['text/mime2'].example
               end
-            end  
+            end
           end
         end
       end
-    end
-  end
-
-  describe '#document' do
-    it 'returns a String' do
-      subject.document.should be_a String
-    end
-    it 'should render the template' do
-      mock(Slim::Template).new(/templates\/response.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-      subject.document
     end
   end
 end

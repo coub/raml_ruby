@@ -12,12 +12,6 @@ module Raml
       /<xs:schema [^>]*xmlns:xs="http:\/\/www\.w3\.org\/2001\/XMLSchema"[^>]*>/ === @value
     end
 
-    # Returns HTML documenting the node and child nodes.
-    # @return [String] HTML documentation.
-    def document
-      highlight @value, parent.media_type
-    end
-    
     private
 
     def validate_value
@@ -35,7 +29,7 @@ module Raml
       meta_schema = JSON::Validator.validator_for_name(version).metaschema
       JSON::Validator.validate! meta_schema, parsed_schema
     rescue JSON::ParserError, JSON::Schema::SchemaError, JSON::Schema::ValidationError => e
-      raise InvalidSchema, "Could not parse JSON Schema: #{e}"      
+      raise InvalidSchema, "Could not parse JSON Schema: #{e}"
     end
   end
 end

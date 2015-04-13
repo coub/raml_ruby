@@ -15,19 +15,4 @@ describe Raml::Parameter::QueryParameter do
   it "should instanciate Query parameter" do
     Raml::Parameter::QueryParameter.new(name, data, root)
   end
-
-  describe "#document" do
-    let(:data) {
-      YAML.load(%q(
-        description: Specify the page that you want to retrieve
-        type: integer
-        required: true
-        example: 1
-      ))
-    }
-
-    it "prints out documentation" do
-      subject.document
-    end
-  end
 end

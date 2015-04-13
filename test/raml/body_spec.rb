@@ -17,7 +17,7 @@ describe Raml::Body do
           "type": "object"
         }
     ))
-  }  
+  }
   let(:form_body_data) {
     YAML.load(%q(
       formParameters:
@@ -28,7 +28,7 @@ describe Raml::Body do
   let(:root) { Raml::Root.new 'title' => 'x', 'baseUri' => 'http://foo.com', 'schemas' => [{'Job' => 'xxx'}] }
 
   subject { Raml::Body.new media_type, body_data, root }
-  
+
   describe '#initialize' do
     context 'when the media type is valid' do
       it "inits body with media_type" do
@@ -91,7 +91,7 @@ describe Raml::Body do
               it { expect { subject }.to raise_error Raml::InvalidProperty, /formParameters/ }
             end
           end
-          
+
           context 'when a schema property is not provided' do
             it { expect { subject }.to_not raise_error }
           end
@@ -118,10 +118,10 @@ describe Raml::Body do
             it { expect { subject }.to raise_error Raml::InvalidProperty, /schema/ }
           end
         end
-      end      
+      end
     end
   end
-  
+
   describe '#form_parameters' do
     context 'when body is not a web form' do
       it 'returns no form parameters' do
@@ -136,7 +136,7 @@ describe Raml::Body do
       end
     end
   end
-  
+
   describe '#web_form?' do
     context 'when body isnt a web form' do
       it { should_not be_web_form }
@@ -179,9 +179,9 @@ describe Raml::Body do
             end
           end
           context 'formParameters properties' do
-            let(:mixin_data) { { 
+            let(:mixin_data) { {
               'formParameters' => {
-                'param1' => {'description' => 'foo'}, 
+                'param1' => {'description' => 'foo'},
                 'param2' => {'description' => 'bar'}
               }
             } }
@@ -206,16 +206,16 @@ describe Raml::Body do
             end
           end
           context 'formParameters properties' do
-            let(:body_data) { { 
+            let(:body_data) { {
               'formParameters' => {
-                'param1' => {'description' => 'foo'}, 
+                'param1' => {'description' => 'foo'},
                 'param2' => {'description' => 'bar'}
               }
             } }
             context 'when the merged in body form parameters are different from the form parametes of the body merged into' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'formParameters' => {
-                  'param3' => {'description' => 'foo2'}, 
+                  'param3' => {'description' => 'foo2'},
                   'param4' => {'description' => 'bar2'}
                 }
               } }
@@ -224,10 +224,10 @@ describe Raml::Body do
               end
             end
             context 'when the merged in body form parameters overlap with the form parametes of the body merged into' do
-              let(:mixin_data) { { 
+              let(:mixin_data) { {
                 'formParameters' => {
-                  'param2' => {'description' => 'bar3', 'displayName' => 'Param 3'}, 
-                  'param3' => {'description' => 'foo2'}, 
+                  'param2' => {'description' => 'bar3', 'displayName' => 'Param 3'},
+                  'param3' => {'description' => 'foo2'},
                   'param4' => {'description' => 'bar2'}
                 }
               } }
@@ -236,32 +236,9 @@ describe Raml::Body do
                  body.form_parameters['param2'].display_name.should eq mixin.form_parameters['param2'].display_name
                  body.form_parameters['param2'].description.should  eq mixin.form_parameters['param2'].description
               end
-            end        
+            end
           end
         end
-      end
-    end
-  end
-
-  describe '#document' do
-    context 'when the body is not a form body' do
-      it 'returns a String' do
-        subject.document.should be_a String
-      end
-      it 'should render the template' do
-        mock(Slim::Template).new(/templates\/body.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-        subject.document
-      end
-    end
-    context 'when the body is a form body' do
-      let(:media_type) { 'application/x-www-form-urlencoded' }
-      let(:body_data) { form_body_data }
-      it 'returns a String' do
-        subject.document.should be_a String
-      end
-      it 'should render the template' do
-        mock(Slim::Template).new(/templates\/body.slim\z/, is_a(Hash)).mock!.render(is_a(Raml::Node)) { '' }
-        subject.document
       end
     end
   end
