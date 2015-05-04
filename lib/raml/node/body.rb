@@ -60,7 +60,11 @@ module Raml
     private
 
     def validate_name
-      raise InvalidMediaType, 'body media type is invalid' unless media_type =~ Body::MEDIA_TYPE_RE
+      raise InvalidMediaType, 'body media type is invalid' unless valid_media_type?
+    end
+
+    def valid_media_type?
+       media_type =~ Body::MEDIA_TYPE_RE || media_type == '*/*'
     end
 
     def parse_form_parameters(value)

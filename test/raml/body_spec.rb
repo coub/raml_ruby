@@ -35,6 +35,12 @@ describe Raml::Body do
         expect( subject.media_type ).to eq media_type
       end
     end
+    context 'when the media type is "*/*"' do
+      let(:media_type) { '*/*' }
+      it 'inits the body with the media_type' do
+        expect( subject.media_type ).to eq media_type
+      end
+    end
     context 'when the media type is invalid' do
       let(:media_type) { 'foo' }
       it { expect { subject }.to raise_error Raml::InvalidMediaType }
