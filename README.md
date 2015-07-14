@@ -1,6 +1,6 @@
 # RAML ruby
 
-[![Build Status](https://travis-ci.org/eliaslevy/raml_ruby.svg?branch=master)](https://travis-ci.org/eliaslevy/raml_ruby)
+[![Build Status](https://travis-ci.org/coub/raml_ruby.svg?branch=master)](https://travis-ci.org/coub/raml_ruby)
 
 Implementation of a RAML parser in Ruby. It uses the stdlib YAML parser
 (Psych). It can also generate HTML documentation.
