@@ -38,6 +38,10 @@ require_relative 'raml/node/resource_type_reference'
 
 require_relative 'raml/node/template'
 
+require_relative 'raml/node/security_scheme'
+require_relative 'raml/node/security_scheme_reference'
+require_relative 'raml/mixin/secured_by'
+
 require_relative 'raml/node/abstract_method'
 require_relative 'raml/node/trait'
 require_relative 'raml/node/method'

@@ -8,6 +8,7 @@ module Raml
 
     include Parent
     include Validation
+    include SecuredBy
 
     # @!attribute [rw] title
     #   @return [String] API title.
@@ -44,11 +45,14 @@ module Raml
     # @!attribute [r] resource_types
     #   @return [Hash<String, Raml::ResourceType>] the resource type definitions, keyed by the resource type name.
 
+    # @!attribute [r] security_schemes
+    #   @return [Hash<String, Raml::SecurityScheme>] the security scheme definitions, keyed by the security scheme name.
+
     scalar_property :title      , :version    , :base_uri     ,
                     :protocols  , :media_type
 
     non_scalar_property :base_uri_parameters, :documentation , :schemas,  :secured_by,
-                        :security_schemes   , :resource_types, :traits
+                        :security_schemes   , :resource_types, :traits, :security_schemes
 
     regexp_property( /\A\//, ->(key,value) { Resource.new key, value, self } )
 
@@ -59,11 +63,15 @@ module Raml
     children_by :schemas            , :name, Schema
     children_by :traits             , :name, Trait
     children_by :resource_types     , :name, ResourceType
+    children_by :security_schemes   , :name, SecurityScheme
+    children_by :secured_by         , :name, SecuritySchemeReference
 
-    alias :default_media_type         :media_type
-    alias :trait_declarations         :traits
-    alias :resource_type_declarations :resource_types
-    alias :schema_declarations        :schemas
+    alias :default_media_type           :media_type
+    alias :trait_declarations           :traits
+    alias :resource_type_declarations   :resource_types
+    alias :security_scheme_declarations :security_schemes
+    alias :schema_declarations          :schemas
+    alias :secured_by_declarations      :secured_by
 
     def initialize(root_data)
       super nil, root_data, self
@@ -91,6 +99,7 @@ module Raml
       raise RequiredPropertyMissing, 'Missing root title property.'  if title.nil?
       raise RequiredPropertyMissing, 'Missing root baseUri property' if base_uri.nil?
       _validate_base_uri
+      _validate_secured_by
     end
 
     def validate_title
@@ -171,12 +180,20 @@ module Raml
       documentation.map { |doc| doc = doc.dup; Documentation.new doc.delete("title"), doc, self }
     end
 
-    def parse_secured_by(data)
-      # XXX ignored for now
-    end
-
     def parse_security_schemes(data)
-      # XXX ignored for now
+      validate_array :security_schemes, data, Hash
+
+      raise InvalidProperty, 'securitySchemes property must be an array of maps with string keys'  unless
+        data.all? {|t| t.keys.all?   {|k| k.is_a? String }}
+
+      raise InvalidProperty, 'securitySchemes property must be an array of maps with map values'   unless
+        data.all? {|t| t.values.all? {|v| v.is_a? Hash }}
+
+      raise InvalidProperty, 'securitySchemes property contains duplicate type names'              unless
+        data.map(&:keys).flatten.uniq!.nil?
+
+      data.reduce({}) { |memo, map | memo.merge! map }.
+           map        { |name, data| SecurityScheme.new name, data, self }
     end
 
     def parse_resource_types(types)

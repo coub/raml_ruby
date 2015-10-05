@@ -413,6 +413,83 @@ describe Raml::Root do
         it { expect{ subject }.to raise_error Raml::InvalidProperty, /traits/ }
       end
     end
+
+    context 'when the securedBy property is defined' do
+      context 'when the securitySchemes property is an array of strings' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securedBy' => ['oauth_2_0', 'oauth_1_0'], 'securitySchemes' => ['oauth_2_0' => {'type' => 'OAuth 2.0'}, 'oauth_1_0' => {'type' => 'OAuth 1.0'}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the securitySchemes property is an array of strings and "null"' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securedBy' => ['oauth_2_0', 'null'], 'securitySchemes' => ['oauth_2_0' => {'type' => 'OAuth 2.0'}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the securitySchemes property is an array of hash with single key' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securedBy' => ['oauth_2_0' => {'scopes' => 'ADMINISTRATOR'}], 'securitySchemes' => ['oauth_2_0' => {'type' => 'OAuth 2.0'}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the securitySchemes property references a missing security scheme' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securedBy' => ['bar'], 'securitySchemes' => ['oauth_2_0' => {'type' => 'OAuth 2.0'}] } }
+        it { expect{ subject }.to raise_error Raml::UnknownSecuritySchemeReference, /bar/}
+      end
+    end
+
+    context 'when the securitySchemes property is defined' do
+      context 'when the securitySchemes property is an array of maps with string keys and and map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{},'boo'=>{}}] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the securitySchemes property is an array with a single map' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{}}] } }
+        it 'returns the SecurityScheme in the #security_schemes method' do
+          subject.security_schemes.should be_a Hash
+          subject.security_schemes.keys.should contain_exactly('foo')
+          subject.security_schemes['foo'].should be_a Raml::SecurityScheme
+          subject.security_schemes['foo'].name.should == 'foo'
+        end
+        context 'when the securitySchemes property is an array with a single map with multiple types' do
+          let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{},'boo'=>{}}] } }
+          it 'returns the SecuritySchemes in the #security_schemes method' do
+            subject.security_schemes.should be_a Hash
+            subject.security_schemes.keys.should contain_exactly('foo', 'boo')
+            subject.security_schemes.values.should all(be_a Raml::SecurityScheme)
+            subject.security_schemes.values.map(&:name).should contain_exactly('foo', 'boo')
+          end
+        end
+      end
+      context 'when the securitySchemes property is an array with multiple maps' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{}},{'boo'=>{}}] } }
+        it 'returns the merged maps in the #security_schemes method' do
+          subject.security_schemes.should be_a Hash
+          subject.security_schemes.keys.should contain_exactly('foo', 'boo')
+          subject.security_schemes.values.should all(be_a Raml::SecurityScheme)
+          subject.security_schemes.values.map(&:name).should contain_exactly('foo', 'boo')
+        end
+      end
+      context 'when the securitySchemes property is not an array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => 'x' } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /securitySchemes/ }
+      end
+      context 'when the securitySchemes property is an empty array' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [] } }
+        it { expect{ subject }.to_not raise_error }
+      end
+      context 'when the securitySchemes property is an array with some non-map elements' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{}}, 1] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /securitySchemes/ }
+      end
+      context 'when the securitySchemes property is an array of maps with non-string keys' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{1=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /securitySchemes/ }
+      end
+      context 'when the securitySchemes property is an array of maps with non-map values' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>1}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /securitySchemes/ }
+      end
+      context 'when the securitySchemes property has duplicate type names' do
+        let(:data) { { 'title' => 'x', 'baseUri' => 'http://foo.com', 'securitySchemes' => [{'foo'=>{}},{'foo'=>{}}] } }
+        it { expect{ subject }.to raise_error Raml::InvalidProperty, /securitySchemes/ }
+      end
+    end
   end
 
   describe '#expand' do
