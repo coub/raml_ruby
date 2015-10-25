@@ -116,7 +116,7 @@ module Raml
       maybe_exec :validate_name
       maybe_exec :validate_parent
 
-      if properties.respond_to? :each
+      if properties.is_a? Hash
         properties.each do |prop_name, prop_value|
           prop_name       = prop_name.to_s
           under_prop_name = underscore prop_name
