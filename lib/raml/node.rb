@@ -116,26 +116,28 @@ module Raml
       maybe_exec :validate_name
       maybe_exec :validate_parent
 
-      properties.each do |prop_name, prop_value|
-        prop_name       = prop_name.to_s
-        under_prop_name = underscore prop_name
+      if properties.respond_to? :each
+        properties.each do |prop_name, prop_value|
+          prop_name       = prop_name.to_s
+          under_prop_name = underscore prop_name
 
-        if scalar_properties.include? under_prop_name
-          send "#{under_prop_name}=", prop_value
-          maybe_exec "validate_#{under_prop_name}"
+          if scalar_properties.include? under_prop_name
+            send "#{under_prop_name}=", prop_value
+            maybe_exec "validate_#{under_prop_name}"
 
-        elsif non_scalar_properties.include? under_prop_name
-          parsed = send "parse_#{under_prop_name}", prop_value
-          parsed = [ parsed ] unless parsed.is_a? Array
-          @children += parsed
+          elsif non_scalar_properties.include? under_prop_name
+            parsed = send "parse_#{under_prop_name}", prop_value
+            parsed = [ parsed ] unless parsed.is_a? Array
+            @children += parsed
 
-        elsif _regexp_property and _regexp_property[0].match prop_name
-          parsed = self.instance_exec(prop_name, prop_value, &_regexp_property[1])
-          parsed = [ parsed ] unless parsed.is_a? Array
-          @children += parsed
+          elsif _regexp_property and _regexp_property[0].match prop_name
+            parsed = self.instance_exec(prop_name, prop_value, &_regexp_property[1])
+            parsed = [ parsed ] unless parsed.is_a? Array
+            @children += parsed
 
-        else
-          raise UnknownProperty, "#{prop_name} is an unknown property with value of #{prop_value}."
+          else
+            raise UnknownProperty, "#{prop_name} is an unknown property with value of #{prop_value}."
+          end
         end
       end
 

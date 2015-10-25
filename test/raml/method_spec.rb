@@ -347,6 +347,11 @@ describe Raml::Method do
       }
       it { expect {subject }.to raise_error Raml::InvalidProperty, /Optional properties/ }
     end
+
+    context 'when no property is given' do
+      let(:data) { }
+      it { expect{ subject }.to_not raise_error }
+    end
   end
 
   describe '#merge' do
