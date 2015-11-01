@@ -38,7 +38,7 @@ module Raml
 
       if value_class
 	      raise InvalidProperty, "#{camel_case name} property must be a map with map values: #{hash}" unless
-	      	hash.values.all?  {|value| value.is_a? Hash }
+	      	hash.values.all?  {|value| value.is_a?(Hash) || value.nil? }
       end
 		end
 
