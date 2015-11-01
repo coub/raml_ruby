@@ -348,8 +348,8 @@ describe Raml::Method do
       it { expect {subject }.to raise_error Raml::InvalidProperty, /Optional properties/ }
     end
 
-    context 'when no property is given' do
-      let(:data) { }
+    context 'when null is given as a property' do
+      let(:data) {YAML.load('!!null')}
       it { expect{ subject }.to_not raise_error }
     end
   end
