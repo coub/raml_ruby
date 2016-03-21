@@ -1,13 +1,13 @@
 module Raml
   class SecurityScheme < Template
-  	class Instance < PropertiesNode
-	    inherit_class_attributes
+    class Instance < PropertiesNode
+      inherit_class_attributes
 
       include Validation
 
       # @!attribute [rw] description
       #   @return [String,nil] how the description of the security scheme.
-  		scalar_property :description
+      scalar_property :description
 
       # @!attribute [rw] type
       #   @return [String,nil] describes the type of the security scheme.
@@ -33,15 +33,15 @@ module Raml
         validate_hash :settings, value, String
         value
       end
-  	end
+    end
 
     # Instantiate a new resource type with the given parameters.
     # @param params [Hash] the parameters to interpolate in the resource type.
     # @return [Raml::SecurityScheme::Instance] the instantiated resouce type.
-  	def instantiate(params)
-  		instance = Instance.new( *interpolate(params), @parent )
-  		# instance.apply_resource_type # TODO: do we need apply_security_scheme?
-  		instance
-  	end
+    def instantiate(params)
+      instance = Instance.new( *interpolate(params), @parent )
+      # instance.apply_resource_type # TODO: do we need apply_security_scheme?
+      instance
+    end
   end
 end

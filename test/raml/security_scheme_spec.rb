@@ -2,7 +2,7 @@
 require_relative 'spec_helper'
 
 describe Raml::SecurityScheme do
-	let(:name) { 'oauth_2_0' }
+  let(:name) { 'oauth_2_0' }
   let(:data) {
     YAML.load(%q(
       description: |
@@ -42,19 +42,19 @@ describe Raml::SecurityScheme do
   subject { Raml::SecurityScheme.new(name, data, root) }
 
   describe '#new' do
-  	context 'with valid arguments' do
-  	  it { expect { subject }.to_not raise_error }
-  	  it { should be_a Raml::SecurityScheme }
+    context 'with valid arguments' do
+      it { expect { subject }.to_not raise_error }
+      it { should be_a Raml::SecurityScheme }
     end
   end
 
   describe '#instantiate' do
     context 'when the description property is given' do
-  		before { data['description'] = 'Some text' }
-	    it 'stores the description property' do
+      before { data['description'] = 'Some text' }
+      it 'stores the description property' do
         subject.instantiate({}).description.should eq data['description']
-	    end
-	  end
+      end
+    end
     context 'when the type property is given' do
       before { data['type'] = 'Some text' }
       it 'stores the type property' do
@@ -62,10 +62,10 @@ describe Raml::SecurityScheme do
       end
     end
     context 'with invalid arguments' do
-    	context 'when the securityScheme has nested resources' do
-    		before { data['/foo'] = {} }
-    		it { expect { subject.instantiate({}) }.to raise_error Raml::UnknownProperty, /\/foo/ }
-    	end
+      context 'when the securityScheme has nested resources' do
+        before { data['/foo'] = {} }
+        it { expect { subject.instantiate({}) }.to raise_error Raml::UnknownProperty, /\/foo/ }
+      end
     end
   end
 end

@@ -8,8 +8,8 @@ module Raml
     # @param parameters [Hash<String,String>] parameters to interpolate when instantiating the resouce type or trait.
     # @param parent [Raml::Node] the parent node.
     def initialize(name, parameters={}, parent)
-    	super name, parent
-    	@parameters = parameters
+      super name, parent
+      @parameters = parameters
     end
   end
 end

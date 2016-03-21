@@ -10,15 +10,15 @@ module Raml
     end
 
     def merge_properties(other, type)
-    	match, no_match = other.send(type).values.partition { |param| self.send(type).has_key? param.name }
+      match, no_match = other.send(type).values.partition { |param| self.send(type).has_key? param.name }
 
-    	match.each { |param| self.send(type)[param.name].merge param }
+      match.each { |param| self.send(type)[param.name].merge param }
 
       # if its an optional property, and there is no match in self, don't merge it.
       no_match.reject! { |node| node.optional      }
       no_match.map!    { |node| node.clone         }
       no_match.each    { |node| node.parent = self }
-    	@children += no_match
+      @children += no_match
     end
   end
 end
