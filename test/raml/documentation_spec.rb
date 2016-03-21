@@ -34,6 +34,6 @@ You can retrieve a representation of a resource by GETting its url. The easiest 
 * 500 SERVER ERROR: We couldn't return the representation due to an internal server error.
 * 503 SERVICE UNAVAILABLE: We are temporarily unable to return the representation. Please wait for a bit and try again.
 EOS
-	}
+  }
   subject { Raml::Documentation.new(title, {'content' => content }, root) }
  end

@@ -1,6 +1,6 @@
 module Raml
   # @private
-	module SecuredBy
+  module SecuredBy
     def parse_secured_by(data)
       validate_array :secured_by, data, [String, Hash]
 
@@ -23,5 +23,5 @@ module Raml
           valid_security_schemes.include?(security_scheme_reference)
       end
     end
-	end
+  end
 end

@@ -148,25 +148,25 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"name": {
-        			"description": "The desired name for the folder.",
-        			"type": "string",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "name": {
+              "description": "The desired name for the folder.",
+              "type": "string",
                     "required": true
-        		},
-        		"parent": {
-        			"description": "The parent folder.",
-        			"type": "object",
+            },
+            "parent": {
+              "description": "The parent folder.",
+              "type": "object",
                     "required": true
-        		},
-        		"id": {
-        			"description": "The ID of the parent folder.",
-        			"type": "string",
+            },
+            "id": {
+              "description": "The ID of the parent folder.",
+              "type": "string",
                     "required": true
-        		}
-        	}
+            }
+          }
         }
     responses:
       200:
@@ -353,41 +353,41 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"name": {
-          			"description": "The desired name for the folder.",
-          			"type": "string",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "name": {
+                "description": "The desired name for the folder.",
+                "type": "string",
                     "required": true
-          		},
-          		"parent": {
-          			"description": "The parent folder.",
-          			"type": "object",
+              },
+              "parent": {
+                "description": "The parent folder.",
+                "type": "object",
                     "required": true
-          		},
-          		"id": {
-          			"description": "The ID of the parent folder.",
-          			"type": "string",
+              },
+              "id": {
+                "description": "The ID of the parent folder.",
+                "type": "string",
                     "required": true
-          		},
-          		"description": {
-          			"description": "The description of the folder.",
-          			"type": "string"
-          		},
-          		"shared_link": {
-          			"description": "An object representing this item'''s shared link and associated permissions.",
-          			"type": "object"
-          		},
-          		"access": {
-          			"description": "The level of access required for this shared link.",
-          			"type": [ "open", "company", "collaborators"]
-          		},
-          		"unshared_at": {
-          			"description": "The day that this link should be disabled at. Timestamps are rounded off to the given day.",
-          			"type": "timestamp"
-          		}
-          	}
+              },
+              "description": {
+                "description": "The description of the folder.",
+                "type": "string"
+              },
+              "shared_link": {
+                "description": "An object representing this item'''s shared link and associated permissions.",
+                "type": "object"
+              },
+              "access": {
+                "description": "The level of access required for this shared link.",
+                "type": [ "open", "company", "collaborators"]
+              },
+              "unshared_at": {
+                "description": "The day that this link should be disabled at. Timestamps are rounded off to the given day.",
+                "type": "timestamp"
+              }
+            }
           }
       responses:
         200:
@@ -498,22 +498,22 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"name": {
-          			"description": "The new name for this item.",
-          			"type": "string"
-          		},
-          		"parent": {
-          			"description": "The new parent folder for this item.",
-          			"type": "object"
-          		},
-          		"id": {
-          			"description": "The id of the new parent folder.",
-          			"type": "string"
-          		}
-          	}
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "name": {
+                "description": "The new name for this item.",
+                "type": "string"
+              },
+              "parent": {
+                "description": "The new parent folder for this item.",
+                "type": "object"
+              },
+              "id": {
+                "description": "The id of the new parent folder.",
+                "type": "string"
+              }
+            }
           }
       responses:
         201:
@@ -584,24 +584,24 @@ resourceTypes:
         body:
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"name": {
-            			"description": "An optional new name for the folder.",
-            			"type": "string"
-            		},
-            		"parent": {
-            			"description": "Object representing the new location of the folder.",
-            			"type": "string",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "name": {
+                  "description": "An optional new name for the folder.",
+                  "type": "string"
+                },
+                "parent": {
+                  "description": "Object representing the new location of the folder.",
+                  "type": "string",
                         "required": true
-            		},
-            		"id": {
-            			"description": "The ID of the destination folder.",
-            			"type": "string",
+                },
+                "id": {
+                  "description": "The ID of the destination folder.",
+                  "type": "string",
                         "required": true
-            		}
-            	}
+                }
+              }
             }
         responses:
           200:
@@ -997,50 +997,50 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"name": {
-        			"description": "The new name for the file.",
-        			"type": "string"
-        		},
-        		"description": {
-        			"description": "The new description for the file.",
-        			"type": "string"
-        		},
-        		"parent": {
-        			"description": "The parent folder of this file.",
-        			"type": "object"
-        		},
-        		"id": {
-        			"description": "The ID of the parent folder.",
-        			"type": "string"
-        		},
-        		"shared_link": {
-        			"description": "An object representing this item'''s shared link and associated permissions.",
-        			"type": "object"
-        		},
-        		"access": {
-        			"description": "The level of access required for this shared link.",
-        			"type": ["open", "company", "collaborators" ]
-        		},
-        		"unshared_at": {
-        			"description": "The day that this link should be disabled at. Timestamps are rounded off to the given day.",
-        			"type": "timestamp"
-        		},
-        		"permissions": {
-        			"description": "The set of permissions that apply to this link.",
-        			"type": "object"
-        		},
-        		"permissions.download": {
-        			"description": "Whether this link allows downloads.",
-        			"type": "boolean"
-        		},
-        		"permissions.preview": {
-        			"description": "Whether this link allows previews.",
-        			"type": "boolean"
-        		}
-        	}
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "name": {
+              "description": "The new name for the file.",
+              "type": "string"
+            },
+            "description": {
+              "description": "The new description for the file.",
+              "type": "string"
+            },
+            "parent": {
+              "description": "The parent folder of this file.",
+              "type": "object"
+            },
+            "id": {
+              "description": "The ID of the parent folder.",
+              "type": "string"
+            },
+            "shared_link": {
+              "description": "An object representing this item'''s shared link and associated permissions.",
+              "type": "object"
+            },
+            "access": {
+              "description": "The level of access required for this shared link.",
+              "type": ["open", "company", "collaborators" ]
+            },
+            "unshared_at": {
+              "description": "The day that this link should be disabled at. Timestamps are rounded off to the given day.",
+              "type": "timestamp"
+            },
+            "permissions": {
+              "description": "The set of permissions that apply to this link.",
+              "type": "object"
+            },
+            "permissions.download": {
+              "description": "Whether this link allows downloads.",
+              "type": "boolean"
+            },
+            "permissions.preview": {
+              "description": "Whether this link allows previews.",
+              "type": "boolean"
+            }
+          }
         }
     responses:
       200:
@@ -1138,22 +1138,22 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"name": {
-        			"description": "The new name for this item.",
-        			"type": "string"
-        		},
-        		"parent": {
-        			"description": "The new parent folder for this item.",
-        			"type": "object"
-        		},
-        		"id": {
-        			"description": "The id of the new parent folder.",
-        			"type": "string"
-        		}
-        	}
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "name": {
+              "description": "The new name for this item.",
+              "type": "string"
+            },
+            "parent": {
+              "description": "The new parent folder for this item.",
+              "type": "object"
+            },
+            "id": {
+              "description": "The id of the new parent folder.",
+              "type": "string"
+            }
+          }
         }
     responses:
       201:
@@ -1290,24 +1290,24 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"parent": {
-          			"description": "Folder object representing the new location of the file.",
-          			"type": "string",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "parent": {
+                "description": "Folder object representing the new location of the file.",
+                "type": "string",
                     "required": true
-          		},
-          		"id": {
-          			"description": "The ID of the destination folder.",
-          			"type": "string",
+              },
+              "id": {
+                "description": "The ID of the destination folder.",
+                "type": "string",
                     "required": true
-          		},
-          		"name": {
-          			"description": "An optional new name for the file",
-          			"type": "string"
-          		}
-          	}
+              },
+              "name": {
+                "description": "An optional new name for the file",
+                "type": "string"
+              }
+            }
           }
       responses:
         200:
@@ -1705,27 +1705,27 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"item": {
-        			"description": "The item that this comment will be placed on.",
-        			"type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "item": {
+              "description": "The item that this comment will be placed on.",
+              "type": "object",
                     "required": true
-        		},
-        		"type": {
-        			"description": "The type of the item that this comment will be placed on.",
-        			"type": [ "file", "comment" ]
-        		},
-        		"id": {
-        			"description": "The id of the item that this comment will be placed on.",
-        			"type": "string"
-        		},
-        		"message": {
-        			"description": "The text body of the comment.",
-        			"type": "string"
-        		}
-        	}
+            },
+            "type": {
+              "description": "The type of the item that this comment will be placed on.",
+              "type": [ "file", "comment" ]
+            },
+            "id": {
+              "description": "The id of the item that this comment will be placed on.",
+              "type": "string"
+            },
+            "message": {
+              "description": "The text body of the comment.",
+              "type": "string"
+            }
+          }
         }
     responses:
       200:
@@ -1751,71 +1751,71 @@ resourceTypes:
             }
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object",
-            	"properties": {
-            		"type": {
-            			"description": "For comments is 'comment'.",
-            			"type": "string"
-            		},
-            		"id": {
-            			"description": "A unique string identifying this comment.",
-            			"type": "string"
-            		},
-            		"is_reply_comment": {
-            			"description": "Whether or not this comment is a reply to another comment.",
-            			"type": "boolean"
-            		},
-            		"message": {
-            			"description": "The comment text that the user typed.",
-            			"type": "string"
-            		},
-            		"tagged_message": {
-            			"description": "The string representing the comment text with @mentions included.",
-            			"required": false,
-            			"type": "string"
-            		},
-            		"created_by": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				},
-            				"login": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "A mini user object representing the author of the comment.",
-            			"type": "object"
-            		},
-            		"dcreated_at": {
-            			"description": "The time this comment was created.",
-            			"type": "timestamp"
-            		},
-            		"item": {
-            			"properties": {
-            				"id": {
-            					"type": "string"
-            				},
-            				"type": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "The object this comment was placed on.",
-            			"type": "object"
-            		},
-            		"modified_at": {
-            			"description": "The time this comment was last modified.",
-            			"type": "timestamp"
-            		}
-            	},
-            	"required": false,
-            	"type": "object"
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object",
+              "properties": {
+                "type": {
+                  "description": "For comments is 'comment'.",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "A unique string identifying this comment.",
+                  "type": "string"
+                },
+                "is_reply_comment": {
+                  "description": "Whether or not this comment is a reply to another comment.",
+                  "type": "boolean"
+                },
+                "message": {
+                  "description": "The comment text that the user typed.",
+                  "type": "string"
+                },
+                "tagged_message": {
+                  "description": "The string representing the comment text with @mentions included.",
+                  "required": false,
+                  "type": "string"
+                },
+                "created_by": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "login": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "A mini user object representing the author of the comment.",
+                  "type": "object"
+                },
+                "dcreated_at": {
+                  "description": "The time this comment was created.",
+                  "type": "timestamp"
+                },
+                "item": {
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "The object this comment was placed on.",
+                  "type": "object"
+                },
+                "modified_at": {
+                  "description": "The time this comment was last modified.",
+                  "type": "timestamp"
+                }
+              },
+              "required": false,
+              "type": "object"
             }
   /{commentId}:
     type: base
@@ -1829,15 +1829,15 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"message": {
-          			"description": "The desired text for the comment message.",
-          			"type": "string",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "message": {
+                "description": "The desired text for the comment message.",
+                "type": "string",
                     "required": true
-          		}
-          	}
+              }
+            }
           }
       responses:
         200:
@@ -1863,71 +1863,71 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object",
-              	"properties": {
-              		"type": {
-              			"description": "For comments is 'comment'.",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this comment.",
-              			"type": "string"
-              		},
-              		"is_reply_comment": {
-              			"description": "Whether or not this comment is a reply to another comment.",
-              			"type": "boolean"
-              		},
-              		"message": {
-              			"description": "The comment text that the user typed.",
-              			"type": "string"
-              		},
-              		"tagged_message": {
-              			"description": "The string representing the comment text with @mentions included.",
-              			"required": false,
-              			"type": "string"
-              		},
-              		"created_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "A mini user object representing the author of the comment.",
-              			"type": "object"
-              		},
-              		"dcreated_at": {
-              			"description": "The time this comment was created.",
-              			"type": "timestamp"
-              		},
-              		"item": {
-              			"properties": {
-              				"id": {
-              					"type": "string"
-              				},
-              				"type": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The object this comment was placed on.",
-              			"type": "object"
-              		},
-              		"modified_at": {
-              			"description": "The time this comment was last modified.",
-              			"type": "timestamp"
-              		}
-              	},
-              	"required": false,
-              	"type": "object"
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "description": "For comments is 'comment'.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this comment.",
+                    "type": "string"
+                  },
+                  "is_reply_comment": {
+                    "description": "Whether or not this comment is a reply to another comment.",
+                    "type": "boolean"
+                  },
+                  "message": {
+                    "description": "The comment text that the user typed.",
+                    "type": "string"
+                  },
+                  "tagged_message": {
+                    "description": "The string representing the comment text with @mentions included.",
+                    "required": false,
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "A mini user object representing the author of the comment.",
+                    "type": "object"
+                  },
+                  "dcreated_at": {
+                    "description": "The time this comment was created.",
+                    "type": "timestamp"
+                  },
+                  "item": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The object this comment was placed on.",
+                    "type": "object"
+                  },
+                  "modified_at": {
+                    "description": "The time this comment was last modified.",
+                    "type": "timestamp"
+                  }
+                },
+                "required": false,
+                "type": "object"
               }
     get:
       description: |
@@ -1957,71 +1957,71 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object",
-              	"properties": {
-              		"type": {
-              			"description": "For comments is 'comment'.",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this comment.",
-              			"type": "string"
-              		},
-              		"is_reply_comment": {
-              			"description": "Whether or not this comment is a reply to another comment.",
-              			"type": "boolean"
-              		},
-              		"message": {
-              			"description": "The comment text that the user typed.",
-              			"type": "string"
-              		},
-              		"tagged_message": {
-              			"description": "The string representing the comment text with @mentions included.",
-              			"required": false,
-              			"type": "string"
-              		},
-              		"created_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "A mini user object representing the author of the comment.",
-              			"type": "object"
-              		},
-              		"dcreated_at": {
-              			"description": "The time this comment was created.",
-              			"type": "timestamp"
-              		},
-              		"item": {
-              			"properties": {
-              				"id": {
-              					"type": "string"
-              				},
-              				"type": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The object this comment was placed on.",
-              			"type": "object"
-              		},
-              		"modified_at": {
-              			"description": "The time this comment was last modified.",
-              			"type": "timestamp"
-              		}
-              	},
-              	"required": false,
-              	"type": "object"
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "description": "For comments is 'comment'.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this comment.",
+                    "type": "string"
+                  },
+                  "is_reply_comment": {
+                    "description": "Whether or not this comment is a reply to another comment.",
+                    "type": "boolean"
+                  },
+                  "message": {
+                    "description": "The comment text that the user typed.",
+                    "type": "string"
+                  },
+                  "tagged_message": {
+                    "description": "The string representing the comment text with @mentions included.",
+                    "required": false,
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "A mini user object representing the author of the comment.",
+                    "type": "object"
+                  },
+                  "dcreated_at": {
+                    "description": "The time this comment was created.",
+                    "type": "timestamp"
+                  },
+                  "item": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The object this comment was placed on.",
+                    "type": "object"
+                  },
+                  "modified_at": {
+                    "description": "The time this comment was last modified.",
+                    "type": "timestamp"
+                  }
+                },
+                "required": false,
+                "type": "object"
               }
     delete:
       description: |
@@ -2040,43 +2040,43 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object",
-        	"properties": {
-        		"item": {
-        			"description": "The item to add the collaboration on.",
-        			"type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object",
+          "properties": {
+            "item": {
+              "description": "The item to add the collaboration on.",
+              "type": "object",
                     "required": true
-        		},
-        		"id": {
-        			"description": "The ID of the item to add the collaboration on.",
-        			"type": "string",
+            },
+            "id": {
+              "description": "The ID of the item to add the collaboration on.",
+              "type": "string",
                     "required": true
-        		},
-        		"type": {
-        			"description": "Must be 'folder'.",
-        			"type": "string",
+            },
+            "type": {
+              "description": "Must be 'folder'.",
+              "type": "string",
                     "required": true
-        		},
-        		"accessible_by": {
-        			"description": "The user who this collaboration applies to.",
-        			"type": "object",
+            },
+            "accessible_by": {
+              "description": "The user who this collaboration applies to.",
+              "type": "object",
                     "required": true
-        		},
-        		"role": {
-        			"description": "The access level of this collaboration.",
-        			"type": ["editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ],
+            },
+            "role": {
+              "description": "The access level of this collaboration.",
+              "type": ["editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ],
                     "required": true
-        		},
-        		"id": {
-        			"description": "The ID of this user.",
-        			"type": "string"
-        		},
-        		"login": {
-        			"description": "An email address (does not need to be a Box user).",
-        			"type": "string"
-        		}
-        	}
+            },
+            "id": {
+              "description": "The ID of this user.",
+              "type": "string"
+            },
+            "login": {
+              "description": "An email address (does not need to be a Box user).",
+              "type": "string"
+            }
+          }
         }
     responses:
       200:
@@ -2113,99 +2113,99 @@ resourceTypes:
             }
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"type": {
-            			"description": "For collaborations is 'collaboration'",
-            			"type": "string"
-            		},
-            		"id": {
-            			"description": "A unique string identifying this collaboration.",
-            			"type": "string"
-            		},
-            		"created_by": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				},
-            				"login": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "The user who created this collaboration.",
-            			"type": "object"
-            		},
-            		"created_at": {
-            			"description": "The time this collaboration was created.",
-            			"type": "timestamp"
-            		},
-            		"modified_at": {
-            			"description": "The time this collaboration was last modified.",
-            			"type": "timestamp"
-            		},
-            		"expires_at": {
-            			"description": "The time this collaboration will expire.",
-            			"type": "timestamp"
-            		},
-            		"status": {
-            			"description": "The status of this collab.",
-            			"enum": [ "accepted", "pending", "rejected" ]
-            		},
-            		"accecible_by": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				},
-            				"login": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "The user who the collaboration applies to.",
-            			"type": "object"
-            		},
-            		"role": {
-            			"description": "The level of access this user has.",
-            			"enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
-            		},
-            		"acknowledged_at": {
-            			"description": "When the 'status' of this collab was changed.",
-            			"type": "timestamp"
-            		},
-            		"item": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"sequence_id": {
-            					"type": "string"
-            				},
-            				"etag": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "The folder this collaboration is related to",
-            			"type": "object"
-            		}
-            	}
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "type": {
+                  "description": "For collaborations is 'collaboration'",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "A unique string identifying this collaboration.",
+                  "type": "string"
+                },
+                "created_by": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "login": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "The user who created this collaboration.",
+                  "type": "object"
+                },
+                "created_at": {
+                  "description": "The time this collaboration was created.",
+                  "type": "timestamp"
+                },
+                "modified_at": {
+                  "description": "The time this collaboration was last modified.",
+                  "type": "timestamp"
+                },
+                "expires_at": {
+                  "description": "The time this collaboration will expire.",
+                  "type": "timestamp"
+                },
+                "status": {
+                  "description": "The status of this collab.",
+                  "enum": [ "accepted", "pending", "rejected" ]
+                },
+                "accecible_by": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "login": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "The user who the collaboration applies to.",
+                  "type": "object"
+                },
+                "role": {
+                  "description": "The level of access this user has.",
+                  "enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
+                },
+                "acknowledged_at": {
+                  "description": "When the 'status' of this collab was changed.",
+                  "type": "timestamp"
+                },
+                "item": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "sequence_id": {
+                      "type": "string"
+                    },
+                    "etag": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "The folder this collaboration is related to",
+                  "type": "object"
+                }
+              }
             }
   /{collabId}:
     type: base
@@ -2221,19 +2221,19 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"role": {
-          			"description": "The access level of this collaboration",
-          			"enum": ["editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
-          		},
-          		"status": {
-          			"description": "Whether this collaboration has been accepted.",
-          			"enum": ["accepted", "pending", "rejected" ]
-          		}
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "role": {
+                "description": "The access level of this collaboration",
+                "enum": ["editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
+              },
+              "status": {
+                "description": "Whether this collaboration has been accepted.",
+                "enum": ["accepted", "pending", "rejected" ]
+              }
 
-          	}
+            }
           }
       responses:
         200:
@@ -2270,99 +2270,99 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"description": "For collaborations is 'collaboration'",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this collaboration.",
-              			"type": "string"
-              		},
-              		"created_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The user who created this collaboration.",
-              			"type": "object"
-              		},
-              		"created_at": {
-              			"description": "The time this collaboration was created.",
-              			"type": "timestamp"
-              		},
-              		"modified_at": {
-              			"description": "The time this collaboration was last modified.",
-              			"type": "timestamp"
-              		},
-              		"expires_at": {
-              			"description": "The time this collaboration will expire.",
-              			"type": "timestamp"
-              		},
-              		"status": {
-              			"description": "The status of this collab.",
-              			"enum": [ "accepted", "pending", "rejected" ]
-              		},
-              		"accecible_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The user who the collaboration applies to.",
-              			"type": "object"
-              		},
-              		"role": {
-              			"description": "The level of access this user has.",
-              			"enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
-              		},
-              		"acknowledged_at": {
-              			"description": "When the 'status' of this collab was changed.",
-              			"type": "timestamp"
-              		},
-              		"item": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"sequence_id": {
-              					"type": "string"
-              				},
-              				"etag": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The folder this collaboration is related to",
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "description": "For collaborations is 'collaboration'",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this collaboration.",
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The user who created this collaboration.",
+                    "type": "object"
+                  },
+                  "created_at": {
+                    "description": "The time this collaboration was created.",
+                    "type": "timestamp"
+                  },
+                  "modified_at": {
+                    "description": "The time this collaboration was last modified.",
+                    "type": "timestamp"
+                  },
+                  "expires_at": {
+                    "description": "The time this collaboration will expire.",
+                    "type": "timestamp"
+                  },
+                  "status": {
+                    "description": "The status of this collab.",
+                    "enum": [ "accepted", "pending", "rejected" ]
+                  },
+                  "accecible_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The user who the collaboration applies to.",
+                    "type": "object"
+                  },
+                  "role": {
+                    "description": "The level of access this user has.",
+                    "enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
+                  },
+                  "acknowledged_at": {
+                    "description": "When the 'status' of this collab was changed.",
+                    "type": "timestamp"
+                  },
+                  "item": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "sequence_id": {
+                        "type": "string"
+                      },
+                      "etag": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The folder this collaboration is related to",
+                    "type": "object"
+                  }
+                }
               }
     delete:
       description: |
@@ -2417,99 +2417,99 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"description": "For collaborations is 'collaboration'",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this collaboration.",
-              			"type": "string"
-              		},
-              		"created_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The user who created this collaboration.",
-              			"type": "object"
-              		},
-              		"created_at": {
-              			"description": "The time this collaboration was created.",
-              			"type": "timestamp"
-              		},
-              		"modified_at": {
-              			"description": "The time this collaboration was last modified.",
-              			"type": "timestamp"
-              		},
-              		"expires_at": {
-              			"description": "The time this collaboration will expire.",
-              			"type": "timestamp"
-              		},
-              		"status": {
-              			"description": "The status of this collab.",
-              			"enum": [ "accepted", "pending", "rejected" ]
-              		},
-              		"accecible_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The user who the collaboration applies to.",
-              			"type": "object"
-              		},
-              		"role": {
-              			"description": "The level of access this user has.",
-              			"enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
-              		},
-              		"acknowledged_at": {
-              			"description": "When the 'status' of this collab was changed.",
-              			"type": "timestamp"
-              		},
-              		"item": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"sequence_id": {
-              					"type": "string"
-              				},
-              				"etag": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "The folder this collaboration is related to",
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "description": "For collaborations is 'collaboration'",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this collaboration.",
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The user who created this collaboration.",
+                    "type": "object"
+                  },
+                  "created_at": {
+                    "description": "The time this collaboration was created.",
+                    "type": "timestamp"
+                  },
+                  "modified_at": {
+                    "description": "The time this collaboration was last modified.",
+                    "type": "timestamp"
+                  },
+                  "expires_at": {
+                    "description": "The time this collaboration will expire.",
+                    "type": "timestamp"
+                  },
+                  "status": {
+                    "description": "The status of this collab.",
+                    "enum": [ "accepted", "pending", "rejected" ]
+                  },
+                  "accecible_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The user who the collaboration applies to.",
+                    "type": "object"
+                  },
+                  "role": {
+                    "description": "The level of access this user has.",
+                    "enum": [ "editor", "viewer", "previewer", "uploader", "previewer uploader", "viewer uploader", "co-owner" ]
+                  },
+                  "acknowledged_at": {
+                    "description": "When the 'status' of this collab was changed.",
+                    "type": "timestamp"
+                  },
+                  "item": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "sequence_id": {
+                        "type": "string"
+                      },
+                      "etag": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "The folder this collaboration is related to",
+                    "type": "object"
+                  }
+                }
               }
 /search:
   type: base
@@ -2808,109 +2808,109 @@ resourceTypes:
             }
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"type": {
-            			"description": "For users is 'user'.",
-            			"type": "string"
-            		},
-            		"id": {
-            			"description": "A unique string identifying this user.",
-            			"type": "string"
-            		},
-            		"name": {
-            			"description": "The name of this user.",
-            			"type": "string"
-            		},
-            		"login": {
-            			"description": "The email address this user uses to login.",
-            			"type": "string"
-            		},
-            		"created_at": {
-            			"description": "The time this user was created.",
-            			"type": "timestamp"
-            		},
-            		"modified_at": {
-            			"description": "The time this user was last modified.",
-            			"type": "timestamp"
-            		},
-            		"role": {
-            			"description": "This user'''s enterprise role.",
-            			"enum": [ "admin", "coadmin", "user" ]
-            		},
-            		"language": {
-            			"description": "The language of this user. ISO 639-1 Language Code.",
-            			"type": "string"
-            		},
-            		"space_amount": {
-            			"description": "The user'''s total available space amount in bytes.",
-            			"type": "integer"
-            		},
-            		"space_used": {
-            			"description": "The amount of space in use by the user.",
-            			"type": "integer"
-            		},
-            		"max_upload_size": {
-            			"description": "The maximum individual file size in bytes this user can have.",
-            			"type": "integer"
-            		},
-            		"tracking_codes": {
-            			"description": "An array of key/value pairs set by the user'''s admin.",
-            			"type": "array"
-            		},
-            		"can_see_managed_users": {
-            			"description": "Whether this user can see other enterprise users in its contact list.",
-            			"type": "boolean"
-            		},
-            		"is_sync_enabled": {
-            			"description": "Whether or not this user can use Box Sync",
-            			"type": "boolean"
-            		},
-            		"status": {
-            			"description": "Can be active or inactive.",
-            			"enum": [ "actibe", "inactive" ]
-            		},
-            		"job_title": {
-            			"description": "The user'''s job title.",
-            			"type": "string"
-            		},
-            		"phone": {
-            			"description": "The user'''s phone number.",
-            			"type": "string"
-            		},
-            		"address": {
-            			"description": "The user'''s address.",
-            			"type": "string"
-            		},
-            		"avatar_url": {
-            			"description": "URL of this user'''s avatar image.",
-            			"type": "string"
-            		},
-            		"is_exempt_from_device_limits": {
-            			"description": "Whether to exempt this user from Enterprise device limits.",
-            			"type": "boolean"
-            		},
-            		"is_exempt_from_login_verification": {
-            			"description": "Whether or not this user must use two-factor authentication.",
-            			"type": "boolean"
-            		},
-            		"enterprise": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				}
-            			},
-            			"description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
-            			"type": "object"
-            		}
-            	}
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "type": {
+                  "description": "For users is 'user'.",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "A unique string identifying this user.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "The name of this user.",
+                  "type": "string"
+                },
+                "login": {
+                  "description": "The email address this user uses to login.",
+                  "type": "string"
+                },
+                "created_at": {
+                  "description": "The time this user was created.",
+                  "type": "timestamp"
+                },
+                "modified_at": {
+                  "description": "The time this user was last modified.",
+                  "type": "timestamp"
+                },
+                "role": {
+                  "description": "This user'''s enterprise role.",
+                  "enum": [ "admin", "coadmin", "user" ]
+                },
+                "language": {
+                  "description": "The language of this user. ISO 639-1 Language Code.",
+                  "type": "string"
+                },
+                "space_amount": {
+                  "description": "The user'''s total available space amount in bytes.",
+                  "type": "integer"
+                },
+                "space_used": {
+                  "description": "The amount of space in use by the user.",
+                  "type": "integer"
+                },
+                "max_upload_size": {
+                  "description": "The maximum individual file size in bytes this user can have.",
+                  "type": "integer"
+                },
+                "tracking_codes": {
+                  "description": "An array of key/value pairs set by the user'''s admin.",
+                  "type": "array"
+                },
+                "can_see_managed_users": {
+                  "description": "Whether this user can see other enterprise users in its contact list.",
+                  "type": "boolean"
+                },
+                "is_sync_enabled": {
+                  "description": "Whether or not this user can use Box Sync",
+                  "type": "boolean"
+                },
+                "status": {
+                  "description": "Can be active or inactive.",
+                  "enum": [ "actibe", "inactive" ]
+                },
+                "job_title": {
+                  "description": "The user'''s job title.",
+                  "type": "string"
+                },
+                "phone": {
+                  "description": "The user'''s phone number.",
+                  "type": "string"
+                },
+                "address": {
+                  "description": "The user'''s address.",
+                  "type": "string"
+                },
+                "avatar_url": {
+                  "description": "URL of this user'''s avatar image.",
+                  "type": "string"
+                },
+                "is_exempt_from_device_limits": {
+                  "description": "Whether to exempt this user from Enterprise device limits.",
+                  "type": "boolean"
+                },
+                "is_exempt_from_login_verification": {
+                  "description": "Whether or not this user must use two-factor authentication.",
+                  "type": "boolean"
+                },
+                "enterprise": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
+                  "type": "object"
+                }
+              }
             }
   /me:
     type: base
@@ -2943,109 +2943,109 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"description": "For users is 'user'.",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this user.",
-              			"type": "string"
-              		},
-              		"name": {
-              			"description": "The name of this user.",
-              			"type": "string"
-              		},
-              		"login": {
-              			"description": "The email address this user uses to login.",
-              			"type": "string"
-              		},
-              		"created_at": {
-              			"description": "The time this user was created.",
-              			"type": "timestamp"
-              		},
-              		"modified_at": {
-              			"description": "The time this user was last modified.",
-              			"type": "timestamp"
-              		},
-              		"role": {
-              			"description": "This user'''s enterprise role.",
-              			"enum": [ "admin", "coadmin", "user" ]
-              		},
-              		"language": {
-              			"description": "The language of this user. ISO 639-1 Language Code.",
-              			"type": "string"
-              		},
-              		"space_amount": {
-              			"description": "The user'''s total available space amount in bytes.",
-              			"type": "integer"
-              		},
-              		"space_used": {
-              			"description": "The amount of space in use by the user.",
-              			"type": "integer"
-              		},
-              		"max_upload_size": {
-              			"description": "The maximum individual file size in bytes this user can have.",
-              			"type": "integer"
-              		},
-              		"tracking_codes": {
-              			"description": "An array of key/value pairs set by the user'''s admin.",
-              			"type": "array"
-              		},
-              		"can_see_managed_users": {
-              			"description": "Whether this user can see other enterprise users in its contact list.",
-              			"type": "boolean"
-              		},
-              		"is_sync_enabled": {
-              			"description": "Whether or not this user can use Box Sync",
-              			"type": "boolean"
-              		},
-              		"status": {
-              			"description": "Can be active or inactive.",
-              			"enum": [ "actibe", "inactive" ]
-              		},
-              		"job_title": {
-              			"description": "The user'''s job title.",
-              			"type": "string"
-              		},
-              		"phone": {
-              			"description": "The user'''s phone number.",
-              			"type": "string"
-              		},
-              		"address": {
-              			"description": "The user'''s address.",
-              			"type": "string"
-              		},
-              		"avatar_url": {
-              			"description": "URL of this user'''s avatar image.",
-              			"type": "string"
-              		},
-              		"is_exempt_from_device_limits": {
-              			"description": "Whether to exempt this user from Enterprise device limits.",
-              			"type": "boolean"
-              		},
-              		"is_exempt_from_login_verification": {
-              			"description": "Whether or not this user must use two-factor authentication.",
-              			"type": "boolean"
-              		},
-              		"enterprise": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "description": "For users is 'user'.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this user.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of this user.",
+                    "type": "string"
+                  },
+                  "login": {
+                    "description": "The email address this user uses to login.",
+                    "type": "string"
+                  },
+                  "created_at": {
+                    "description": "The time this user was created.",
+                    "type": "timestamp"
+                  },
+                  "modified_at": {
+                    "description": "The time this user was last modified.",
+                    "type": "timestamp"
+                  },
+                  "role": {
+                    "description": "This user'''s enterprise role.",
+                    "enum": [ "admin", "coadmin", "user" ]
+                  },
+                  "language": {
+                    "description": "The language of this user. ISO 639-1 Language Code.",
+                    "type": "string"
+                  },
+                  "space_amount": {
+                    "description": "The user'''s total available space amount in bytes.",
+                    "type": "integer"
+                  },
+                  "space_used": {
+                    "description": "The amount of space in use by the user.",
+                    "type": "integer"
+                  },
+                  "max_upload_size": {
+                    "description": "The maximum individual file size in bytes this user can have.",
+                    "type": "integer"
+                  },
+                  "tracking_codes": {
+                    "description": "An array of key/value pairs set by the user'''s admin.",
+                    "type": "array"
+                  },
+                  "can_see_managed_users": {
+                    "description": "Whether this user can see other enterprise users in its contact list.",
+                    "type": "boolean"
+                  },
+                  "is_sync_enabled": {
+                    "description": "Whether or not this user can use Box Sync",
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "description": "Can be active or inactive.",
+                    "enum": [ "actibe", "inactive" ]
+                  },
+                  "job_title": {
+                    "description": "The user'''s job title.",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "description": "The user'''s phone number.",
+                    "type": "string"
+                  },
+                  "address": {
+                    "description": "The user'''s address.",
+                    "type": "string"
+                  },
+                  "avatar_url": {
+                    "description": "URL of this user'''s avatar image.",
+                    "type": "string"
+                  },
+                  "is_exempt_from_device_limits": {
+                    "description": "Whether to exempt this user from Enterprise device limits.",
+                    "type": "boolean"
+                  },
+                  "is_exempt_from_login_verification": {
+                    "description": "Whether or not this user must use two-factor authentication.",
+                    "type": "boolean"
+                  },
+                  "enterprise": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
+                    "type": "object"
+                  }
+                }
               }
   /{userId}:
     type: base
@@ -3070,71 +3070,71 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"enterprise": {
-          			"description": "Setting this to 'null' will roll the user out of the enterprise and make them a free user.",
-          			"type": "string"
-          		},
-          		"name": {
-          			"description": "The name of this user.",
-          			"type": "string"
-          		},
-          		"role": {
-          			"description": "This user'''s enterprise role. Can be 'coadmin' or 'user'.",
-          			"type": [ "coadmin", "user" ]
-          		},
-          		"language": {
-          			"description": "The language of this user. ISO 639-1 Language Code.",
-          			"type": "string",
-          			"maxLength": 2
-          		},
-          		"is_sync_enabled": {
-          			"description": "Whether or not this user can use Box Sync.",
-          			"type": "boolean"
-          		},
-          		"job_title": {
-          			"description": "The user'''s job title.",
-          			"type": "string"
-          		},
-          		"phone": {
-          			"description": "The user'''s phone number.",
-          			"type": "string"
-          		},
-          		"address": {
-          			"description": "The user'''s address.",
-          			"type": "string"
-          		},
-          		"space_amount": {
-          			"description": "The user'''s total available space amount in byte. A value of '-1' grants unlimited storage.",
-          			"type": "number"
-          		},
-          		"tracking_codes": {
-          			"description": "An array of key/value pairs set by the user'''s admin.",
-          			"type": "array"
-          		},
-          		"can_see_managed_users": {
-          			"description": "Whether this user can see other enterprise users in its contact list.",
-          			"type": "boolean"
-          		},
-          		"status": {
-          			"description": "Can be 'active' or 'inactive'.",
-          			"type": [ "active", "inactive" ]
-          		},
-          		"is_exempt_from_device_limits": {
-          			"description": "Whether to exempt this user from Enterprise device limits.",
-          			"type": "boolean"
-          		},
-          		"is_exempt_from_login_verification": {
-          			"description": "Whether or not this user must use two-factor authentication.",
-          			"type": "boolean"
-          		},
-          		"is_password_reset_required": {
-          			"description": "Whether or not the user is required to reset password.",
-          			"type": "boolean"
-          		}
-          	}
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "enterprise": {
+                "description": "Setting this to 'null' will roll the user out of the enterprise and make them a free user.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of this user.",
+                "type": "string"
+              },
+              "role": {
+                "description": "This user'''s enterprise role. Can be 'coadmin' or 'user'.",
+                "type": [ "coadmin", "user" ]
+              },
+              "language": {
+                "description": "The language of this user. ISO 639-1 Language Code.",
+                "type": "string",
+                "maxLength": 2
+              },
+              "is_sync_enabled": {
+                "description": "Whether or not this user can use Box Sync.",
+                "type": "boolean"
+              },
+              "job_title": {
+                "description": "The user'''s job title.",
+                "type": "string"
+              },
+              "phone": {
+                "description": "The user'''s phone number.",
+                "type": "string"
+              },
+              "address": {
+                "description": "The user'''s address.",
+                "type": "string"
+              },
+              "space_amount": {
+                "description": "The user'''s total available space amount in byte. A value of '-1' grants unlimited storage.",
+                "type": "number"
+              },
+              "tracking_codes": {
+                "description": "An array of key/value pairs set by the user'''s admin.",
+                "type": "array"
+              },
+              "can_see_managed_users": {
+                "description": "Whether this user can see other enterprise users in its contact list.",
+                "type": "boolean"
+              },
+              "status": {
+                "description": "Can be 'active' or 'inactive'.",
+                "type": [ "active", "inactive" ]
+              },
+              "is_exempt_from_device_limits": {
+                "description": "Whether to exempt this user from Enterprise device limits.",
+                "type": "boolean"
+              },
+              "is_exempt_from_login_verification": {
+                "description": "Whether or not this user must use two-factor authentication.",
+                "type": "boolean"
+              },
+              "is_password_reset_required": {
+                "description": "Whether or not the user is required to reset password.",
+                "type": "boolean"
+              }
+            }
           }
       responses:
         200:
@@ -3165,109 +3165,109 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"description": "For users is 'user'.",
-              			"type": "string"
-              		},
-              		"id": {
-              			"description": "A unique string identifying this user.",
-              			"type": "string"
-              		},
-              		"name": {
-              			"description": "The name of this user.",
-              			"type": "string"
-              		},
-              		"login": {
-              			"description": "The email address this user uses to login.",
-              			"type": "string"
-              		},
-              		"created_at": {
-              			"description": "The time this user was created.",
-              			"type": "timestamp"
-              		},
-              		"modified_at": {
-              			"description": "The time this user was last modified.",
-              			"type": "timestamp"
-              		},
-              		"role": {
-              			"description": "This user'''s enterprise role.",
-              			"enum": [ "admin", "coadmin", "user" ]
-              		},
-              		"language": {
-              			"description": "The language of this user. ISO 639-1 Language Code.",
-              			"type": "string"
-              		},
-              		"space_amount": {
-              			"description": "The user'''s total available space amount in bytes.",
-              			"type": "integer"
-              		},
-              		"space_used": {
-              			"description": "The amount of space in use by the user.",
-              			"type": "integer"
-              		},
-              		"max_upload_size": {
-              			"description": "The maximum individual file size in bytes this user can have.",
-              			"type": "integer"
-              		},
-              		"tracking_codes": {
-              			"description": "An array of key/value pairs set by the user'''s admin.",
-              			"type": "array"
-              		},
-              		"can_see_managed_users": {
-              			"description": "Whether this user can see other enterprise users in its contact list.",
-              			"type": "boolean"
-              		},
-              		"is_sync_enabled": {
-              			"description": "Whether or not this user can use Box Sync",
-              			"type": "boolean"
-              		},
-              		"status": {
-              			"description": "Can be active or inactive.",
-              			"enum": [ "actibe", "inactive" ]
-              		},
-              		"job_title": {
-              			"description": "The user'''s job title.",
-              			"type": "string"
-              		},
-              		"phone": {
-              			"description": "The user'''s phone number.",
-              			"type": "string"
-              		},
-              		"address": {
-              			"description": "The user'''s address.",
-              			"type": "string"
-              		},
-              		"avatar_url": {
-              			"description": "URL of this user'''s avatar image.",
-              			"type": "string"
-              		},
-              		"is_exempt_from_device_limits": {
-              			"description": "Whether to exempt this user from Enterprise device limits.",
-              			"type": "boolean"
-              		},
-              		"is_exempt_from_login_verification": {
-              			"description": "Whether or not this user must use two-factor authentication.",
-              			"type": "boolean"
-              		},
-              		"enterprise": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "description": "For users is 'user'.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "A unique string identifying this user.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of this user.",
+                    "type": "string"
+                  },
+                  "login": {
+                    "description": "The email address this user uses to login.",
+                    "type": "string"
+                  },
+                  "created_at": {
+                    "description": "The time this user was created.",
+                    "type": "timestamp"
+                  },
+                  "modified_at": {
+                    "description": "The time this user was last modified.",
+                    "type": "timestamp"
+                  },
+                  "role": {
+                    "description": "This user'''s enterprise role.",
+                    "enum": [ "admin", "coadmin", "user" ]
+                  },
+                  "language": {
+                    "description": "The language of this user. ISO 639-1 Language Code.",
+                    "type": "string"
+                  },
+                  "space_amount": {
+                    "description": "The user'''s total available space amount in bytes.",
+                    "type": "integer"
+                  },
+                  "space_used": {
+                    "description": "The amount of space in use by the user.",
+                    "type": "integer"
+                  },
+                  "max_upload_size": {
+                    "description": "The maximum individual file size in bytes this user can have.",
+                    "type": "integer"
+                  },
+                  "tracking_codes": {
+                    "description": "An array of key/value pairs set by the user'''s admin.",
+                    "type": "array"
+                  },
+                  "can_see_managed_users": {
+                    "description": "Whether this user can see other enterprise users in its contact list.",
+                    "type": "boolean"
+                  },
+                  "is_sync_enabled": {
+                    "description": "Whether or not this user can use Box Sync",
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "description": "Can be active or inactive.",
+                    "enum": [ "actibe", "inactive" ]
+                  },
+                  "job_title": {
+                    "description": "The user'''s job title.",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "description": "The user'''s phone number.",
+                    "type": "string"
+                  },
+                  "address": {
+                    "description": "The user'''s address.",
+                    "type": "string"
+                  },
+                  "avatar_url": {
+                    "description": "URL of this user'''s avatar image.",
+                    "type": "string"
+                  },
+                  "is_exempt_from_device_limits": {
+                    "description": "Whether to exempt this user from Enterprise device limits.",
+                    "type": "boolean"
+                  },
+                  "is_exempt_from_login_verification": {
+                    "description": "Whether or not this user must use two-factor authentication.",
+                    "type": "boolean"
+                  },
+                  "enterprise": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "Mini representation of this user'''s enterprise, including the ID of its enterprise",
+                    "type": "object"
+                  }
+                }
               }
     delete:
       description: |
@@ -3311,20 +3311,20 @@ resourceTypes:
         body:
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"owned_by": {
-            			"description": "The user who the folder will be transferred to.",
-            			"type": "string",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "owned_by": {
+                  "description": "The user who the folder will be transferred to.",
+                  "type": "string",
                         "required": true
-            		},
-            		"id": {
-            			"description": "The ID of the user who the folder will be transferred to.",
-            			"type": "string",
+                },
+                "id": {
+                  "description": "The ID of the user who the folder will be transferred to.",
+                  "type": "string",
                         "required": true
-            		}
-            	}
+                }
+              }
             }
         responses:
           200:
@@ -3451,15 +3451,15 @@ resourceTypes:
         body:
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"email": {
-            			"description": "The email address to add to the account as an alias.",
-            			"type": "string",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "email": {
+                  "description": "The email address to add to the account as an alias.",
+                  "type": "string",
                         "required": true
-            		}
-            	}
+                }
+              }
             }
         responses:
           201:
@@ -3473,22 +3473,22 @@ resourceTypes:
                 }
               schema: |
                 {
-                	"$schema": "http://json-schema.org/draft-03/schema",
-                	"type": "object" ,
-                	"properties": {
-                		"type": {
-                			"type": "string"
-                		},
-                		"id": {
-                			"type": "string"
-                		},
-                		"is_confirmed": {
-                			"type": "boolean"
-                		},
-                		"email": {
-                			"type": "string"
-                		}
-                	}
+                  "$schema": "http://json-schema.org/draft-03/schema",
+                  "type": "object" ,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "is_confirmed": {
+                      "type": "boolean"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
                 }
       /{emailAliasId}:
         type: base
@@ -3509,38 +3509,38 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"item": {
-        			"description": "The item this task is for.",
-        			"type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "item": {
+              "description": "The item this task is for.",
+              "type": "object",
                     "required": true
-        		},
-        		"type": {
-        			"description": "The type of the item this task is for (currently only 'file' is supported).",
-        			"type": "string",
+            },
+            "type": {
+              "description": "The type of the item this task is for (currently only 'file' is supported).",
+              "type": "string",
                     "required": true
-        		},
-        		"id": {
-        			"description": "The ID of the item this task is for.",
-        			"type": "string",
+            },
+            "id": {
+              "description": "The ID of the item this task is for.",
+              "type": "string",
                     "required": true
-        		},
-        		"action": {
-        			"description": "The action the task assignee will be prompted to do. Must be 'review'.",
-        			"type": [ "review" ],
+            },
+            "action": {
+              "description": "The action the task assignee will be prompted to do. Must be 'review'.",
+              "type": [ "review" ],
                     "required": true
-        		},
-        		"message": {
-        			"description": "An optional message to include with the task.",
-        			"type": "string"
-        		},
-        		"due_at": {
-        			"description": "The day at which this task is due.",
-        			"type": "timestamp"
-        		}
-        	}
+            },
+            "message": {
+              "description": "An optional message to include with the task.",
+              "type": "string"
+            },
+            "due_at": {
+              "description": "The day at which this task is due.",
+              "type": "timestamp"
+            }
+          }
         }
     responses:
       200:
@@ -3700,22 +3700,22 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"action": {
-          			"description": "The action the task assignee will be prompted to do. Can be 'review'.",
-          			"type": "string"
-          		},
-          		"message": {
-          			"description": "An optional message to include with the task.",
-          			"type": "string"
-          		},
-          		"due_at": {
-          			"description": "The day at which this task is due.",
-          			"type": "timestamp"
-          		}
-          	}
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "action": {
+                "description": "The action the task assignee will be prompted to do. Can be 'review'.",
+                "type": "string"
+              },
+              "message": {
+                "description": "An optional message to include with the task.",
+                "type": "string"
+              },
+              "due_at": {
+                "description": "The day at which this task is due.",
+                "type": "timestamp"
+              }
+            }
           }
       responses:
         200:
@@ -3798,37 +3798,37 @@ resourceTypes:
     body:
       schema: |
         {
-        	"$schema": "http://json-schema.org/draft-03/schema",
-        	"type": "object" ,
-        	"properties": {
-        		"task": {
-        			"description": "The task this assignment is for.",
-        			"type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "type": "object" ,
+          "properties": {
+            "task": {
+              "description": "The task this assignment is for.",
+              "type": "object",
                     "required": true
-        		},
-        		"type": {
-        			"description": "Must be 'task'",
-        			"type": [ "task" ]
-        		},
-        		"id": {
-        			"description": "The ID of the task this assignment is for.",
-        			"type": "string",
+            },
+            "type": {
+              "description": "Must be 'task'",
+              "type": [ "task" ]
+            },
+            "id": {
+              "description": "The ID of the task this assignment is for.",
+              "type": "string",
                     "required": true
-        		},
-        		"assign_to": {
-        			"description": "The user this assignment is for. At least one of 'id' or 'login' is required in this object.",
-        			"type": "object",
+            },
+            "assign_to": {
+              "description": "The user this assignment is for. At least one of 'id' or 'login' is required in this object.",
+              "type": "object",
                     "required": true
-        		},
-        		"id": {
-        			"description": "The ID of the user this assignment is for.",
-        			"type": "string"
-        		},
-        		"login": {
-        			"description": "The login email address for the user this assignment is for.",
-        			"type": "string"
-        		}
-        	}
+            },
+            "id": {
+              "description": "The ID of the user this assignment is for.",
+              "type": "string"
+            },
+            "login": {
+              "description": "The login email address for the user this assignment is for.",
+              "type": "string"
+            }
+          }
         }
     responses:
       200:
@@ -3865,88 +3865,88 @@ resourceTypes:
             }
           schema: |
             {
-            	"$schema": "http://json-schema.org/draft-03/schema",
-            	"type": "object" ,
-            	"properties": {
-            		"type": {
-            			"type": "string"
-            		},
-            		"id": {
-            			"type": "string"
-            		},
-            		"item": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"sequence_id": {
-            					"type": "string"
-            				},
-            				"etag": {
-            					"type": "string"
-            				},
-            				"sha1": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				}
-            			},
-            			"type": "object"
-            		},
-            		"assigned_to": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				},
-            				"login": {
-            					"type": "string"
-            				}
-            			},
-            			"type": "object"
-            		},
-            		"message": {
-            			"type": "string"
-            		},
-            		"completed_at": {
-            			"type": "timestamp"
-            		},
-            		"assigned_at": {
-            			"type": "timestamp"
-            		},
-            		"reminded_at": {
-            			"type": "string"
-            		},
-            		"resolution_state": {
-            			"type": "string"
-            		},
-            		"assigned_by": {
-            			"properties": {
-            				"type": {
-            					"type": "string"
-            				},
-            				"id": {
-            					"type": "string"
-            				},
-            				"name": {
-            					"type": "string"
-            				},
-            				"login": {
-            					"type": "string"
-            				}
-            			},
-            			"type": "object"
-            		}
-            	}
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "type": "object" ,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "item": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "sequence_id": {
+                      "type": "string"
+                    },
+                    "etag": {
+                      "type": "string"
+                    },
+                    "sha1": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "assigned_to": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "login": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "completed_at": {
+                  "type": "timestamp"
+                },
+                "assigned_at": {
+                  "type": "timestamp"
+                },
+                "reminded_at": {
+                  "type": "string"
+                },
+                "resolution_state": {
+                  "type": "string"
+                },
+                "assigned_by": {
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "login": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
             }
   /{id}:
     type: base
@@ -3989,88 +3989,88 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"type": "string"
-              		},
-              		"id": {
-              			"type": "string"
-              		},
-              		"item": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"sequence_id": {
-              					"type": "string"
-              				},
-              				"etag": {
-              					"type": "string"
-              				},
-              				"sha1": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		},
-              		"assigned_to": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		},
-              		"message": {
-              			"type": "string"
-              		},
-              		"completed_at": {
-              			"type": "timestamp"
-              		},
-              		"assigned_at": {
-              			"type": "timestamp"
-              		},
-              		"reminded_at": {
-              			"type": "string"
-              		},
-              		"resolution_state": {
-              			"type": "string"
-              		},
-              		"assigned_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "item": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "sequence_id": {
+                        "type": "string"
+                      },
+                      "etag": {
+                        "type": "string"
+                      },
+                      "sha1": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "assigned_to": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "completed_at": {
+                    "type": "timestamp"
+                  },
+                  "assigned_at": {
+                    "type": "timestamp"
+                  },
+                  "reminded_at": {
+                    "type": "string"
+                  },
+                  "resolution_state": {
+                    "type": "string"
+                  },
+                  "assigned_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
               }
     delete:
       description: |
@@ -4086,23 +4086,23 @@ resourceTypes:
       body:
         schema: |
           {
-          	"$schema": "http://json-schema.org/draft-03/schema",
-          	"type": "object" ,
-          	"properties": {
-          		"message": {
-          			"description": "A message from the assignee about this task.",
-          			"type": "string"
-          		},
-          		"resolution_state": {
-          			"description": "Can be 'completed', 'incomplete', 'approved', or 'rejected'.",
-          			"type": [
-          				"completed",
-          				"incomplete",
-          				"approved",
-          				"rejected"
-          			]
-          		}
-          	}
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "type": "object" ,
+            "properties": {
+              "message": {
+                "description": "A message from the assignee about this task.",
+                "type": "string"
+              },
+              "resolution_state": {
+                "description": "Can be 'completed', 'incomplete', 'approved', or 'rejected'.",
+                "type": [
+                  "completed",
+                  "incomplete",
+                  "approved",
+                  "rejected"
+                ]
+              }
+            }
           }
       responses:
         200:
@@ -4139,86 +4139,86 @@ resourceTypes:
               }
             schema: |
               {
-              	"$schema": "http://json-schema.org/draft-03/schema",
-              	"type": "object" ,
-              	"properties": {
-              		"type": {
-              			"type": "string"
-              		},
-              		"id": {
-              			"type": "string"
-              		},
-              		"item": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"sequence_id": {
-              					"type": "string"
-              				},
-              				"etag": {
-              					"type": "string"
-              				},
-              				"sha1": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		},
-              		"assigned_to": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		},
-              		"message": {
-              			"type": "string"
-              		},
-              		"completed_at": {
-              			"type": "timestamp"
-              		},
-              		"assigned_at": {
-              			"type": "timestamp"
-              		},
-              		"reminded_at": {
-              			"type": "string"
-              		},
-              		"resolution_state": {
-              			"type": "string"
-              		},
-              		"assigned_by": {
-              			"properties": {
-              				"type": {
-              					"type": "string"
-              				},
-              				"id": {
-              					"type": "string"
-              				},
-              				"name": {
-              					"type": "string"
-              				},
-              				"login": {
-              					"type": "string"
-              				}
-              			},
-              			"type": "object"
-              		}
-              	}
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type": "object" ,
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "item": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "sequence_id": {
+                        "type": "string"
+                      },
+                      "etag": {
+                        "type": "string"
+                      },
+                      "sha1": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "assigned_to": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "completed_at": {
+                    "type": "timestamp"
+                  },
+                  "assigned_at": {
+                    "type": "timestamp"
+                  },
+                  "reminded_at": {
+                    "type": "string"
+                  },
+                  "resolution_state": {
+                    "type": "string"
+                  },
+                  "assigned_by": {
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "login": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
               }

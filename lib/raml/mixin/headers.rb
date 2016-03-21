@@ -9,7 +9,7 @@ module Raml
 
     def self.included(base)
       base.instance_eval do
-		    non_scalar_property :headers
+        non_scalar_property :headers
         children_by :headers, :name, Header
       end
     end

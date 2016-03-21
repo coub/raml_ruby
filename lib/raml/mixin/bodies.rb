@@ -9,11 +9,11 @@ module Raml
 
     def self.included(base)
       base.instance_eval do
-		    non_scalar_property :body
-		    children_by :bodies, :media_type , Body
+        non_scalar_property :body
+        children_by :bodies, :media_type , Body
       end
     end
-    
+
     def parse_body(value)
       if value.is_a? Hash and value.keys.all? {|k| k.is_a? String and k =~ /.+\/.+/ }
         # If all keys looks like media types, its not a default media type body.
