@@ -21,6 +21,7 @@ module Raml
 
   class UnknownTraitReference           < RamlError; end
   class UnknownResourceTypeReference    < RamlError; end
+  class UnknownSecuritySchemeReference  < RamlError; end
   class MergeError                      < RamlError; end
   class UnknownTypeOrTraitParameter     < RamlError; end
   class UnknownTypeOrTraitParamFunction < RamlError; end

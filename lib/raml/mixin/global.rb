@@ -16,5 +16,9 @@ module Raml
   	def schema_declarations
   		@parent.schema_declarations
   	end
+
+    def security_scheme_declarations
+      @parent.security_scheme_declarations
+    end
   end
 end

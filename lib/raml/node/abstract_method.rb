@@ -9,6 +9,7 @@ module Raml
     include Validation
     include Bodies
     include Headers
+    include SecuredBy
 
     # @!attribute [rw] protocols
     #   @return [Array<String>, nil] the supported protocols. Nil or an array of up to two string
@@ -28,9 +29,14 @@ module Raml
 
     children_by :query_parameters , :name       , Parameter::QueryParameter
     children_by :responses        , :name       , Response
+    children_by :secured_by       , :name       , SecuritySchemeReference
     
     private
-        
+
+    def validate
+      _validate_secured_by
+    end
+
     def validate_protocols
       if @protocols
         validate_array :protocols, @protocols, String
@@ -51,11 +57,5 @@ module Raml
       validate_hash 'responses', value, [Integer, String], Hash
       value.map { |r_name, r_data| Response.new r_name, r_data, self }
     end
-
-    def parse_secured_by(data)
-      # XXX ignored for now
-      []
-    end
-
   end
 end

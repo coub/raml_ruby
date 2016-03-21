@@ -7,6 +7,7 @@ module Raml
     include Merge
     include Parent
     include Validation
+    include SecuredBy
 
     # @!attribute [r] base_uri_parameters
     #   @return [Hash<String, Raml::Parameter::BaseUriParameter>] the base URI parameters, keyed
@@ -28,6 +29,7 @@ module Raml
     children_by :methods            , :name, Raml::Method
     children_by :base_uri_parameters, :name, Parameter::BaseUriParameter, true
     children_by :uri_parameters     , :name, Parameter::UriParameter    , true
+    children_by :secured_by         , :name, SecuritySchemeReference
 
     children_of :traits, [ Raml::Trait, Raml::TraitReference ]
 
@@ -87,7 +89,11 @@ module Raml
     end
 
     private
-    
+
+    def validate
+      _validate_secured_by
+    end
+
     def validate_parent
       raise InvalidParent, "Parent of resource cannot be nil." if @parent.nil?
     end
@@ -152,11 +158,6 @@ module Raml
           resource_type_declarations.include? value
         ResourceTypeReference.new value, self
       end
-    end
-
-    def parse_secured_by(data)
-      # XXX ignored for now
-      []
     end
 
     def instantiate_resource_type
