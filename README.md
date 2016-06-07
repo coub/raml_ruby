@@ -6,7 +6,6 @@ Implementation of a RAML parser in Ruby. It uses the stdlib YAML parser
 (Psych). It can also generate HTML documentation.
 
 
-<!---
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -20,17 +19,16 @@ And then execute:
 Or install it yourself as:
 
     $ gem install raml_ruby
--->
+
+You can also clone the repository to build the latest master:
+
+    $ git clone git@github.com/coub/raml_ruby.git
 
 ## Usage
 
-Clone this repository:
+Install the gem as shown above, then require:
 
-    git clone git@github.com:coub/raml_ruby.git
-
-Require:
-
-    require 'lib/raml'
+    require 'raml'
 
 or
 
@@ -42,9 +40,8 @@ To parse the file:
 
 ## To Do
 
-- Align mergin strategy of conflicting properties of resource types and traits with official Javascript and Java parsers.
+- Align merging strategy of conflicting properties of resource types and traits with official Javascript and Java parsers.
 - Security schemes
-- Publish to Rubygems
 
 More a more detailed analysis of the spec requirements and which ones are finishes see the [RAML requirements document](raml_spec_reqs.md).
 
